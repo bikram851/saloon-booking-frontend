@@ -1,4 +1,17 @@
 import React, { useMemo, useState, useEffect } from "react";
+import {
+  Scissors,
+  Clock,
+  User,
+  Plus,
+  Coffee,
+  Flame,
+  ShieldCheck,
+  Sparkles,
+  CheckCircle2,
+  Coins,
+  X,
+} from "lucide-react";
 import { request } from "../api";
 
 const navItems = [
@@ -67,12 +80,92 @@ export default function DashboardPage() {
     setConfirmQueue((current) => current.filter((entry) => entry.id !== id));
   }
 
-  function toggleBarber(id) {
-    setBarbers((current) =>
-      current.map((barber) =>
-        barber.id === id ? { ...barber, available: !barber.available } : barber
-      )
-    );
+  const [stationActive, setStationActive] = useState(true);
+  const [inChair, setInChair] = useState({
+    id: 999,
+    customer: "Arjun Verma",
+    service: "Skin Fade + Royal Beard Sculpt",
+    time: "In Chair (20 mins)",
+    price: 750,
+    startedAt: "10:15 AM",
+  });
+  const [showWalkIn, setShowWalkIn] = useState(false);
+  const [walkInForm, setWalkInForm] = useState({
+    customer: "",
+    service: "Signature Skin Fade",
+    price: 550,
+  });
+  const [stationChecklist, setStationChecklist] = useState({
+    bladeDisinfected: true,
+    towelSteamer: true,
+    freshCapes: true,
+    clippersOiled: true,
+  });
+  const [toastMessage, setToastMessage] = useState("");
+
+  function showToast(msg) {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 3500);
+  }
+
+  function finishInChairCut() {
+    if (!inChair) return;
+    const completed = {
+      ...inChair,
+      status: "Confirmed",
+      time: "Completed just now",
+    };
+    setBookings((current) => [completed, ...current]);
+    showToast(`✅ Cut completed for ${inChair.customer}! ₹${inChair.price} added to daily earnings.`);
+    setInChair(null);
+  }
+
+  function seatInChair(booking) {
+    if (inChair) {
+      // finish current first
+      setBookings((current) => [{ ...inChair, status: "Confirmed", time: "Completed" }, ...current]);
+    }
+    setInChair({
+      ...booking,
+      startedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    });
+    setBookings((current) => current.filter((b) => b.id !== booking.id));
+    showToast(`💈 ${booking.customer} is now seated in Chair #1!`);
+  }
+
+  function handleWalkInSubmit(e) {
+    e.preventDefault();
+    if (!walkInForm.customer.trim()) return;
+
+    const newClient = {
+      id: Date.now(),
+      customer: walkInForm.customer,
+      service: walkInForm.service,
+      price: Number(walkInForm.price) || 500,
+      time: "Walk-in (Now)",
+      status: "Confirmed",
+    };
+
+    if (!inChair) {
+      setInChair({
+        ...newClient,
+        startedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      });
+      showToast(`💈 Walk-in ${newClient.customer} seated directly in Chair #1!`);
+    } else {
+      setBookings((current) => [newClient, ...current]);
+      showToast(`💈 Walk-in ${newClient.customer} added to the queue!`);
+    }
+
+    setWalkInForm({ customer: "", service: "Signature Skin Fade", price: 550 });
+    setShowWalkIn(false);
+  }
+
+  function toggleChecklist(key) {
+    setStationChecklist((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   }
 
   useEffect(() => {
@@ -110,69 +203,302 @@ export default function DashboardPage() {
         </aside>
 
         <section className="barber-content">
+          {toastMessage && (
+            <div className="appt-toast-banner" style={{ top: "18px" }}>
+              <CheckCircle2 size={18} />
+              <span>{toastMessage}</span>
+            </div>
+          )}
+
           <header className="barber-header">
             <div>
-              <span className="eyebrow">BARBER DASHBOARD</span>
-              <h1>Welcome back, {user?.name || "Barber"}</h1>
+              <span className="eyebrow" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                <Scissors size={13} /> BARBER SALOON • STATION #1
+              </span>
+              <h1>Welcome back, {user?.name || "Alex Rivera"}</h1>
             </div>
-            <button type="button" className="primary small">
-              Salon is open
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className={stationActive ? "station-active-badge active" : "station-active-badge break"}
+                onClick={() => {
+                  setStationActive(!stationActive);
+                  showToast(stationActive ? "☕ Chair #1 set to break mode." : "🟢 Chair #1 is now active & ready!");
+                }}
+              >
+                <span className="station-dot" />
+                {stationActive ? "Chair #1 Active" : "Station on Break"}
+              </button>
+              <button
+                type="button"
+                className="primary small"
+                onClick={() => setShowWalkIn(true)}
+                style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+              >
+                <Plus size={15} /> Quick Walk-in
+              </button>
+            </div>
           </header>
 
           {activeTab === "home" && (
             <>
+              {/* Active Barber Chair Card */}
+              {inChair ? (
+                <div className="barber-chair-card">
+                  <div className="barber-chair-header">
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span className="chair-pulse-badge">
+                        <Scissors size={15} className="spin-slow" /> LIVE IN CHAIR
+                      </span>
+                      <span className="chair-timer">
+                        <Clock size={13} /> Started at {inChair.startedAt || "10:15 AM"}
+                      </span>
+                    </div>
+                    <span className="chair-price-tag">₹{inChair.price}</span>
+                  </div>
+
+                  <div className="barber-chair-body">
+                    <div>
+                      <h2 className="chair-client-name">{inChair.customer}</h2>
+                      <p className="chair-service-name">
+                        <Sparkles size={14} style={{ color: "var(--gold)" }} /> {inChair.service}
+                      </p>
+                    </div>
+                    <div className="barber-chair-actions">
+                      <button
+                        type="button"
+                        className="outline small"
+                        onClick={() => {
+                          setInChair({ ...inChair, price: inChair.price + 150, service: inChair.service + " + Hot Towel" });
+                          showToast("♨️ Added Hot Towel & Beard Oil (+₹150)!");
+                        }}
+                      >
+                        + Add Hot Towel (+₹150)
+                      </button>
+                      <button type="button" className="primary" onClick={finishInChairCut}>
+                        <CheckCircle2 size={16} /> Finish Cut & Bill
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="barber-chair-empty-card">
+                  <div>
+                    <h3>💺 Barber Chair #1 is Free</h3>
+                    <p>No client is currently in the chair. Seat the next appointment or log a walk-in.</p>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      className="primary small"
+                      onClick={() => {
+                        const next = bookings.find((b) => b.status === "Confirmed");
+                        if (next) seatInChair(next);
+                        else showToast("No waiting appointments in queue. Add a walk-in!");
+                      }}
+                    >
+                      Seat Next from Queue
+                    </button>
+                    <button type="button" className="outline small" onClick={() => setShowWalkIn(true)}>
+                      + Walk-in Client
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Barbershop Live Stats Grid */}
               <div className="stats-grid">
                 <div className="stat-card">
-                  <small>Today bookings</small>
-                  <strong>{bookings.length}</strong>
-                  <span>Booked services</span>
-                </div>
-                <div className="stat-card">
-                  <small>Confirmed</small>
-                  <strong>{confirmedCount}</strong>
-                  <span>Ready to serve</span>
-                </div>
-                <div className="stat-card">
-                  <small>Pending</small>
-                  <strong>{pendingCount}</strong>
-                  <span>Awaiting action</span>
+                  <small>Today Cuts & Clients</small>
+                  <strong>{bookings.length + (inChair ? 1 : 0)}</strong>
+                  <span>Groomed at Chair #1</span>
                 </div>
                 <div className="stat-card accent">
-                  <small>Today earnings</small>
-                  <strong>₹{todayRevenue}</strong>
-                  <span>Gross revenue</span>
+                  <small>Chair Revenue</small>
+                  <strong>₹{todayRevenue + (inChair ? inChair.price : 0)}</strong>
+                  <span>Today's gross earnings</span>
+                </div>
+                <div className="stat-card">
+                  <small>Avg Cut Duration</small>
+                  <strong>28 min</strong>
+                  <span>Optimal salon pace</span>
+                </div>
+                <div className="stat-card">
+                  <small>Waiting in Lounge</small>
+                  <strong>{bookings.filter((b) => b.status === "Confirmed").length}</strong>
+                  <span>Next up in queue</span>
                 </div>
               </div>
 
+              {/* Barbershop 2-Panel Grid: Queue & Station Operations */}
               <div className="panel-grid">
+                {/* Left Panel: Today's Barber Schedule & Queue */}
                 <div className="info-panel">
-                  <h3>Upcoming schedule</h3>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                    <h3 style={{ margin: 0 }}>Today's Haircut Queue</h3>
+                    <span className="eyebrow" style={{ margin: 0 }}>{bookings.length} Scheduled</span>
+                  </div>
+
                   <ul className="list-stack">
-                    {bookings.slice(0, 4).map((entry) => (
-                      <li key={entry.id}>
-                        <div>
-                          <strong>{entry.customer}</strong>
-                          <span>{entry.service}</span>
+                    {bookings.slice(0, 5).map((entry) => (
+                      <li key={entry.id} className="barber-queue-item">
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <strong>{entry.customer}</strong>
+                            <span className="queue-service-badge">{entry.service}</span>
+                          </div>
+                          <span style={{ fontSize: "12px", color: "var(--muted)" }}>
+                            ⏰ {entry.time} • ₹{entry.price}
+                          </span>
                         </div>
-                        <em>{entry.time}</em>
+                        <button
+                          type="button"
+                          className="outline small barber-seat-btn"
+                          onClick={() => seatInChair(entry)}
+                          title="Seat client in chair"
+                        >
+                          <Scissors size={13} /> Seat in Chair
+                        </button>
                       </li>
                     ))}
                   </ul>
                 </div>
 
+                {/* Right Panel: Station Readiness Checklist & Popular Cuts */}
                 <div className="info-panel">
-                  <h3>Salon status</h3>
-                  <div className="status-box">
-                    <span className="status-pill open">Open</span>
-                    <p>Working hours: {openTime} - {closeTime}</p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                    <h3 style={{ margin: 0 }}>Station Ops & Hygiene</h3>
+                    <span className="status-pill open">
+                      <ShieldCheck size={12} style={{ marginRight: "4px" }} /> Inspected
+                    </span>
                   </div>
-                  <div className="mini-row">
-                    <span>Available barbers</span>
-                    <strong>{availableNow}</strong>
+
+                  {/* Checklist */}
+                  <div className="station-checklist">
+                    <label className="station-check-item">
+                      <input
+                        type="checkbox"
+                        checked={stationChecklist.bladeDisinfected}
+                        onChange={() => toggleChecklist("bladeDisinfected")}
+                      />
+                      <span>Straight Razors & Blades Sterilized</span>
+                    </label>
+                    <label className="station-check-item">
+                      <input
+                        type="checkbox"
+                        checked={stationChecklist.towelSteamer}
+                        onChange={() => toggleChecklist("towelSteamer")}
+                      />
+                      <span>Hot Towel Steamer Ready (65°C)</span>
+                    </label>
+                    <label className="station-check-item">
+                      <input
+                        type="checkbox"
+                        checked={stationChecklist.freshCapes}
+                        onChange={() => toggleChecklist("freshCapes")}
+                      />
+                      <span>Fresh Neck Strips & Barber Capes</span>
+                    </label>
+                    <label className="station-check-item">
+                      <input
+                        type="checkbox"
+                        checked={stationChecklist.clippersOiled}
+                        onChange={() => toggleChecklist("clippersOiled")}
+                      />
+                      <span>Clippers & Trimmers Oiled</span>
+                    </label>
+                  </div>
+
+                  {/* Popular Barber Cuts & Quick Rate Card */}
+                  <div className="barber-rate-box">
+                    <span className="barber-rate-title">Popular Barber Services</span>
+                    <div className="barber-rate-tags">
+                      <span className="rate-pill">Skin Fade: ₹680</span>
+                      <span className="rate-pill">Royal Shave: ₹560</span>
+                      <span className="rate-pill">Beard Sculpt: ₹420</span>
+                      <span className="rate-pill">Hair Spa: ₹940</span>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Quick Walk-In Dialog / Modal */}
+              {showWalkIn && (
+                <div className="walkin-overlay" onClick={() => setShowWalkIn(false)}>
+                  <div className="walkin-modal" onClick={(e) => e.stopPropagation()}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                      <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                        <Scissors size={18} style={{ color: "var(--gold)" }} /> Add Walk-in Client
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setShowWalkIn(false)}
+                        style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleWalkInSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px", fontWeight: "600" }}>
+                        Client Name
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Rahul Sharma"
+                          value={walkInForm.customer}
+                          onChange={(e) => setWalkInForm({ ...walkInForm, customer: e.target.value })}
+                          autoFocus
+                          style={{ minHeight: "42px", padding: "8px 12px", borderRadius: "10px", border: "1px solid var(--line)" }}
+                        />
+                      </label>
+
+                      <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px", fontWeight: "600" }}>
+                        Haircut / Grooming Service
+                        <select
+                          value={walkInForm.service}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            let p = 550;
+                            if (val.includes("Fade")) p = 680;
+                            else if (val.includes("Royal")) p = 560;
+                            else if (val.includes("Beard")) p = 420;
+                            else if (val.includes("Spa")) p = 940;
+                            setWalkInForm({ ...walkInForm, service: val, price: p });
+                          }}
+                          style={{ minHeight: "42px", padding: "8px 12px", borderRadius: "10px", border: "1px solid var(--line)", background: "#fff" }}
+                        >
+                          <option value="Signature Skin Fade">Signature Skin Fade (₹680)</option>
+                          <option value="Classic Beard Trim & Styling">Classic Beard Trim & Styling (₹420)</option>
+                          <option value="Royal Hot Towel Shave">Royal Hot Towel Shave (₹560)</option>
+                          <option value="Hair Cut + Head Wash">Hair Cut + Head Wash (₹550)</option>
+                          <option value="Complete Grooming & Hair Spa">Complete Grooming & Hair Spa (₹940)</option>
+                        </select>
+                      </label>
+
+                      <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px", fontWeight: "600" }}>
+                        Price (₹)
+                        <input
+                          type="number"
+                          required
+                          value={walkInForm.price}
+                          onChange={(e) => setWalkInForm({ ...walkInForm, price: e.target.value })}
+                          style={{ minHeight: "42px", padding: "8px 12px", borderRadius: "10px", border: "1px solid var(--line)" }}
+                        />
+                      </label>
+
+                      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                        <button type="button" className="outline" onClick={() => setShowWalkIn(false)} style={{ flex: 1 }}>
+                          Cancel
+                        </button>
+                        <button type="submit" className="primary" style={{ flex: 1 }}>
+                          💈 Add to Chair / Queue
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
