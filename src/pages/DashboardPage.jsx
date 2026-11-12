@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { request } from "../api";
+import quickGroomLogo from "../assets/quick_groom.jpg";
 
 const navItems = [
   { key: "home", label: "Home" },
@@ -210,35 +211,88 @@ export default function DashboardPage() {
             </div>
           )}
 
-          <header className="barber-header">
-            <div>
-              <span className="eyebrow" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                <Scissors size={13} /> BARBER SALOON • STATION #1
-              </span>
-              <h1>Welcome back, {user?.name || "Alex Rivera"}</h1>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-              <button
-                type="button"
-                className={stationActive ? "station-active-badge active" : "station-active-badge break"}
-                onClick={() => {
-                  setStationActive(!stationActive);
-                  showToast(stationActive ? "☕ Chair #1 set to break mode." : "🟢 Chair #1 is now active & ready!");
+          {/* Barber Home Salon Hero Banner */}
+          {activeTab === "home" ? (
+            <div className="barber-home-hero-banner">
+              <div
+                className="barber-banner-bg"
+                style={{
+                  backgroundImage:
+                    "url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=85')",
                 }}
               >
-                <span className="station-dot" />
-                {stationActive ? "Chair #1 Active" : "Station on Break"}
-              </button>
-              <button
-                type="button"
-                className="primary small"
-                onClick={() => setShowWalkIn(true)}
-                style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-              >
-                <Plus size={15} /> Quick Walk-in
-              </button>
+                <div className="barber-banner-overlay" />
+              </div>
+
+              <div className="barber-banner-content">
+                <div className="barber-banner-top">
+                  <div className="barber-banner-badge-group">
+                    <div className="barber-salon-avatar">
+                      <img src={quickGroomLogo} alt="Quick Groom Saloon" />
+                    </div>
+                    <div>
+                      <span className="barber-banner-eyebrow">
+                        <Scissors size={13} /> QUICK GROOM BARBER SALOON • STATION #1
+                      </span>
+                      <h1 className="barber-banner-title">Barber Dashboard</h1>
+                      <p className="barber-banner-subtitle">
+                        Master Stylist Station · Managing live haircuts, appointments & daily earnings
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="barber-banner-actions">
+                    <button
+                      type="button"
+                      className={stationActive ? "station-active-badge active" : "station-active-badge break"}
+                      onClick={() => {
+                        setStationActive(!stationActive);
+                        showToast(
+                          stationActive
+                            ? "☕ Chair #1 set to break mode."
+                            : "🟢 Chair #1 is now active & ready!"
+                        );
+                      }}
+                    >
+                      <span className="station-dot" />
+                      {stationActive ? "Chair #1 Active" : "Station on Break"}
+                    </button>
+                    <button
+                      type="button"
+                      className="primary small banner-walkin-btn"
+                      onClick={() => setShowWalkIn(true)}
+                    >
+                      <Plus size={15} /> Quick Walk-in
+                    </button>
+                  </div>
+                </div>
+
+                <div className="barber-banner-footer-pills">
+                  <div className="banner-pill">
+                    <Clock size={13} />
+                    <span>Hours: {openTime} – {closeTime}</span>
+                  </div>
+                  <div className="banner-pill">
+                    <User size={13} />
+                    <span>Stylist: {user?.name || "Alex Rivera"}</span>
+                  </div>
+                  <div className="banner-pill highlight">
+                    <Sparkles size={13} />
+                    <span>{bookings.length + (inChair ? 1 : 0)} Cuts Groomed Today</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </header>
+          ) : (
+            <header className="barber-header">
+              <div>
+                <span className="eyebrow" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                  <Scissors size={13} /> BARBER SALOON
+                </span>
+                <h1>{navItems.find((n) => n.key === activeTab)?.label || "Barber Dashboard"}</h1>
+              </div>
+            </header>
+          )}
 
           {activeTab === "home" && (
             <>
