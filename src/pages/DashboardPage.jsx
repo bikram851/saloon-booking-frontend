@@ -71,6 +71,13 @@ export default function DashboardPage() {
   const confirmedCount = bookings.filter((entry) => entry.status === "Confirmed").length;
   const pendingCount = bookings.filter((entry) => entry.status === "Pending").length;
   const availableNow = barbers.filter((barber) => barber.available).length;
+  const [apptFilter, setApptFilter] = useState("all");
+
+  const filteredBookings = useMemo(() => {
+    if (apptFilter === "confirmed") return bookings.filter((b) => b.status === "Confirmed");
+    if (apptFilter === "pending") return bookings.filter((b) => b.status === "Pending");
+    return bookings;
+  }, [bookings, apptFilter]);
 
   function confirmBooking(id) {
     const selected = confirmQueue.find((entry) => entry.id === id);
@@ -81,6 +88,18 @@ export default function DashboardPage() {
       ...current,
     ]);
     setConfirmQueue((current) => current.filter((entry) => entry.id !== id));
+    showToast(`✅ Confirmed appointment for ${selected.customer}!`);
+  }
+
+  function confirmAllBookings() {
+    if (confirmQueue.length === 0) return;
+    const count = confirmQueue.length;
+    setBookings((current) => [
+      ...confirmQueue.map((entry) => ({ ...entry, status: "Confirmed" })),
+      ...current,
+    ]);
+    setConfirmQueue([]);
+    showToast(`✅ All ${count} appointments confirmed!`);
   }
 
   const [stationActive, setStationActive] = useState(true);
@@ -371,11 +390,11 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="barber-chair-empty-card">
-                  <div>
+                  <div className="empty-chair-text">
                     <h3>💺 Barber Chair #1 is Free</h3>
                     <p>No client is currently in the chair. Seat the next appointment or log a walk-in.</p>
                   </div>
-                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  <div className="empty-chair-actions">
                     <button
                       type="button"
                       className="primary small"
@@ -385,10 +404,10 @@ export default function DashboardPage() {
                         else showToast("No waiting appointments in queue. Add a walk-in!");
                       }}
                     >
-                      Seat Next from Queue
+                      <Scissors size={14} /> Seat Next from Queue
                     </button>
                     <button type="button" className="outline small" onClick={() => setShowWalkIn(true)}>
-                      + Walk-in Client
+                      <Plus size={14} /> + Walk-in Client
                     </button>
                   </div>
                 </div>
@@ -591,10 +610,35 @@ export default function DashboardPage() {
           )}
 
           {activeTab === "appointments" && (
-            <div className="info-panel full-width">
+            <div className="info-panel full-width barber-appt-panel">
               <div className="panel-title-bar">
-                <h3>Appointment Overview</h3>
-                <span className="eyebrow">{bookings.length} Total</span>
+                <div className="title-bar-left">
+                  <h3>Appointment Overview</h3>
+                  <span className="eyebrow">{bookings.length} Total</span>
+                </div>
+                <div className="barber-filter-pills">
+                  <button
+                    type="button"
+                    className={`filter-pill ${apptFilter === "all" ? "active" : ""}`}
+                    onClick={() => setApptFilter("all")}
+                  >
+                    All ({bookings.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${apptFilter === "confirmed" ? "active" : ""}`}
+                    onClick={() => setApptFilter("confirmed")}
+                  >
+                    Confirmed ({confirmedCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`filter-pill ${apptFilter === "pending" ? "active" : ""}`}
+                    onClick={() => setApptFilter("pending")}
+                  >
+                    Pending ({pendingCount})
+                  </button>
+                </div>
               </div>
 
               {/* Desktop Table View */}
@@ -607,19 +651,44 @@ export default function DashboardPage() {
                       <th>Time</th>
                       <th>Price</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.map((entry) => (
+                    {filteredBookings.map((entry) => (
                       <tr key={entry.id}>
-                        <td>{entry.customer}</td>
+                        <td><strong>{entry.customer}</strong></td>
                         <td>{entry.service}</td>
-                        <td>{entry.time}</td>
-                        <td>₹{entry.price}</td>
+                        <td>⏰ {entry.time}</td>
+                        <td><strong>₹{entry.price}</strong></td>
                         <td>
                           <span className={entry.status === "Confirmed" ? "status-pill confirmed" : "status-pill pending"}>
                             {entry.status}
                           </span>
+                        </td>
+                        <td>
+                          {entry.status === "Confirmed" ? (
+                            <button
+                              type="button"
+                              className="outline small table-action-btn"
+                              onClick={() => seatInChair(entry)}
+                            >
+                              <Scissors size={12} /> Seat
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="primary small table-action-btn"
+                              onClick={() => {
+                                setBookings((prev) =>
+                                  prev.map((b) => (b.id === entry.id ? { ...b, status: "Confirmed" } : b))
+                                );
+                                showToast(`✅ Confirmed appointment for ${entry.customer}`);
+                              }}
+                            >
+                              <CheckCircle2 size={12} /> Confirm
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -629,58 +698,127 @@ export default function DashboardPage() {
 
               {/* Mobile Card View */}
               <div className="mobile-appt-list">
-                {bookings.map((entry) => (
+                {filteredBookings.map((entry) => (
                   <div className="mobile-appt-card" key={entry.id}>
                     <div className="mobile-appt-header">
-                      <strong className="mobile-appt-customer">{entry.customer}</strong>
+                      <div className="mobile-appt-header-main">
+                        <strong className="mobile-appt-customer">{entry.customer}</strong>
+                        <span className="mobile-appt-time">⏰ {entry.time}</span>
+                      </div>
                       <span className={entry.status === "Confirmed" ? "status-pill confirmed" : "status-pill pending"}>
                         {entry.status}
                       </span>
                     </div>
+
                     <div className="mobile-appt-service">
                       <Scissors size={13} style={{ color: "var(--gold)" }} />
                       <span>{entry.service}</span>
                     </div>
+
                     <div className="mobile-appt-footer">
-                      <span className="mobile-appt-time">⏰ {entry.time}</span>
-                      <strong className="mobile-appt-price">₹{entry.price}</strong>
+                      <div className="mobile-appt-price-wrap">
+                        <small>Total</small>
+                        <strong className="mobile-appt-price">₹{entry.price}</strong>
+                      </div>
+                      <div className="mobile-appt-actions">
+                        {entry.status === "Confirmed" ? (
+                          <button
+                            type="button"
+                            className="primary small mobile-card-action-btn"
+                            onClick={() => seatInChair(entry)}
+                          >
+                            <Scissors size={13} /> Seat in Chair
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="primary small mobile-card-action-btn"
+                            onClick={() => {
+                              setBookings((prev) =>
+                                prev.map((b) => (b.id === entry.id ? { ...b, status: "Confirmed" } : b))
+                              );
+                              showToast(`✅ Confirmed appointment for ${entry.customer}`);
+                            }}
+                          >
+                            <CheckCircle2 size={13} /> Confirm Now
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {filteredBookings.length === 0 && (
+                <div className="queue-empty-box">
+                  <Calendar size={32} style={{ color: "var(--gold)", margin: "0 auto 8px" }} />
+                  <p>No {apptFilter === "all" ? "" : apptFilter} appointments found.</p>
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === "confirm" && (
-            <div className="info-panel full-width">
+            <div className="info-panel full-width barber-confirm-panel">
               <div className="panel-title-bar">
-                <h3>Confirm Appointments</h3>
-                <span className="eyebrow">{confirmQueue.length} Pending</span>
+                <div className="title-bar-left">
+                  <h3>Confirm Appointments</h3>
+                  <span className="eyebrow">{confirmQueue.length} Pending Approval</span>
+                </div>
+                {confirmQueue.length > 1 && (
+                  <button
+                    type="button"
+                    className="outline small confirm-all-btn"
+                    onClick={confirmAllBookings}
+                  >
+                    <CheckCircle2 size={13} /> Confirm All ({confirmQueue.length})
+                  </button>
+                )}
               </div>
               <div className="confirm-list">
                 {confirmQueue.map((entry) => (
                   <div className="confirm-card" key={entry.id}>
                     <div className="confirm-info">
-                      <strong>{entry.customer}</strong>
-                      <p>{entry.service}</p>
+                      <strong className="confirm-customer-name">{entry.customer}</strong>
+                      <p className="confirm-service-desc">{entry.service}</p>
                     </div>
                     <div className="confirm-meta">
-                      <span>⏰ {entry.time}</span>
+                      <span className="confirm-time-badge">⏰ {entry.time}</span>
                       <strong className="confirm-price">₹{entry.price}</strong>
                     </div>
-                    <button
-                      type="button"
-                      className="primary small confirm-action-btn"
-                      onClick={() => confirmBooking(entry.id)}
-                    >
-                      <CheckCircle2 size={14} /> Confirm
-                    </button>
+                    <div className="confirm-actions-row">
+                      <button
+                        type="button"
+                        className="outline small confirm-seat-direct-btn"
+                        onClick={() => {
+                          seatInChair({ ...entry, status: "Confirmed" });
+                          setConfirmQueue((cur) => cur.filter((i) => i.id !== entry.id));
+                        }}
+                      >
+                        <Scissors size={13} /> Direct Seat
+                      </button>
+                      <button
+                        type="button"
+                        className="primary small confirm-action-btn"
+                        onClick={() => confirmBooking(entry.id)}
+                      >
+                        <CheckCircle2 size={14} /> Confirm
+                      </button>
+                    </div>
                   </div>
                 ))}
                 {confirmQueue.length === 0 && (
                   <div className="queue-empty-box">
-                    <CheckCircle2 size={32} style={{ color: "#22c55e", margin: "0 auto 8px" }} />
-                    <p>All pending appointments have been confirmed!</p>
+                    <CheckCircle2 size={36} style={{ color: "#22c55e", margin: "0 auto 10px" }} />
+                    <h4 style={{ margin: "0 0 6px", color: "#25221d" }}>All Caught Up!</h4>
+                    <p style={{ margin: "0 0 14px" }}>All customer appointment requests have been confirmed.</p>
+                    <button
+                      type="button"
+                      className="primary small"
+                      onClick={() => setShowWalkIn(true)}
+                    >
+                      <Plus size={14} /> Add Walk-in Client
+                    </button>
                   </div>
                 )}
               </div>
