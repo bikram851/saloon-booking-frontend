@@ -5705,6 +5705,385 @@ footer .brand {
 }
 
 /* =========================================================
+   GLOW & GRACE — RESPONSIVE BARBER SELECTION GRID
+   Signature Dark & Golden Luxury Theme
+========================================================= */
+
+.barber-section {
+  width: 100%;
+}
+
+.barber-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.barber-section-sub {
+  font-size: 12px;
+  color: #78716c;
+}
+
+/* Barber Card Grid */
+.customer-barber-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Desktop: 3 to 4 cards per row */
+@media screen and (min-width: 1025px) {
+  .customer-barber-grid {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+  }
+}
+
+/* Tablet: 2 or 3 cards per row */
+@media screen and (min-width: 651px) and (max-width: 1024px) {
+  .customer-barber-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Mobile: Exactly 2 cards per row on standard screens (360px, 375px, 390px, 430px) */
+@media screen and (max-width: 650px) {
+  .customer-barber-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+/* Single column only on extremely narrow screens (320px – 345px) */
+@media screen and (max-width: 345px) {
+  .customer-barber-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* Barber Card */
+.barber-select-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fffdf9;
+  border: 1.5px solid rgba(212, 154, 91, 0.28);
+  border-radius: 16px;
+  padding: 14px;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 190px;
+  overflow: hidden;
+}
+
+.barber-select-card:hover:not(.unavailable) {
+  border-color: #d49a5b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(212, 154, 91, 0.16);
+  background: #fffdfa;
+}
+
+/* Selected State */
+.barber-select-card.selected {
+  background: #fdf8f2 !important;
+  border: 2px solid #b47535 !important;
+  box-shadow: 0 6px 20px rgba(212, 154, 91, 0.25) !important;
+  transform: translateY(-1.5px);
+}
+
+/* Dedicated Any Barber Card Styling */
+.barber-select-card.any-barber-card {
+  background: linear-gradient(135deg, #fffdfa 0%, #fefcf9 100%);
+  border: 1.5px dashed rgba(212, 154, 91, 0.45);
+}
+
+.barber-select-card.any-barber-card.selected {
+  border-style: solid !important;
+}
+
+/* Unavailable / Disabled State */
+.barber-select-card.unavailable {
+  background: #f5f3ef !important;
+  border-color: #e5e0d8 !important;
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  filter: grayscale(0.4);
+}
+
+/* Visually Hidden Radio */
+.visually-hidden-radio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Card Top Action (Avatar + Check Badge) */
+.barber-card-top-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.barber-card-avatar-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #25221d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.any-avatar-wrap {
+  background: linear-gradient(135deg, #25221d 0%, #3e3830 100%);
+  border-color: #d49a5b;
+}
+
+.any-barber-icon {
+  color: #f7d8a9;
+}
+
+.barber-card-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.barber-card-avatar-placeholder {
+  color: #d49a5b;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Checkmark Icon Badge */
+.barber-card-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(212, 154, 91, 0.4);
+  background: #ffffff;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.barber-card-check.active {
+  background: linear-gradient(135deg, #d49a5b 0%, #b47535 100%);
+  border-color: #9a652e;
+  color: #25221d;
+  box-shadow: 0 2px 6px rgba(212, 154, 91, 0.4);
+}
+
+/* Card Body */
+.barber-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+  flex: 1;
+}
+
+.barber-card-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.barber-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #25221d;
+  line-height: 1.25;
+}
+
+.barber-card-chair {
+  font-size: 10px;
+  font-weight: 800;
+  color: #b47535;
+  background: #fbf3e8;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #f3dcba;
+}
+
+.barber-card-desc {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.35;
+  margin: 2px 0 0 0;
+}
+
+.barber-card-spec {
+  font-size: 11.5px;
+  color: #78716c;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.barber-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.barber-card-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b45309;
+}
+
+.barber-card-rating small {
+  color: #8c827a;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.barber-card-exp {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Card Footer */
+.barber-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(231, 222, 213, 0.7);
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.barber-card-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.barber-card-status.available {
+  color: #15803d;
+}
+
+.barber-card-status.busy {
+  color: #b45309;
+}
+
+.barber-card-status.offline {
+  color: #64748b;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-dot.green {
+  background: #22c55e;
+  box-shadow: 0 0 5px rgba(34, 197, 94, 0.6);
+}
+
+.status-dot.amber {
+  background: #f59e0b;
+}
+
+.status-dot.grey {
+  background: #94a3b8;
+}
+
+.barber-card-next-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #78716c;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.barber-card-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  padding: 1px 6px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+/* Mobile Compact Card Design */
+@media screen and (max-width: 480px) {
+  .barber-select-card {
+    padding: 10px;
+    min-height: 175px;
+    border-radius: 14px;
+  }
+
+  .barber-card-avatar-wrap {
+    width: 42px;
+    height: 42px;
+  }
+
+  .barber-card-name {
+    font-size: 12.5px;
+  }
+
+  .barber-card-spec {
+    font-size: 10.5px;
+  }
+
+  .barber-card-desc {
+    font-size: 10px;
+  }
+
+  .barber-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+}
+
+/* =========================================================
    GLOW & GRACE — TIME SLOT SELECTION & RESPONSIVE GRID
    Signature Dark & Golden Luxury Theme
 ========================================================= */

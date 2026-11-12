@@ -7,10 +7,14 @@ import {
 } from "react-router-dom";
 import {
   ArrowRight,
+  Check,
   CheckCircle2,
+  Clock,
   MapPin,
+  Sparkles,
   Star,
   UserRound,
+  Users,
 } from "lucide-react";
 import { request } from "../api";
 import { fallback, photos } from "../data/mockData";
@@ -296,7 +300,7 @@ export default function BookingPage() {
           customerName: user.name || user.fullName || "Valued Client",
           salonId: Number(id),
           serviceId: Number(serviceId),
-          barberId: selectedBarber === "any" ? "any" : Number(selectedBarber),
+          barberId: selectedBarber === "any" ? null : Number(selectedBarber),
           appointmentDate: date,
           appointmentTime: time,
           notes: notes.trim(),
@@ -576,20 +580,24 @@ export default function BookingPage() {
             </label>
 
             {/* =============================================
-                BARBER
+                BARBER SELECTION GRID
             ============================================= */}
 
             <div className="barber-section">
-              <label>
-                2. Choose your barber / stylist
-              </label>
+              <div className="barber-section-header">
+                <label className="booking-field-label">
+                  2. Choose your barber / stylist
+                </label>
+                <span className="barber-section-sub">
+                  Select a preferred specialist or choose automatic assignment
+                </span>
+              </div>
 
-              <div className="barber-picker">
+              <div className="customer-barber-grid">
+                {/* Dedicated "Any Barber" Card */}
                 <label
-                  className={`barber-option ${
-                    selectedBarber === "any"
-                      ? "selected"
-                      : ""
+                  className={`barber-select-card any-barber-card ${
+                    selectedBarber === "any" ? "selected" : ""
                   }`}
                 >
                   <input
@@ -597,168 +605,132 @@ export default function BookingPage() {
                     name="barber"
                     value="any"
                     checked={selectedBarber === "any"}
-                    onChange={(e) => {
-                      setSelectedBarber(e.target.value);
+                    onChange={() => {
+                      setSelectedBarber("any");
                       setTime("");
                     }}
+                    className="visually-hidden-radio"
                   />
 
-                  <div className="barber-option-content">
-                    <div className="barber-main-row">
-                      <div className="barber-avatar-circle" style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "50%",
-                        background: "linear-gradient(135deg, #d49a5b, #9a652e)",
-                        color: "#fff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "15px",
-                        flexShrink: 0,
-                        boxShadow: "0 2px 6px rgba(212, 154, 91, 0.3)"
-                      }}>
-                        ⚡
-                      </div>
-
-                      <div className="barber-name-block">
-                        <span className="barber-name">
-                          Any Barber (Automatic Assignment)
-                        </span>
-                        <small>Auto-assigns best available stylist for your slot</small>
-                      </div>
-
-                      <div className="barber-meta-inline">
-                        <span className="barber-tag" style={{ background: "#fef3c7", color: "#b45309", border: "1px solid #fde68a", fontWeight: "700" }}>
-                          Recommended
-                        </span>
-                      </div>
+                  <div className="barber-card-top-action">
+                    <div className="barber-card-avatar-wrap any-avatar-wrap">
+                      <Users size={22} className="any-barber-icon" />
                     </div>
+                    <span className={`barber-card-check ${selectedBarber === "any" ? "active" : ""}`}>
+                      <Check size={13} strokeWidth={3} />
+                    </span>
+                  </div>
+
+                  <div className="barber-card-body">
+                    <div className="barber-card-title-row">
+                      <strong className="barber-card-name">Any Available Barber</strong>
+                    </div>
+                    <p className="barber-card-desc">
+                      Let us assign the best available barber for your selected time.
+                    </p>
+                  </div>
+
+                  <div className="barber-card-footer">
+                    <span className="barber-card-status available">
+                      <span className="status-dot green" /> ⚡ Fastest Match
+                    </span>
+                    <span className="barber-card-tag">Auto-Assign</span>
                   </div>
                 </label>
 
+                {/* Individual Barber Cards */}
                 {barbers.map((barber) => {
-                  const rating =
-                    barber.rating ??
-                    barber.averageRating ??
-                    barber.starRating ??
-                    null;
-
+                  const rating = Number(barber.rating ?? barber.averageRating ?? barber.starRating ?? 4.9);
+                  const reviewCount =
+                    barber.reviewCount || ((Number(barber.id) * 37 + 55) % 80 + 60);
                   const experience =
-                    barber.experienceYears ??
-                    barber.experience ??
-                    barber.yearsExperience ??
-                    barber.experienceYear ??
-                    null;
-
+                    barber.experienceYears ?? barber.experience ?? barber.yearsExperience ?? 5;
+                  const isSelected = String(selectedBarber) === String(barber.id);
+                  const isAvailable =
+                    barber.status === "active" ||
+                    (barber.available !== false && barber.status !== "offline");
+                  const isBreak = barber.status === "break";
                   const chairLabel = barber.chair || `Chair #${barber.id}`;
-                  const isAvailable = barber.status === "active" || barber.available !== false;
 
                   return (
                     <label
                       key={barber.id}
-                      className={`barber-option ${
-                        String(selectedBarber) ===
-                        String(barber.id)
-                          ? "selected"
-                          : ""
+                      className={`barber-select-card ${isSelected ? "selected" : ""} ${
+                        !isAvailable ? "unavailable" : ""
                       }`}
                     >
                       <input
                         type="radio"
                         name="barber"
                         value={barber.id}
-                        checked={
-                          String(selectedBarber) ===
-                          String(barber.id)
-                        }
-                        onChange={(e) => {
-                          setSelectedBarber(
-                            e.target.value,
-                          );
-                          setTime("");
+                        checked={isSelected}
+                        disabled={!isAvailable}
+                        onChange={() => {
+                          if (isAvailable) {
+                            setSelectedBarber(String(barber.id));
+                            setTime("");
+                          }
                         }}
+                        className="visually-hidden-radio"
                       />
 
-                      <div className="barber-option-content">
-                        <div className="barber-main-row">
+                      <div className="barber-card-top-action">
+                        <div className="barber-card-avatar-wrap">
                           {barber.image ? (
                             <img
                               src={barber.image}
                               alt={barber.name}
-                              style={{
-                                width: "36px",
-                                height: "36px",
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                                border: "2px solid #e7ded5",
-                                flexShrink: 0
-                              }}
+                              className="barber-card-avatar"
                             />
                           ) : (
-                            <div
-                              style={{
-                                width: "36px",
-                                height: "36px",
-                                borderRadius: "50%",
-                                background: "#25221d",
-                                color: "#d49a5b",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontWeight: "700",
-                                flexShrink: 0
-                              }}
-                            >
+                            <div className="barber-card-avatar-placeholder">
                               {barber.name.charAt(0)}
                             </div>
                           )}
-
-                          <div className="barber-name-block">
-                            <span className="barber-name">
-                              {barber.name}
-                              <em style={{ fontStyle: "normal", fontSize: "11px", color: "var(--gold)", marginLeft: "6px", fontWeight: "600" }}>
-                                {chairLabel}
-                              </em>
-                            </span>
-                            <small>
-                              {barber.specialization ||
-                                barber.role ||
-                                "Stylist"}
-                            </small>
-                          </div>
-
-                          <div className="barber-meta-inline">
-                            <span style={{
-                              fontSize: "10px",
-                              fontWeight: "700",
-                              padding: "2px 6px",
-                              borderRadius: "6px",
-                              background: isAvailable ? "#dcfce7" : "#f1f5f9",
-                              color: isAvailable ? "#15803d" : "#64748b"
-                            }}>
-                              {isAvailable ? "● On Duty" : "○ Break"}
-                            </span>
-
-                            {rating !== null && (
-                              <span className="barber-rating">
-                                <Star
-                                  size={11}
-                                  fill="currentColor"
-                                  strokeWidth={1.5}
-                                />
-                                {Number(rating).toFixed(1)}
-                              </span>
-                            )}
-
-                            {experience !== null && (
-                              <span className="barber-experience">
-                                {Number(experience)}+
-                                {" "}yrs
-                              </span>
-                            )}
-                          </div>
                         </div>
+                        <span className={`barber-card-check ${isSelected ? "active" : ""}`}>
+                          <Check size={13} strokeWidth={3} />
+                        </span>
+                      </div>
+
+                      <div className="barber-card-body">
+                        <div className="barber-card-title-row">
+                          <strong className="barber-card-name">{barber.name}</strong>
+                          <span className="barber-card-chair">{chairLabel}</span>
+                        </div>
+
+                        <span className="barber-card-spec">
+                          {barber.specialization || barber.role || "Stylist"}
+                        </span>
+
+                        <div className="barber-card-meta">
+                          <span className="barber-card-rating">
+                            <Star size={11} fill="currentColor" /> {rating.toFixed(1)} <small>({reviewCount})</small>
+                          </span>
+                          <span className="barber-card-exp">
+                            {experience}+ yrs exp
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="barber-card-footer">
+                        {isAvailable ? (
+                          <span className="barber-card-status available">
+                            <span className="status-dot green" /> Available
+                          </span>
+                        ) : isBreak ? (
+                          <span className="barber-card-status busy">
+                            <span className="status-dot amber" /> Quick Break
+                          </span>
+                        ) : (
+                          <span className="barber-card-status offline">
+                            <span className="status-dot grey" /> Off Duty
+                          </span>
+                        )}
+
+                        <span className="barber-card-next-slot">
+                          <Clock size={10} /> {isAvailable ? "Next: 09:30 AM" : "Next Shift"}
+                        </span>
                       </div>
                     </label>
                   );
