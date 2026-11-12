@@ -76,7 +76,7 @@ export default function HomePage() {
       rating: 5,
       date: "Verified Customer",
       comment:
-        "The salon ambiance is pure warm luxury. Alex gave me the cleanest precision fade in Bangalore. Zero wait time and exceptional service!",
+        "The rich ambiance and attention to detail is remarkable. Alex gave me a flawless precision fade and beard sculpt. Pure modern luxury!",
       service: "Haircut & Beard Sculpt",
     },
     {
@@ -85,8 +85,8 @@ export default function HomePage() {
       rating: 5,
       date: "Verified Customer",
       comment:
-        "Elena is extraordinary with custom balayage. My hair feels revitalized after the deep conditioning spa. Truly five-star experience!",
-      service: "Hair Colour & Spa",
+        "Elena's balayage technique is Parisian standard. My hair feels silken after the organic hair spa. A truly elevated salon marketplace experience.",
+      service: "Hair Colour & Hair Spa",
     },
     {
       id: 3,
@@ -94,72 +94,126 @@ export default function HomePage() {
       rating: 5,
       date: "Verified Customer",
       comment:
-        "Booking took 30 seconds, the chair was ready the second I walked in. The scalp massage with warm oils melted all my work fatigue away.",
-      service: "Luxury Head Massage",
+        "Instant slot confirmation, warm beverage upon arrival, and zero wait time. The restorative head therapy and de-tan facial were sublime.",
+      service: "De-Tan & Head Massage",
     },
   ];
 
-  const popularServices = [
+  // Specific service categories with distinct subtle backgrounds:
+  // - Hair services: Soft champagne
+  // - Beard grooming: Warm terracotta tint
+  // - Facial and skincare: Dusty rose tint
+  // - Massage: Soft lavender
+  // - Hair spa: Sage tint
+  // - Premium treatments: Champagne and cream
+  const serviceCategories = [
     {
-      name: "Signature Precision Cut",
-      category: "Hair",
+      title: "Hair Services",
+      sub: "Cuts, creative styling, balayage & gloss",
+      icon: Scissors,
+      type: "champagne",
+    },
+    {
+      title: "Beard Grooming",
+      sub: "Precision razor lining & hot towel sculpt",
+      icon: CheckCircle2,
+      type: "terracotta",
+    },
+    {
+      title: "Facial & Skincare",
+      sub: "De-tan, purifying scrub & gold glow masks",
+      icon: Sparkles,
+      type: "rose",
+    },
+    {
+      title: "Relaxing Massage",
+      sub: "Therapeutic warm oil & tension release",
+      icon: Heart,
+      type: "lavender",
+    },
+    {
+      title: "Hair Spa Rituals",
+      sub: "Deep keratin scalp nourish & steam therapy",
+      icon: ShieldCheck,
+      type: "sage",
+    },
+    {
+      title: "Premium Treatments",
+      sub: "Executive bridal, mani-pedi duo & VIP suites",
+      icon: Star,
+      type: "cream",
+    },
+  ];
+
+  const popularTreatments = [
+    {
+      name: "Signature Precision Haircut",
+      category: "Hair Services",
       duration: "45 mins",
       price: "₹1,200",
-      desc: "Tailored scissor cut, hair wash & blowout styling.",
+      desc: "Tailored consultation, precision scissor cut, hair wash & blowout.",
       salonId: 1,
+      chipType: "champagne",
     },
     {
-      name: "Glow Radiance Facial",
-      category: "Skin",
+      name: "Hair + Beard Cut Combo",
+      category: "Beard Grooming",
       duration: "60 mins",
-      price: "₹2,200",
-      desc: "Deep cleansing exfoliation, antioxidant serum & gold mask.",
+      price: "₹1,750",
+      desc: "Complete restyle: Scissor cut + beard sculpt + hot towel steam.",
       salonId: 1,
+      chipType: "terracotta",
     },
     {
-      name: "Beard Trim & Sculpt",
-      category: "Grooming",
-      duration: "30 mins",
-      price: "₹650",
-      desc: "Hot towel prep, razor edge alignment & soothing beard oil.",
+      name: "De-Tan & Purifying Scrub",
+      category: "Facial & Skincare",
+      duration: "45 mins",
+      price: "₹1,400",
+      desc: "Sun damage reversal, gentle fruit-acid scrub & hydration pack.",
       salonId: 1,
+      chipType: "rose",
     },
     {
-      name: "Deep Conditioning Spa",
-      category: "Spa",
+      name: "Restorative Hair Spa",
+      category: "Hair Spa Rituals",
       duration: "50 mins",
       price: "₹1,800",
-      desc: "Keratin scalp nourish, steam infusion & relaxation head therapy.",
+      desc: "Scalp revitalization, warm keratin infusion & neck pressure relief.",
       salonId: 1,
+      chipType: "sage",
     },
   ];
 
   return (
-    <div className="homepage-wrapper">
-      {/* 1. HERO SECTION */}
-      <section className="hero warm-luxury-hero">
+    <div className="homepage-wrapper modern-luxury-homepage">
+      {/* 1. EDITORIAL HERO SECTION */}
+      <section className="hero modern-editorial-hero">
         <div className="hero-copy">
           <div className="hero-greeting-pill">
-            <Sparkles size={14} className="gold-sparkle" />
+            <Sparkles size={14} className="gold-accent-icon" />
             <span>
               {greeting}, {user.name?.trim() || "there"}!
             </span>
           </div>
 
-          <span className="eyebrow">YOUR MOMENT OF BEAUTY</span>
+          <span className="eyebrow">MODERN RICH LUXURY</span>
 
-          <h1 className="hero-title">
-            Look good.
+          {/* Heading required by prompt */}
+          <h1 className="hero-title editorial-heading">
+            Your Beauty.
             <br />
-            <em className="hero-highlight">Feel even better.</em>
+            <em className="hero-highlight">Your Moment.</em>
+            <br />
+            Your Glow.
           </h1>
 
+          {/* Description required by prompt */}
           <p className="hero-subtitle">
-            Discover Bengaluru's best-loved salons and book your next little luxury in minutes.
+            Discover exceptional salons, talented professionals and beauty experiences crafted around you.
           </p>
 
-          <div className="searchbox warm-searchbox">
-            <Search size={19} className="search-icon" />
+          <div className="searchbox luxury-searchbox">
+            <Search size={19} className="search-icon-gold" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -168,39 +222,39 @@ export default function HomePage() {
             />
             <button
               type="button"
-              className="search-btn"
+              className="champagne-cta search-btn"
               onClick={() =>
                 document.getElementById("salons")?.scrollIntoView({ behavior: "smooth" })
               }
             >
-              Find a salon <ArrowRight size={16} />
+              Find a Salon <ArrowRight size={16} />
             </button>
           </div>
 
           <div className="hero-trust">
             <span className="trust-pill">
-              <Star size={14} fill="currentColor" className="star-gold" /> Loved by 2,500+ clients
+              <Star size={14} fill="currentColor" className="star-gold" /> 2,500+ Verified 5-Star Reviews
             </span>
             <span className="trust-pill">
-              <CheckCircle2 size={14} className="check-success" /> Instant online slot confirmation
+              <CheckCircle2 size={14} className="check-sage" /> Double-Booking Protected
             </span>
           </div>
         </div>
 
         <div className="hero-image-wrap">
-          <div className="hero-image-frame">
+          <div className="hero-image-frame luxury-frame">
             <img
               src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=90"
-              alt="Luxury Salon Interior"
+              alt="High-end Salon Aesthetics"
               className="hero-main-photo"
             />
-            <div className="image-note warm-image-note">
+            <div className="image-note modern-image-note">
               <span className="note-icon">
                 <Scissors size={18} />
               </span>
               <div>
-                <b>Your time, your style.</b>
-                <small>Beauty appointments made effortless.</small>
+                <b>Artisanal Care.</b>
+                <small>Bespoke beauty appointments made effortless.</small>
               </div>
             </div>
           </div>
@@ -208,48 +262,84 @@ export default function HomePage() {
       </section>
 
       {/* 2. BENEFITS HIGHLIGHTS */}
-      <section className="benefits warm-benefits">
+      <section className="benefits modern-benefits">
         <div className="benefit-card">
-          <span className="benefit-icon">
+          <span className="benefit-icon icon-champagne">
             <MapPin size={22} />
           </span>
           <div>
-            <b>Salons near you</b>
-            <small>Find your neighbourhood favourite</small>
+            <b>Top Salons Near You</b>
+            <small>Bengaluru's most acclaimed studios</small>
           </div>
         </div>
         <div className="benefit-card">
-          <span className="benefit-icon">
+          <span className="benefit-icon icon-terracotta">
             <CalendarDays size={22} />
           </span>
           <div>
-            <b>Book in a few clicks</b>
-            <small>Choose a time that suits your day</small>
+            <b>Book in Seconds</b>
+            <small>Instant real-time slot reservation</small>
           </div>
         </div>
         <div className="benefit-card">
-          <span className="benefit-icon">
+          <span className="benefit-icon icon-rose">
             <Heart size={22} />
           </span>
           <div>
-            <b>Stylists you'll love</b>
-            <small>Handpicked masters with verified reviews</small>
+            <b>Master Stylists</b>
+            <small>Vetted professionals with verified ratings</small>
           </div>
         </div>
       </section>
 
-      {/* 3. SOFT PEACH PROMOTIONAL SECTION: OFFERS & PACKAGES */}
+      {/* 3. COLOURFUL PREMIUM SERVICE CATEGORIES */}
+      <section id="services" className="service-categories-section">
+        <div className="section-top text-center">
+          <div>
+            <span className="eyebrow">CURATED SPECIALTIES</span>
+            <h2>
+              Explore by <em>Service.</em>
+            </h2>
+            <p className="muted">Immerse yourself in our distinct beauty and wellness specialties.</p>
+          </div>
+        </div>
+
+        <div className="service-category-cards-grid">
+          {serviceCategories.map((cat) => {
+            const IconComp = cat.icon;
+            return (
+              <div
+                className={`service-cat-card cat-tint-${cat.type}`}
+                key={cat.title}
+                onClick={() =>
+                  document.getElementById("salons")?.scrollIntoView({ behavior: "smooth" })
+                }
+                role="button"
+                tabIndex={0}
+              >
+                <div className={`cat-icon-bubble bubble-${cat.type}`}>
+                  <IconComp size={22} />
+                </div>
+                <b>{cat.title}</b>
+                <small>{cat.sub}</small>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 4. PROMOTIONS & PACKAGES (DUSTY ROSE & CHAMPAGNE ACCENTS) */}
       <section className="promotional-offers-section" aria-label="Curated Offers & Packages">
         <div className="section-top">
           <div>
-            <span className="eyebrow">CURATED SAVINGS</span>
+            <span className="eyebrow">EXCLUSIVE PACKAGES</span>
             <h2>
-              Offers & <em>Bundled Packages.</em>
+              Indulgent <em>Combinations.</em>
             </h2>
-            <p className="muted">Indulge in artisanal self-care with delightful bundled discounts.</p>
+            <p className="muted">Hand-crafted combinations offering luxury care with exceptional savings.</p>
           </div>
           <span className="promo-badge-top">
-            <Percent size={14} /> Limited Period Specials
+            <Percent size={14} /> Seasonal Privileges
           </span>
         </div>
 
@@ -285,84 +375,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. ATTRACTIVE SERVICE CATEGORY CARDS */}
-      <section id="services" className="service-categories-section">
-        <div className="section-top text-center">
-          <div>
-            <span className="eyebrow">A LITTLE SELF-CARE</span>
-            <h2>
-              Make time for <em>you.</em>
-            </h2>
-            <p className="muted">Browse curated categories crafted for your comfort and style.</p>
-          </div>
-        </div>
-
-        <div className="service-category-cards-grid">
-          {[
-            {
-              title: "Hair Cuts & Colour",
-              sub: "Precision styling, balayage & gloss therapy",
-              icon: Scissors,
-              colorClass: "card-peach",
-            },
-            {
-              title: "Skin & Facials",
-              sub: "Glow restoration, exfoliation & gold masks",
-              icon: Sparkles,
-              colorClass: "card-ivory",
-            },
-            {
-              title: "Nails & Care",
-              sub: "Classic manicure & deluxe soothing pedicure",
-              icon: Heart,
-              colorClass: "card-peach",
-            },
-            {
-              title: "Bespoke Grooming",
-              sub: "Razor fades, beard sculpt & hot towel rituals",
-              icon: CheckCircle2,
-              colorClass: "card-ivory",
-            },
-            {
-              title: "Head Spa & Therapy",
-              sub: "Deep conditioning, warm oils & relaxing head spa",
-              icon: ShieldCheck,
-              colorClass: "card-peach",
-            },
-          ].map((cat) => {
-            const IconComp = cat.icon;
-            return (
-              <div
-                className={`service-cat-card ${cat.colorClass}`}
-                key={cat.title}
-                onClick={() =>
-                  document.getElementById("salons")?.scrollIntoView({ behavior: "smooth" })
-                }
-                role="button"
-                tabIndex={0}
-              >
-                <div className="cat-icon-bubble">
-                  <IconComp size={22} />
-                </div>
-                <b>{cat.title}</b>
-                <small>{cat.sub}</small>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 5. FEATURED SALONS SECTION */}
+      {/* 5. FEATURED SALON LISTINGS */}
       <section id="salons" className="section salons-showcase-section">
         <div className="section-top">
           <div>
-            <span className="eyebrow">THE EDIT</span>
+            <span className="eyebrow">THE DIRECTORY</span>
             <h2>
-              Salons worth <em>your time.</em>
+              Premier Salons in <em>Bengaluru.</em>
             </h2>
-            <p className="muted">Thoughtfully selected beauty spots across Bengaluru.</p>
+            <p className="muted">Vetted luxury destinations offering master craftsmanship.</p>
           </div>
-          <span className="result-count">{filtered.length} curated salons</span>
+          <span className="result-count">{filtered.length} Studios</span>
         </div>
 
         <div className="salon-grid">
@@ -375,7 +398,7 @@ export default function HomePage() {
           <div className="empty-search-box">
             <p>No salons match that search. Try Whitefield, Indiranagar or Koramangala.</p>
             <button type="button" className="outline small" onClick={() => setQ("")}>
-              Clear Search
+              Reset Search
             </button>
           </div>
         )}
@@ -385,28 +408,28 @@ export default function HomePage() {
       <section className="popular-services-section">
         <div className="section-top">
           <div>
-            <span className="eyebrow">POPULAR TREATMENTS</span>
+            <span className="eyebrow">HIGHLY REQUESTED</span>
             <h2>
-              Loved by <em>our guests.</em>
+              Most Loved <em>Treatments.</em>
             </h2>
-            <p className="muted">Book Bengaluru's most-requested hair and wellness treatments.</p>
+            <p className="muted">Experience our guests' top-rated grooming and beauty services.</p>
           </div>
         </div>
 
         <div className="popular-services-grid">
-          {popularServices.map((ps) => (
-            <article className="popular-service-item" key={ps.name}>
+          {popularTreatments.map((pt) => (
+            <article className="popular-service-item" key={pt.name}>
               <div className="popular-service-body">
-                <div className="service-tag-pill">{ps.category}</div>
-                <h3>{ps.name}</h3>
-                <p>{ps.desc}</p>
+                <div className={`service-tag-pill tag-${pt.chipType}`}>{pt.category}</div>
+                <h3>{pt.name}</h3>
+                <p>{pt.desc}</p>
                 <span className="service-duration-text">
-                  <Clock size={13} /> {ps.duration}
+                  <Clock size={13} /> {pt.duration}
                 </span>
               </div>
               <div className="popular-service-action">
-                <strong>{ps.price}</strong>
-                <Link to={`/book/${ps.salonId}`} className="primary small popular-book-cta">
+                <strong className="treatment-price">{pt.price}</strong>
+                <Link to={`/book/${pt.salonId}`} className="primary small popular-book-cta">
                   Book Slot
                 </Link>
               </div>
@@ -415,15 +438,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. CUSTOMER TESTIMONIALS */}
+      {/* 7. VERIFIED CUSTOMER TESTIMONIALS */}
       <section className="testimonials-section">
         <div className="section-top text-center">
           <div>
-            <span className="eyebrow">VERIFIED EXPERIENCES</span>
+            <span className="eyebrow">CLIENT PRAISE</span>
             <h2>
-              What our clients <em>say.</em>
+              Words of <em>Delight.</em>
             </h2>
-            <p className="muted">Real reviews from our community of beauty lovers.</p>
+            <p className="muted">Real experiences from Bengaluru's beauty and styling aficionados.</p>
           </div>
         </div>
 
@@ -444,7 +467,7 @@ export default function HomePage() {
                     .join("")}
                 </div>
                 <div>
-                  <b>{t.name}</b>
+                  <b className="testimonial-name">{t.name}</b>
                   <small className="muted">
                     {t.service} · {t.date}
                   </small>
@@ -455,8 +478,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 8. BEAUTY AROUND THE CORNER CTA */}
-      <section id="location" className="location-cta warm-location-cta">
+      {/* 8. LUXURY DISCOVERY CTA */}
+      <section id="location" className="location-cta modern-location-cta">
         <div>
           <span className="eyebrow">BEAUTY, AROUND THE CORNER</span>
           <h2>
@@ -464,10 +487,10 @@ export default function HomePage() {
             <br />
             might be <em>closer than you think.</em>
           </h2>
-          <p>Explore top salons in Whitefield, Indiranagar, Koramangala and more.</p>
+          <p>Explore salons in Whitefield, Indiranagar, Koramangala and beyond.</p>
         </div>
-        <Link className="primary" to="/#salons">
-          Explore salons <ArrowRight size={16} />
+        <Link className="champagne-cta" to="/#salons">
+          Explore Salons <ArrowRight size={16} />
         </Link>
       </section>
     </div>

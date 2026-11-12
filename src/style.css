@@ -4,34 +4,37 @@
 
 :root {
   /* =========================================================================
-     WARM LUXURY DESIGN SYSTEM
+     MODERN RICH LUXURY DESIGN SYSTEM
      ========================================================================= */
-  --color-primary: #D9B68C;
-  --color-secondary: #F7D9CE;
-  --color-accent: #C77D82;
-  --color-gold: #B68A4A;
-  --color-background: #FFFBF7;
+  --color-background: #FFF9F4;
   --color-surface: #FFFFFF;
-  --color-text: #292522;
-  --color-muted: #817873;
-  --color-success: #739B7A;
-  --color-border: #EDE3D9;
-  --color-soft: #F8F0E9;
+  --color-primary: #773B50;
+  --color-primary-light: #F2E4E8;
+  --color-secondary: #D68F9B;
+  --color-accent: #C69A58;
+  --color-champagne: #E8D2AD;
+  --color-lavender: #E9DDF0;
+  --color-sage: #91A58D;
+  --color-terracotta: #C97960;
+  --color-text: #30252B;
+  --color-muted: #82747B;
+  --color-border: #EDE2DC;
+  --color-success: #6F9475;
 
   --font-heading: 'Playfair Display', serif;
   --font-body: 'DM Sans', sans-serif;
 
-  --radius-card: 18px;
+  --radius-card: 20px;
   --radius-button: 12px;
 
   /* Legacy & compatibility aliases */
-  --gold: var(--color-gold);
-  --gold-dark: #9c7339;
-  --cream: var(--color-soft);
+  --gold: var(--color-accent);
+  --gold-dark: #A5783A;
+  --cream: var(--color-champagne);
   --muted: var(--color-muted);
   --line: var(--color-border);
-  --brown: var(--color-text);
-  --brown-dark: #1f1b18;
+  --brown: var(--color-primary);
+  --brown-dark: #4F2232;
 
   font-family: var(--font-body);
   color: var(--color-text);
@@ -518,30 +521,57 @@ button {
 
 .outline {
   background: var(--color-surface);
-  border: 1px solid var(--color-gold);
-  color: var(--color-text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary) !important;
+  box-shadow: 0 2px 8px rgba(119, 59, 80, 0.04);
 }
 
 .outline:hover {
-  background: var(--color-soft);
-  border-color: var(--color-gold);
-  color: var(--color-text);
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary) !important;
   transform: translateY(-1px);
 }
 
 .primary {
-  background: var(--color-primary);
-  color: var(--color-text) !important;
-  border: 1px solid rgba(182, 138, 74, 0.45);
-  box-shadow: 0 4px 14px rgba(217, 182, 140, 0.35);
+  background: var(--color-primary) !important;
+  color: #FFFFFF !important;
+  border: 1px solid var(--color-primary) !important;
+  box-shadow: 0 4px 14px rgba(119, 59, 80, 0.25);
 }
 
 .primary:hover {
-  background: #cfab7f;
+  background: #622e40 !important;
+  color: #FFFFFF !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(182, 138, 74, 0.3);
+  box-shadow: 0 6px 18px rgba(119, 59, 80, 0.32);
+}
+
+.btn-premium,
+.champagne-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-champagne) !important;
   color: var(--color-text) !important;
+  border: 1px solid var(--color-accent) !important;
+  border-radius: var(--radius-button);
+  padding: 12px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(198, 154, 88, 0.28);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium:hover,
+.champagne-cta:hover {
+  background: var(--color-accent) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(198, 154, 88, 0.36);
 }
 
 
@@ -12603,10 +12633,10 @@ th {
 }
 
 /* =========================================================================
-   WARM LUXURY DESIGN SYSTEM – COMPREHENSIVE COMPONENT STYLESHEET
+   MODERN RICH LUXURY DESIGN SYSTEM – COMPREHENSIVE COMPONENT STYLESHEET
    ========================================================================= */
 
-/* 1. Global Typography & Core Elements */
+/* 1. Global Canvas & Editorial Typography */
 body, #root, .homepage-wrapper, .booking-layout, .detail-page, .page-shell {
   background-color: var(--color-background) !important;
   color: var(--color-text) !important;
@@ -12629,27 +12659,28 @@ h1, h2, h3, h4,
 .hero-highlight, h1 em, h2 em {
   font-family: var(--font-heading);
   font-style: italic;
-  color: var(--color-gold);
+  color: var(--color-accent);
 }
 
 .eyebrow {
-  color: var(--color-gold);
+  color: var(--color-accent);
   font-family: var(--font-body);
   font-weight: 700;
   letter-spacing: 2px;
 }
 
-/* 2. Primary & Secondary Buttons */
+/* 2. Distinctive Luxury Buttons */
+/* Primary: Burgundy background with white text */
 .primary,
 button.primary,
 a.primary {
   background: var(--color-primary) !important;
-  color: var(--color-text) !important;
-  border: 1px solid rgba(182, 138, 74, 0.45) !important;
+  color: #FFFFFF !important;
+  border: 1px solid var(--color-primary) !important;
   border-radius: var(--radius-button) !important;
   font-family: var(--font-body);
   font-weight: 600;
-  box-shadow: 0 4px 14px rgba(217, 182, 140, 0.35);
+  box-shadow: 0 4px 14px rgba(119, 59, 80, 0.25);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
@@ -12657,22 +12688,23 @@ a.primary {
 .primary:hover,
 button.primary:hover,
 a.primary:hover {
-  background: #cfab7f !important;
-  color: var(--color-text) !important;
+  background: #622e40 !important;
+  color: #FFFFFF !important;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(182, 138, 74, 0.32);
+  box-shadow: 0 6px 18px rgba(119, 59, 80, 0.35);
 }
 
+/* Secondary: White background with burgundy border & text */
 .outline,
 button.outline,
 a.outline {
   background: var(--color-surface) !important;
-  border: 1px solid var(--color-gold) !important;
-  color: var(--color-text) !important;
+  border: 1.5px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
   border-radius: var(--radius-button) !important;
   font-family: var(--font-body);
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 8px rgba(119, 59, 80, 0.04);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
@@ -12680,10 +12712,39 @@ a.outline {
 .outline:hover,
 button.outline:hover,
 a.outline:hover {
-  background: var(--color-soft) !important;
-  border-color: var(--color-gold) !important;
-  color: var(--color-text) !important;
+  background: var(--color-primary-light) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
   transform: translateY(-1px);
+}
+
+/* Premium: Champagne gold background with dark text */
+.champagne-cta,
+.btn-premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-champagne) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-accent) !important;
+  border-radius: var(--radius-button) !important;
+  padding: 12px 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(198, 154, 88, 0.28);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.champagne-cta:hover,
+.btn-premium:hover {
+  background: var(--color-accent) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(198, 154, 88, 0.38);
 }
 
 /* 3. Inputs, Selects & Forms */
@@ -12700,28 +12761,32 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px rgba(217, 182, 140, 0.25);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(119, 59, 80, 0.2);
 }
 
 /* 4. Navigation (Desktop & Mobile) */
 .header {
-  background: var(--color-background);
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 2px 12px rgba(41, 37, 34, 0.03);
+  box-shadow: 0 2px 12px rgba(48, 37, 43, 0.04);
+}
+
+.brand {
+  color: var(--color-primary);
 }
 
 .desktop-location-pill {
-  background: var(--color-surface);
+  background: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 6px 12px;
 }
 
 .desktop-location-inline-change {
-  background: var(--color-soft);
-  color: var(--color-gold);
-  border: 1px solid var(--color-border);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid rgba(119, 59, 80, 0.2);
   border-radius: 999px;
   font-size: 11px;
 }
@@ -12729,77 +12794,73 @@ input:focus, select:focus, textarea:focus {
 .mobile-bottom-nav {
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
-  box-shadow: 0 -4px 18px rgba(41, 37, 34, 0.05);
+  box-shadow: 0 -4px 18px rgba(48, 37, 43, 0.06);
 }
 
 .mobile-bottom-nav a.active,
 .mobile-bottom-nav a.active span,
 .mobile-bottom-nav a.active svg {
-  color: var(--color-gold) !important;
+  color: var(--color-primary) !important;
   font-weight: 700;
 }
 
-/* 5. Homepage Warm Luxury Components */
-.homepage-wrapper {
+/* 5. Editorial Homepage Components */
+.modern-luxury-homepage {
   overflow-x: hidden;
 }
 
-.warm-luxury-hero {
+.modern-editorial-hero {
   background: var(--color-background);
-  padding: 40px 6.2% 48px;
+  padding: 44px 6.2% 52px;
+}
+
+.editorial-heading {
+  font-size: clamp(44px, 5.4vw, 72px);
+  line-height: 1.08;
+  margin: 16px 0 20px;
+  color: var(--color-text);
 }
 
 .hero-greeting-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--color-soft);
-  border: 1px solid var(--color-border);
+  background: var(--color-primary-light);
+  border: 1px solid rgba(119, 59, 80, 0.18);
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-gold);
+  color: var(--color-primary);
   margin-bottom: 12px;
 }
 
-.gold-sparkle, .star-gold {
-  color: var(--color-gold);
+.gold-accent-icon, .star-gold {
+  color: var(--color-accent);
 }
 
-.warm-searchbox {
+.check-sage {
+  color: var(--color-success);
+}
+
+.luxury-searchbox {
   background: var(--color-surface) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-button) !important;
-  box-shadow: 0 8px 24px rgba(182, 138, 74, 0.08) !important;
+  box-shadow: 0 8px 24px rgba(119, 59, 80, 0.08) !important;
   padding: 6px 6px 6px 16px;
+  max-width: 580px;
 }
 
-.search-icon {
-  color: var(--color-gold);
+.search-icon-gold {
+  color: var(--color-accent);
 }
 
-.warm-searchbox input {
+.luxury-searchbox input {
   border: none !important;
   padding: 8px !important;
   background: transparent !important;
-}
-
-.warm-searchbox .search-btn {
-  background: var(--color-primary);
   color: var(--color-text);
-  border: 1px solid rgba(182, 138, 74, 0.4);
-  border-radius: 8px;
-  font-weight: 600;
-  padding: 10px 18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-
-.warm-searchbox .search-btn:hover {
-  background: #cfab7f;
 }
 
 .hero-trust .trust-pill {
@@ -12809,209 +12870,82 @@ input:focus, select:focus, textarea:focus {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   font-size: 11.5px;
   color: var(--color-text);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-.hero-image-frame {
+.hero-image-frame.luxury-frame {
   position: relative;
   border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: 0 12px 36px rgba(182, 138, 74, 0.12);
+  box-shadow: 0 16px 40px rgba(119, 59, 80, 0.14);
   border: 2px solid var(--color-border);
 }
 
 .hero-main-photo {
   width: 100%;
-  height: 380px;
+  height: 400px;
   object-fit: cover;
   display: block;
 }
 
-.warm-image-note {
+.modern-image-note {
   position: absolute;
-  bottom: 16px;
-  left: 16px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
+  bottom: 18px;
+  left: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-button);
   padding: 12px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 6px 20px rgba(41, 37, 34, 0.08);
+  box-shadow: 0 8px 24px rgba(48, 37, 43, 0.1);
 }
 
-.warm-image-note .note-icon {
-  width: 36px;
-  height: 36px;
+.modern-image-note .note-icon {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: var(--color-secondary);
-  color: var(--color-gold);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Benefits Section */
-.warm-benefits {
+/* Modern Benefits Highlights */
+.modern-benefits {
   margin: 0 6.2%;
-  padding: 24px 2%;
+  padding: 26px 2%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.benefit-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  justify-content: center;
-}
-
-.benefit-card .benefit-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--color-secondary);
-  color: var(--color-gold);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-/* Promotional Offers & Packages Section (Soft Peach Background) */
-.promotional-offers-section {
-  padding: 60px 6.2%;
-  background: linear-gradient(180deg, var(--color-soft) 0%, #FFF7F2 100%);
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.promo-badge-top {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--color-secondary);
-  color: var(--color-text);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(199, 125, 130, 0.3);
-}
-
-.promo-packages-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 22px;
-  margin-top: 24px;
-}
-
-.promo-package-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 6px 22px rgba(182, 138, 74, 0.06);
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-
-.promo-package-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(182, 138, 74, 0.12);
-  border-color: var(--color-primary);
-}
-
-.package-ribbon {
-  display: inline-block;
-  background: var(--color-secondary);
-  color: var(--color-text);
-  font-size: 10.5px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  align-self: flex-start;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(199, 125, 130, 0.25);
-}
-
-.package-title {
-  font-size: 17px;
-  font-weight: 700;
-  margin: 0 0 6px;
-  color: var(--color-text);
-}
-
-.package-desc {
-  font-size: 12.5px;
-  color: var(--color-muted);
-  line-height: 1.5;
-  margin-bottom: 14px;
-  flex: 1;
-}
-
-.package-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.package-duration {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11.5px;
-  color: var(--color-muted);
-}
-
-.package-code {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 700;
-  background: var(--color-soft);
-  color: var(--color-gold);
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px dashed var(--color-gold);
-}
-
-.package-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   border-top: 1px solid var(--color-border);
-  padding-top: 14px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.package-original {
-  text-decoration: line-through;
-  color: #a8a09a;
-  font-size: 13px;
-  margin-right: 6px;
+.benefit-card .benefit-icon.icon-champagne {
+  background: #FAF3E7;
+  color: var(--color-accent);
 }
 
-.package-deal {
-  font-size: 20px;
-  color: var(--color-text);
-  font-weight: 700;
+.benefit-card .benefit-icon.icon-terracotta {
+  background: #FAEDE8;
+  color: var(--color-terracotta);
 }
 
-/* Service Category Cards */
+.benefit-card .benefit-icon.icon-rose {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/* 6 Distinct Subtle Background Colours for Service Categories */
 .service-categories-section {
-  padding: 60px 6.2%;
+  padding: 64px 6.2%;
   background: var(--color-background);
 }
 
@@ -13023,9 +12957,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .service-cat-card {
-  padding: 22px 18px;
+  padding: 24px 18px;
   border-radius: var(--radius-card);
-  border: 1px solid var(--color-border);
   text-align: center;
   cursor: pointer;
   transition: all 0.22s ease;
@@ -13034,53 +12967,130 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
 }
 
-.service-cat-card.card-peach {
-  background: #FFF5F0;
-  border-color: rgba(247, 217, 206, 0.8);
-}
-
-.service-cat-card.card-ivory {
-  background: var(--color-soft);
-  border-color: var(--color-border);
-}
-
 .service-cat-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(182, 138, 74, 0.1);
-  border-color: var(--color-gold);
+  box-shadow: 0 10px 28px rgba(119, 59, 80, 0.1);
 }
 
-.cat-icon-bubble {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-gold);
-  display: grid;
-  place-items: center;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+/* 1. Hair Services: Soft Champagne */
+.cat-tint-champagne {
+  background: #FAF3E7;
+  border: 1px solid rgba(232, 210, 173, 0.9);
+}
+.bubble-champagne {
+  background: #F2E3C6;
+  color: #7A5726;
 }
 
-.service-cat-card b {
-  font-family: var(--font-heading);
-  font-size: 16px;
-  color: var(--color-text);
-  margin-bottom: 5px;
+/* 2. Beard Grooming: Warm Terracotta Tint */
+.cat-tint-terracotta {
+  background: #FAEDE8;
+  border: 1px solid rgba(201, 121, 96, 0.45);
+}
+.bubble-terracotta {
+  background: #F5D9D0;
+  color: #8A3E26;
 }
 
-.service-cat-card small {
+/* 3. Facial and Skincare: Dusty Rose Tint */
+.cat-tint-rose {
+  background: #F8EAED;
+  border: 1px solid rgba(214, 143, 155, 0.45);
+}
+.bubble-rose {
+  background: #F2D2D8;
+  color: var(--color-primary);
+}
+
+/* 4. Massage: Soft Lavender */
+.cat-tint-lavender {
+  background: #F6F0FA;
+  border: 1px solid rgba(233, 221, 240, 0.9);
+}
+.bubble-lavender {
+  background: #DFCDEB;
+  color: #5B3E69;
+}
+
+/* 5. Hair Spa: Sage Tint */
+.cat-tint-sage {
+  background: #EFF5EE;
+  border: 1px solid rgba(145, 165, 141, 0.45);
+}
+.bubble-sage {
+  background: #D7E5D5;
+  color: #3D543B;
+}
+
+/* 6. Premium Treatments: Champagne and Cream */
+.cat-tint-cream {
+  background: #FBF6EE;
+  border: 1px solid rgba(198, 154, 88, 0.35);
+}
+.bubble-cream {
+  background: #F0E3CB;
+  color: #7A5726;
+}
+
+/* Promotional Packages Section */
+.promotional-offers-section {
+  padding: 64px 6.2%;
+  background: linear-gradient(180deg, #FDF7F5 0%, #FAF0EE 100%);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.promo-badge-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   font-size: 11.5px;
-  color: var(--color-muted);
-  line-height: 1.4;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(119, 59, 80, 0.2);
 }
 
-/* 6. Salon Cards – Warm Luxury Redesign */
-.salon-card.warm-luxury-card {
+.promo-package-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 6px 22px rgba(119, 59, 80, 0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.promo-package-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(119, 59, 80, 0.12);
+  border-color: var(--color-secondary);
+}
+
+.package-ribbon {
+  display: inline-block;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  align-self: flex-start;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(119, 59, 80, 0.2);
+}
+
+/* 6. Salon Listing Cards – Modern Rich Luxury */
+.salon-card.modern-rich-luxury-card {
   background: var(--color-surface) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-card) !important;
-  box-shadow: 0 4px 20px rgba(182, 138, 74, 0.08) !important;
+  box-shadow: 0 6px 24px rgba(119, 59, 80, 0.05) !important;
   overflow: hidden;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
   opacity: 1 !important;
@@ -13089,10 +13099,27 @@ input:focus, select:focus, textarea:focus {
   height: 100%;
 }
 
-.salon-card.warm-luxury-card:hover {
+.salon-card.modern-rich-luxury-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(182, 138, 74, 0.14) !important;
-  border-color: var(--color-primary) !important;
+  box-shadow: 0 12px 34px rgba(119, 59, 80, 0.12) !important;
+  border-color: var(--color-secondary) !important;
+}
+
+.salon-title-burgundy {
+  font-family: var(--font-heading) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--color-primary) !important;
+  margin: 0 !important;
+  line-height: 1.25;
+}
+
+.gold-rating {
+  color: var(--color-accent) !important;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .salon-live-status-badge {
@@ -13106,54 +13133,29 @@ input:focus, select:focus, textarea:focus {
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
 }
 
 .salon-live-status-badge.open {
-  background: rgba(234, 247, 237, 0.92);
-  color: #166534;
-  border: 1px solid #bbf7d0;
+  background: rgba(239, 245, 238, 0.94);
+  color: #2D4C2B;
+  border: 1px solid #C4D9C2;
 }
 
 .salon-live-status-badge.closed {
-  background: rgba(254, 243, 199, 0.92);
-  color: #92400e;
-  border: 1px solid #fde68a;
+  background: rgba(255, 243, 235, 0.94);
+  color: #8A402B;
+  border: 1px solid #F7D0C4;
 }
 
 .live-status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--color-success);
 }
 
-.salon-title-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.warm-gold-rating {
-  color: var(--color-gold) !important;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.salon-card-location {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12.5px;
-  color: var(--color-muted);
-  margin-bottom: 8px;
-}
-
-.gold-icon {
-  color: var(--color-gold);
-}
-
+/* Coloured Service Chips with Soft Pastels & Readable Dark Text */
 .salon-service-chips-row {
   display: flex;
   gap: 6px;
@@ -13166,18 +13168,37 @@ input:focus, select:focus, textarea:focus {
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 12px;
+  line-height: 1.4;
 }
 
-.service-chip.chip-peach {
-  background: var(--color-secondary);
-  color: #7c3a40;
-  border: 1px solid rgba(199, 125, 130, 0.3);
+.chip-champagne {
+  background: #FAF3E7;
+  color: #614B27;
+  border: 1px solid #E8D2AD;
 }
 
-.service-chip.chip-ivory {
-  background: var(--color-soft);
-  color: var(--color-muted);
-  border: 1px solid var(--color-border);
+.chip-terracotta {
+  background: #FAEDE8;
+  color: #7D3E2B;
+  border: 1px solid #F0C4B8;
+}
+
+.chip-rose {
+  background: #F8EAED;
+  color: #7A3A46;
+  border: 1px solid #F0CED5;
+}
+
+.chip-sage {
+  background: #EFF5EE;
+  color: #3D543B;
+  border: 1px solid #C4D9C2;
+}
+
+.chip-lavender {
+  background: #F6F0FA;
+  color: #5B3E69;
+  border: 1px solid #DDCFE8;
 }
 
 .salon-card-footer {
@@ -13187,18 +13208,6 @@ input:focus, select:focus, textarea:focus {
   border-top: 1px solid var(--color-border);
   padding-top: 14px;
   margin-top: auto;
-}
-
-.salon-price-block {
-  display: flex;
-  flex-direction: column;
-}
-
-.price-label {
-  font-size: 10px;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .price-value {
@@ -13213,45 +13222,27 @@ input:focus, select:focus, textarea:focus {
   gap: 8px;
 }
 
-.salon-explore-btn {
-  padding: 8px 12px !important;
-  font-size: 12px !important;
-}
-
-.salon-book-btn {
-  padding: 8px 14px !important;
-  font-size: 12px !important;
-  gap: 4px !important;
-}
-
-/* 7. Popular Services Showcase */
+/* 7. Popular Treatments Showcase */
 .popular-services-section {
-  padding: 60px 6.2%;
+  padding: 64px 6.2%;
   background: var(--color-background);
-}
-
-.popular-services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 18px;
-  margin-top: 24px;
 }
 
 .popular-service-item {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 4px 16px rgba(182, 138, 74, 0.05);
+  box-shadow: 0 4px 16px rgba(119, 59, 80, 0.04);
   transition: transform 0.2s ease;
 }
 
 .popular-service-item:hover {
   transform: translateY(-2px);
-  border-color: var(--color-primary);
+  border-color: var(--color-secondary);
 }
 
 .service-tag-pill {
@@ -13259,129 +13250,55 @@ input:focus, select:focus, textarea:focus {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  background: var(--color-secondary);
-  color: #7c3a40;
   padding: 3px 8px;
   border-radius: 4px;
   margin-bottom: 8px;
 }
 
-.popular-service-body h3 {
-  font-size: 15.5px;
+.service-tag-pill.tag-champagne {
+  background: #FAF3E7;
+  color: #614B27;
+}
+
+.service-tag-pill.tag-terracotta {
+  background: #FAEDE8;
+  color: #7D3E2B;
+}
+
+.service-tag-pill.tag-rose {
+  background: #F8EAED;
+  color: #7A3A46;
+}
+
+.service-tag-pill.tag-sage {
+  background: #EFF5EE;
+  color: #3D543B;
+}
+
+.treatment-price {
+  font-size: 17px;
   font-weight: 700;
-  margin: 0 0 4px;
-}
-
-.popular-service-body p {
-  font-size: 12px;
-  color: var(--color-muted);
-  line-height: 1.45;
-  margin-bottom: 8px;
-}
-
-.service-duration-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: #9c948e;
-}
-
-.popular-service-action {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--color-border);
-  padding-top: 12px;
-  margin-top: 14px;
-}
-
-.popular-service-action strong {
-  font-size: 16px;
   color: var(--color-text);
 }
 
-/* 8. Customer Testimonials */
-.testimonials-section {
-  padding: 60px 6.2%;
-  background: linear-gradient(180deg, var(--color-background) 0%, var(--color-soft) 100%);
-  border-top: 1px solid var(--color-border);
-}
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-top: 28px;
-}
-
-.testimonial-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 18px rgba(182, 138, 74, 0.05);
-}
-
-.testimonial-stars {
-  display: flex;
-  gap: 2px;
-  margin-bottom: 10px;
-}
-
-.testimonial-comment {
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--color-text);
-  font-style: italic;
-  margin: 0 0 18px;
-  flex: 1;
-}
-
-.testimonial-footer {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-top: 1px solid var(--color-border);
-  padding-top: 12px;
-}
-
-.testimonial-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--color-secondary);
-  color: var(--color-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 12.5px;
-}
-
-/* 9. Location CTA */
-.warm-location-cta {
-  background: linear-gradient(135deg, var(--color-soft) 0%, #FFF3EC 100%) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-card) !important;
-  margin: 0 6.2% 60px !important;
-  padding: 44px !important;
-}
-
-/* 10. Barber Cards & Booking Page Theme Overrides */
+/* 8. Barber Selection – Modern Rich Luxury */
 .barber-select-card {
   background: var(--color-surface) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-card) !important;
-  box-shadow: 0 4px 16px rgba(182, 138, 74, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(119, 59, 80, 0.04) !important;
 }
 
 .barber-select-card.selected {
-  border: 2px solid var(--color-gold) !important;
-  background: #FFFDF9 !important;
-  box-shadow: 0 0 0 4px rgba(217, 182, 140, 0.3), 0 8px 20px rgba(182, 138, 74, 0.12) !important;
+  border: 2px solid var(--color-accent) !important;
+  background: #FFFCFA !important;
+  box-shadow: 0 0 0 4px rgba(198, 154, 88, 0.28), 0 8px 24px rgba(119, 59, 80, 0.1) !important;
+}
+
+.barber-card-name {
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .barber-card-avatar {
@@ -13390,18 +13307,25 @@ input:focus, select:focus, textarea:focus {
 }
 
 .barber-card-avatar-wrap {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
 }
 
+.barber-card-status.available {
+  background: #EFF5EE;
+  color: #3D543B;
+  border: 1px solid #C4D9C2;
+}
+
+/* 9. Booking Interface & Time Slots */
 /* Selected Time Slots: Champagne gold background and dark charcoal text */
 .slot-grid-btn.is-selected,
 .time-slot-btn.is-selected {
-  background: var(--color-primary) !important;
+  background: var(--color-champagne) !important;
   color: var(--color-text) !important;
-  border-color: var(--color-gold) !important;
-  box-shadow: 0 0 0 3px rgba(217, 182, 140, 0.35), 0 4px 12px rgba(182, 138, 74, 0.2) !important;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(198, 154, 88, 0.35), 0 4px 12px rgba(198, 154, 88, 0.2) !important;
   font-weight: 700 !important;
 }
 
@@ -13419,16 +13343,70 @@ input:focus, select:focus, textarea:focus {
   background: var(--color-surface) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-card) !important;
-  box-shadow: 0 6px 24px rgba(182, 138, 74, 0.06) !important;
+  box-shadow: 0 6px 24px rgba(119, 59, 80, 0.05) !important;
 }
 
-/* 11. Mobile Responsiveness */
+.booking-field-label {
+  color: var(--color-primary) !important;
+}
+
+/* 10. Testimonials */
+.testimonials-section {
+  padding: 64px 6.2%;
+  background: linear-gradient(180deg, var(--color-background) 0%, #FAF0EE 100%);
+  border-top: 1px solid var(--color-border);
+}
+
+.testimonial-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(119, 59, 80, 0.05);
+}
+
+.testimonial-avatar {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.testimonial-name {
+  color: var(--color-primary);
+}
+
+/* 11. Luxury Discovery Banner */
+.modern-location-cta {
+  background: linear-gradient(135deg, #FAF0EE 0%, #F5E3E7 100%) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  margin: 0 6.2% 64px !important;
+  padding: 48px !important;
+}
+
+/* 12. Responsiveness across 320px, 360px, 375px, 390px, 430px, 768px, 1024px, Desktop */
+@media (max-width: 1024px) {
+  .editorial-heading {
+    font-size: 48px;
+  }
+}
+
 @media (max-width: 768px) {
-  .warm-luxury-hero {
-    padding: 24px 14px 32px;
+  .modern-editorial-hero {
+    padding: 28px 14px 36px;
   }
 
-  .warm-benefits {
+  .editorial-heading {
+    font-size: 38px;
+  }
+
+  .modern-benefits {
     margin: 0 14px;
     grid-template-columns: 1fr;
     gap: 14px;
@@ -13444,16 +13422,45 @@ input:focus, select:focus, textarea:focus {
   .popular-services-section,
   .testimonials-section,
   .section {
-    padding: 36px 14px;
+    padding: 38px 14px;
   }
 
-  .warm-location-cta {
-    margin: 0 14px 40px !important;
-    padding: 24px 16px !important;
+  .modern-location-cta {
+    margin: 0 14px 44px !important;
+    padding: 26px 16px !important;
   }
 
   .hero-main-photo {
-    height: 240px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .editorial-heading {
+    font-size: 32px;
+  }
+
+  .salon-actions-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .salon-explore-btn,
+  .salon-book-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .salon-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 345px) {
+  .editorial-heading {
+    font-size: 28px;
   }
 }
 
