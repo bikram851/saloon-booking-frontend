@@ -5,10 +5,128 @@ export const API = getFirebaseApiUrl();
 export const checkFirebaseHealth = testFirebaseHandshake;
 
 export const defaultMockServices = [
-  ...demoServices,
-  { id: 4, name: "Beard Trim & Sculpt", price: 650, durationMinutes: 30, category: "Beard" },
-  { id: 5, name: "Deep Conditioning Spa", price: 1800, durationMinutes: 50, category: "Spa" },
-  { id: 6, name: "Luxury Head Massage", price: 950, durationMinutes: 35, category: "Massage" },
+  { id: 1, name: "Haircut & Style", price: 1200, durationMinutes: 45, category: "Hair", description: "Precision scissor cut, styling consultation and signature finish" },
+  { id: 2, name: "Hair Colour & Balayage", price: 3500, durationMinutes: 90, category: "Hair", description: "Custom shade blending, gloss treatment and colour lock therapy" },
+  { id: 3, name: "Glow Radiance Facial", price: 2200, durationMinutes: 60, category: "Skin", description: "Cleansing exfoliation, antioxidant serum and revitalizing gold mask" },
+  { id: 4, name: "Beard Trim & Sculpt", price: 650, durationMinutes: 30, category: "Beard", description: "Hot towel prep, precision razor edge and nourishing beard oil massage" },
+  { id: 5, name: "Deep Conditioning Hair Spa", price: 1800, durationMinutes: 50, category: "Spa", description: "Keratin scalp nourish, warm steam infusion and relaxing head therapy" },
+  { id: 6, name: "Luxury Head Massage", price: 950, durationMinutes: 35, category: "Massage", description: "Warm therapeutic oil massage relieving stress and scalp fatigue" },
+  { id: 7, name: "Classic Manicure", price: 800, durationMinutes: 40, category: "Nails", description: "Nail shaping, cuticle treatment, gentle hand scrub and polish" },
+  { id: 8, name: "Deluxe Pedicure", price: 1200, durationMinutes: 50, category: "Nails", description: "Aromatic foot soak, exfoliating pumice, callus care and massage" },
+];
+
+export const defaultMockOffers = [
+  {
+    id: 1,
+    title: "Signature Grooming Ritual",
+    badge: "25% OFF COMBO",
+    discount: "25% OFF",
+    originalPrice: 2800,
+    price: 2100,
+    code: "GROOM25",
+    description: "Haircut & Style + Beard Trim & Sculpt + Luxury Head Massage for the ultimate grooming experience.",
+    durationMinutes: 90,
+  },
+  {
+    id: 2,
+    title: "Rejuvenating Glow Spa Package",
+    badge: "SAVE ₹800",
+    discount: "30% OFF",
+    originalPrice: 4000,
+    price: 3200,
+    code: "GLOWSPA",
+    description: "Deep Conditioning Hair Spa + Glow Radiance Facial for complete relaxation and skin brilliance.",
+    durationMinutes: 110,
+  },
+  {
+    id: 3,
+    title: "Executive Mani-Pedi Duo",
+    badge: "SPECIAL DUO",
+    discount: "20% OFF",
+    originalPrice: 2000,
+    price: 1600,
+    code: "HANDSFEET",
+    description: "Classic Manicure + Deluxe Pedicure with soothing reflexology foot and hand massage.",
+    durationMinutes: 80,
+  },
+];
+
+export const defaultMockReviews = [
+  {
+    id: 1,
+    name: "Rohit Malhotra",
+    rating: 5,
+    date: "2 days ago",
+    comment: "Alex gave me the best fade cut I've had in Bangalore. The salon ambiance is top notch, clean and truly relaxing!",
+    service: "Haircut & Style",
+    verified: true,
+  },
+  {
+    id: 2,
+    name: "Ananya Iyer",
+    rating: 5,
+    date: "1 week ago",
+    comment: "Elena is a hair coloring genius! Loved the balayage tone and the deep conditioning spa. Truly 5-star luxury experience.",
+    service: "Hair Colour & Balayage",
+    verified: true,
+  },
+  {
+    id: 3,
+    name: "Vikram Sengupta",
+    rating: 4.8,
+    date: "2 weeks ago",
+    comment: "Prompt slot timings, zero waiting, and Marcus took great care with precision beard sculpting. Highly recommended!",
+    service: "Beard Trim & Sculpt",
+    verified: true,
+  },
+  {
+    id: 4,
+    name: "Pooja Hegde",
+    rating: 5,
+    date: "3 weeks ago",
+    comment: "The facial treatment was so relaxing and my skin felt rejuvenated immediately. Beautiful luxury salon decor too.",
+    service: "Glow Radiance Facial",
+    verified: true,
+  },
+];
+
+export const defaultMockGallery = [
+  {
+    id: 1,
+    title: "Styling Chairs & Private Stations",
+    category: "Interior",
+    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 2,
+    title: "Wash Lounge & Steam Therapy",
+    category: "Lounge",
+    image: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 3,
+    title: "Modern VIP Treatment Suite",
+    category: "VIP",
+    image: "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 4,
+    title: "Precision Styling & Cutting Area",
+    category: "Styling",
+    image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 5,
+    title: "Colour Bar & Consultation Lounge",
+    category: "Colour",
+    image: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: 6,
+    title: "Skin Rejuvenation & Facial Suite",
+    category: "Skin & Spa",
+    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
+  },
 ];
 
 export const defaultMockBarbers = [
@@ -365,6 +483,21 @@ function handleMockFallback(path, opts = {}) {
   // 6. Salon Barbers
   if (cleanPath.endsWith("/barbers") || (cleanPath.includes("/barbers") && !cleanPath.includes("/availability"))) {
     return getStoredBarbers();
+  }
+
+  // 6b. Salon Offers
+  if (cleanPath.endsWith("/offers") || cleanPath.includes("/offers")) {
+    return defaultMockOffers;
+  }
+
+  // 6c. Salon Reviews
+  if (cleanPath.endsWith("/reviews") || cleanPath.includes("/reviews")) {
+    return defaultMockReviews;
+  }
+
+  // 6d. Salon Gallery
+  if (cleanPath.endsWith("/gallery") || cleanPath.includes("/gallery")) {
+    return defaultMockGallery;
   }
 
   // 7. Availability Slots (Handles /barbers/:id/availability, /salons/:id/availability, /availability)

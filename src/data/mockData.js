@@ -9,7 +9,9 @@ export const fallback = [
     latitude: 12.9698,
     longitude: 77.75,
     rating: 4.8,
-    description: "Premium salon for hair, skin and beauty.",
+    reviewsCount: 142,
+    description: "Premium salon offering artisanal hair styling, rejuvenating skin treatments, luxury head spa and bespoke grooming.",
+    openingHours: "9:00 AM – 9:00 PM",
   },
   {
     id: 2,
@@ -21,7 +23,9 @@ export const fallback = [
     latitude: 12.9784,
     longitude: 77.6408,
     rating: 4.7,
-    description: "Contemporary styling with a personal touch.",
+    reviewsCount: 98,
+    description: "Contemporary styling with a personal touch, premium hair coloring, keratin therapies and modern beauty services.",
+    openingHours: "9:00 AM – 9:00 PM",
   },
   {
     id: 3,
@@ -33,7 +37,9 @@ export const fallback = [
     latitude: 12.9345,
     longitude: 77.6113,
     rating: 4.6,
-    description: "Hair, nails and relaxing skin treatments.",
+    reviewsCount: 115,
+    description: "Hair styling, bespoke nails, relaxing facials and head massages curated for a calm, luxurious self-care experience.",
+    openingHours: "9:00 AM – 9:00 PM",
   },
 ];
 

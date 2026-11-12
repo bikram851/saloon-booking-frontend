@@ -146,7 +146,7 @@ export default function SalonCard({ salon, i }) {
             <Clock size={14} /> 45–90 min
           </span>
           <Link className="text-link" to={"/salon/" + salon.id}>
-            View salon <ArrowRight size={15} />
+            Explore salon <ArrowRight size={15} />
           </Link>
         </div>
       </div>
