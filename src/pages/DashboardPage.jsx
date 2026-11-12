@@ -300,9 +300,9 @@ export default function DashboardPage() {
               {inChair ? (
                 <div className="barber-chair-card">
                   <div className="barber-chair-header">
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div className="chair-header-left">
                       <span className="chair-pulse-badge">
-                        <Scissors size={15} className="spin-slow" /> LIVE IN CHAIR
+                        <Scissors size={14} className="spin-slow" /> LIVE IN CHAIR
                       </span>
                       <span className="chair-timer">
                         <Clock size={13} /> Started at {inChair.startedAt || "10:15 AM"}
@@ -312,7 +312,7 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="barber-chair-body">
-                    <div>
+                    <div className="chair-client-info">
                       <h2 className="chair-client-name">{inChair.customer}</h2>
                       <p className="chair-service-name">
                         <Sparkles size={14} style={{ color: "var(--gold)" }} /> {inChair.service}
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                     <div className="barber-chair-actions">
                       <button
                         type="button"
-                        className="outline small"
+                        className="outline small chair-addon-btn"
                         onClick={() => {
                           setInChair({ ...inChair, price: inChair.price + 150, service: inChair.service + " + Hot Towel" });
                           showToast("♨️ Added Hot Towel & Beard Oil (+₹150)!");
@@ -329,7 +329,7 @@ export default function DashboardPage() {
                       >
                         + Add Hot Towel (+₹150)
                       </button>
-                      <button type="button" className="primary" onClick={finishInChairCut}>
+                      <button type="button" className="primary chair-finish-btn" onClick={finishInChairCut}>
                         <CheckCircle2 size={16} /> Finish Cut & Bill
                       </button>
                     </div>
@@ -396,13 +396,13 @@ export default function DashboardPage() {
                   <ul className="list-stack">
                     {bookings.slice(0, 5).map((entry) => (
                       <li key={entry.id} className="barber-queue-item">
-                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <strong>{entry.customer}</strong>
+                        <div className="queue-item-info">
+                          <div className="queue-item-top">
+                            <strong className="queue-customer-name">{entry.customer}</strong>
                             <span className="queue-service-badge">{entry.service}</span>
                           </div>
-                          <span style={{ fontSize: "12px", color: "var(--muted)" }}>
-                            ⏰ {entry.time} • ₹{entry.price}
+                          <span className="queue-item-meta">
+                            ⏰ {entry.time} • <b>₹{entry.price}</b>
                           </span>
                         </div>
                         <button
