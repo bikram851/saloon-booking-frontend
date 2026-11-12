@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { getGreeting } from "../utils/greeting";
 import {
   ArrowRight,
@@ -18,10 +18,33 @@ import SalonCard from "../components/SalonCard";
 export default function HomePage() {
   const [salons, setSalons] = useState(fallback);
   const [q, setQ] = useState("");
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("gg_user") || "{}");
+    } catch {
+      return {};
+    }
+  });
 
-  const user = JSON.parse(localStorage.getItem("gg_user") || "{}");
+  useEffect(() => {
+    const handleAuthChange = () => {
+      try {
+        setUser(JSON.parse(localStorage.getItem("gg_user") || "{}"));
+      } catch {
+        setUser({});
+      }
+    };
+    window.addEventListener("gg-auth-changed", handleAuthChange);
+    return () => window.removeEventListener("gg-auth-changed", handleAuthChange);
+  }, []);
+
+  const isBarber = (user?.role || "").toUpperCase() === "BARBER";
+
+  if (isBarber) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   const greeting = getGreeting();
-
 
   useEffect(() => {
     request("/salons")

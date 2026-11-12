@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Bell,
   Calendar,
@@ -152,6 +152,11 @@ export default function MyAppointmentsPage() {
       return null;
     }
   });
+
+  const isBarber = (user?.role || "").toUpperCase() === "BARBER";
+  if (isBarber) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   // Initial tab set to "completed" to match uploaded screenshot
   const [activeTab, setActiveTab] = useState("completed");
