@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 
 
 
@@ -43,6 +43,10 @@
 
 
   --line: #e7dfd4
+}
+
+em, i {
+  font-style: normal;
 }
 
 
@@ -758,7 +762,11 @@ h2 em {
 
 
 
-  font-weight: 500
+  font-weight: 500;
+
+
+
+  font-style: normal;
 }
 
 
@@ -6734,7 +6742,7 @@ th {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.35rem;
   font-weight: 700;
-  font-style: italic;
+  font-style: normal;
   color: #a8794c;
   margin: 0;
   text-align: center;
@@ -7276,7 +7284,7 @@ th {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 700;
-    font-style: italic;
+    font-style: normal;
     color: #a8794c;
     margin: 0;
     line-height: 1.1;
