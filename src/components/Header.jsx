@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { CalendarDays, House, Heart, MapPin, Sparkles, UserRound, LogOut } from "lucide-react";
+import {
+  CalendarDays,
+  Heart,
+  House,
+  LogOut,
+  MapPin,
+  Sparkles,
+  Tag,
+  UserRound,
+} from "lucide-react";
 import quickGroomLogo from "../assets/quick_groom.jpg";
 import { getCurrentLocationFromGoogleMaps } from "../utils/googleMaps";
 
@@ -17,7 +26,7 @@ export default function Header() {
   const [location, setLocation] = useState(() => {
     const saved = localStorage.getItem("gg_location");
     if (!saved || saved.includes("Belandur") || saved.includes("Marathahalli")) {
-      return "Locality, Area, City";
+      return "Bengaluru, Karnataka";
     }
     return saved;
   });
@@ -59,7 +68,7 @@ export default function Header() {
     } catch (err) {
       const fallbackLoc = window.prompt(
         `${err.message || "Could not detect location from Google Maps."}\n\nPlease enter your location (Locality, Area, City):`,
-        location === "Locality, Area, City" ? "" : location
+        location === "Bengaluru, Karnataka" ? "" : location
       );
       if (fallbackLoc) {
         const trimmed = fallbackLoc.trim();
@@ -84,10 +93,10 @@ export default function Header() {
         <Link
           to={isStaff ? "/dashboard" : "/"}
           className="brand brand-logo"
-          aria-label="Quick Groom home"
+          aria-label="Glow & Grace home"
           onClick={handleHomeClick}
         >
-          <img src={quickGroomLogo} alt="Quick Groom" className="brand-image" />
+          <img src={quickGroomLogo} alt="Glow & Grace" className="brand-image" />
         </Link>
 
         {!isStaff && (
@@ -101,12 +110,12 @@ export default function Header() {
               disabled={isLocating}
               title="Pick current location from Google Maps"
             >
-              {isLocating ? "Locating..." : "Change location"}
+              {isLocating ? "Locating..." : "Change"}
             </button>
           </div>
         )}
 
-        <nav className="desktop-nav">
+        <nav className="desktop-nav" aria-label="Desktop primary navigation">
           {isStaff ? (
             <Link to="/dashboard" className="nav-barber-dashboard-link" onClick={handleHomeClick}>
               <Sparkles size={14} />
@@ -115,9 +124,10 @@ export default function Header() {
           ) : (
             <>
               <Link to="/" onClick={handleHomeClick}>Home</Link>
+              <Link to="/#salons">Explore</Link>
               <Link to="/#services">Services</Link>
-              <Link to="/#location">Locations</Link>
-              <Link to="/my-appointments">My appointments</Link>
+              <Link to="/#offers">Offers</Link>
+              <Link to="/my-appointments">Bookings</Link>
               <Link to="/wishlist" className="nav-wishlist-link">
                 <Heart size={14} />
                 <span>Wishlist</span>
@@ -125,16 +135,16 @@ export default function Header() {
               <div className="desktop-location-pill">
                 <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
                 <strong className="desktop-location-value">
-                  {isLocating ? "Locating via Google Maps..." : location}
+                  {isLocating ? "Locating via Maps..." : location}
                 </strong>
                 <button
                   type="button"
                   className="desktop-location-inline-change"
                   onClick={pickFromGoogleMaps}
                   disabled={isLocating}
-                  title="Pick current location from Google Maps"
+                  title="Pick current location"
                 >
-                  {isLocating ? "Locating..." : "Change location"}
+                  {isLocating ? "..." : "Change"}
                 </button>
               </div>
             </>
@@ -142,6 +152,13 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
+          {!isStaff && (
+            <Link className="primary small desktop-book-cta" to="/#salons">
+              <CalendarDays size={14} />
+              <span>Book Appointment</span>
+            </Link>
+          )}
+
           {token ? (
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               {isStaff && (
@@ -149,13 +166,13 @@ export default function Header() {
                   {isAdmin ? "Admin" : "Staff"}
                 </span>
               )}
-              <button className="outline small" onClick={logout}>
-                <LogOut size={15} /> Sign out
+              <button className="outline small" onClick={logout} title="Sign Out">
+                <LogOut size={14} /> Sign out
               </button>
             </div>
           ) : (
             <Link className="outline small" to="/login">
-              <UserRound size={15} /> Sign in
+              <UserRound size={14} /> Sign in
             </Link>
           )}
         </div>
@@ -164,37 +181,43 @@ export default function Header() {
       {!isStaff && (
         <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
           <NavLink
+            to="/"
+            end
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={handleHomeClick}
+          >
+            <House size={18} />
+            <span>Home</span>
+          </NavLink>
+          <a
+            href="#salons"
+            className="mobile-nav-link"
+          >
+            <Sparkles size={18} />
+            <span>Explore</span>
+          </a>
+          <NavLink
             to="/my-appointments"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <CalendarDays size={16} />
+            <CalendarDays size={18} />
             <span>Bookings</span>
           </NavLink>
-          <NavLink to={{ pathname: "/", hash: "#location" }} className={({ isActive }) => (isActive ? "active" : "")}>
-            <MapPin size={16} />
-            <span>Map</span>
-          </NavLink>
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) => (isActive ? "active home-item" : "home-item")}
-            onClick={handleHomeClick}
+          <a
+            href="#offers"
+            className="mobile-nav-link"
           >
-            <House size={16} />
-            <span>Home</span>
-          </NavLink>
-          <NavLink to="/wishlist" className={({ isActive }) => (isActive ? "active" : "")}>
-            <Heart size={16} />
-            <span>Wishlist</span>
-          </NavLink>
+            <Tag size={18} />
+            <span>Offers</span>
+          </a>
           {token ? (
-            <button type="button" className="mobile-nav-signout" onClick={logout}>
-              <LogOut size={16} />
+            <button type="button" className="mobile-nav-signout" onClick={logout} title="Sign Out">
+              <LogOut size={18} />
               <span>Out</span>
             </button>
           ) : (
             <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
-              <UserRound size={16} />
+              <UserRound size={18} />
               <span>Profile</span>
             </NavLink>
           )}

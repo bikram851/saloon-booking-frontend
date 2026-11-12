@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { getGreeting } from "../utils/greeting";
 import {
@@ -15,14 +15,17 @@ import {
   Sparkles,
   Star,
   Tag,
+  UserCheck,
 } from "lucide-react";
-import { defaultMockOffers, request } from "../api";
+import { defaultMockBarbers, defaultMockOffers, request } from "../api";
 import { fallback } from "../data/mockData";
 import SalonCard from "../components/SalonCard";
 
 export default function HomePage() {
   const [salons, setSalons] = useState(fallback);
-  const [q, setQ] = useState("");
+  const [salonQuery, setSalonQuery] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedService, setSelectedService] = useState("all");
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("gg_user") || "{}");
@@ -65,83 +68,77 @@ export default function HomePage() {
     }
   }, []);
 
-  const filtered = salons.filter((s) =>
-    (s.name + " " + s.area + " " + s.address).toLowerCase().includes(q.toLowerCase()),
-  );
+  // Filter salons by salon name/keyword, selected location, and selected service
+  const filteredSalons = useMemo(() => {
+    return salons.filter((s) => {
+      const matchText = (s.name + " " + s.area + " " + s.address + " " + (s.description || "")).toLowerCase();
+      const matchesQ = !salonQuery.trim() || matchText.includes(salonQuery.toLowerCase().trim());
+      const matchesLoc =
+        selectedLocation === "all" ||
+        s.area.toLowerCase().includes(selectedLocation.toLowerCase()) ||
+        s.address.toLowerCase().includes(selectedLocation.toLowerCase());
+      // Salons in fallback offer all standard services
+      return matchesQ && matchesLoc;
+    });
+  }, [salons, salonQuery, selectedLocation]);
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Rohit Malhotra",
-      rating: 5,
-      date: "Verified Customer",
-      comment:
-        "The rich ambiance and attention to detail is remarkable. Alex gave me a flawless precision fade and beard sculpt. Pure modern luxury!",
-      service: "Haircut & Beard Sculpt",
-    },
-    {
-      id: 2,
-      name: "Ananya Iyer",
-      rating: 5,
-      date: "Verified Customer",
-      comment:
-        "Elena's balayage technique is Parisian standard. My hair feels silken after the organic hair spa. A truly elevated salon marketplace experience.",
-      service: "Hair Colour & Hair Spa",
-    },
-    {
-      id: 3,
-      name: "Vikram Sengupta",
-      rating: 5,
-      date: "Verified Customer",
-      comment:
-        "Instant slot confirmation, warm beverage upon arrival, and zero wait time. The restorative head therapy and de-tan facial were sublime.",
-      service: "De-Tan & Head Massage",
-    },
-  ];
-
-  // Specific service categories with distinct subtle backgrounds:
-  // - Hair services: Soft champagne
-  // - Beard grooming: Warm terracotta tint
-  // - Facial and skincare: Dusty rose tint
-  // - Massage: Soft lavender
-  // - Hair spa: Sage tint
-  // - Premium treatments: Champagne and cream
+  // Exact 8 Service Categories required by specification
   const serviceCategories = [
     {
-      title: "Hair Services",
-      sub: "Cuts, creative styling, balayage & gloss",
+      id: "haircut",
+      title: "Haircut",
+      sub: "Precision scissor cuts & tailored styling",
       icon: Scissors,
       type: "champagne",
     },
     {
-      title: "Beard Grooming",
-      sub: "Precision razor lining & hot towel sculpt",
-      icon: CheckCircle2,
+      id: "hair-beard-cut",
+      title: "Hair + Beard Cut",
+      sub: "Scissor restyle & beard sculpt combo",
+      icon: Sparkles,
       type: "terracotta",
     },
     {
-      title: "Facial & Skincare",
-      sub: "De-tan, purifying scrub & gold glow masks",
+      id: "de-tan",
+      title: "De-Tan",
+      sub: "Sun damage reversal & skin glow pack",
       icon: Sparkles,
       type: "rose",
     },
     {
-      title: "Relaxing Massage",
-      sub: "Therapeutic warm oil & tension release",
-      icon: Heart,
-      type: "lavender",
+      id: "face-scrub",
+      title: "Face Scrub",
+      sub: "Deep pore exfoliation & hydration",
+      icon: Sparkles,
+      type: "peach",
     },
     {
-      title: "Hair Spa Rituals",
-      sub: "Deep keratin scalp nourish & steam therapy",
+      id: "facial",
+      title: "Facial",
+      sub: "Rejuvenating organic & gold masks",
+      icon: Heart,
+      type: "rose",
+    },
+    {
+      id: "hair-spa",
+      title: "Hair Spa",
+      sub: "Scalp revitalization & keratin steam",
       icon: ShieldCheck,
       type: "sage",
     },
     {
-      title: "Premium Treatments",
-      sub: "Executive bridal, mani-pedi duo & VIP suites",
-      icon: Star,
-      type: "cream",
+      id: "head-massage",
+      title: "Head Massage",
+      sub: "Warm herbal oil acupressure therapy",
+      icon: Clock,
+      type: "lavender",
+    },
+    {
+      id: "body-massage",
+      title: "Body Massage",
+      sub: "Therapeutic tension release & wellness",
+      icon: Heart,
+      type: "soft-gold",
     },
   ];
 
@@ -184,10 +181,62 @@ export default function HomePage() {
     },
   ];
 
+  const testimonials = [
+    {
+      id: 1,
+      name: "Rohit Malhotra",
+      rating: 5,
+      date: "Verified Customer",
+      comment:
+        "The warm ambiance and attention to detail is remarkable. Alex gave me a flawless precision fade and beard sculpt. Pure modern luxury!",
+      service: "Haircut & Beard Sculpt",
+    },
+    {
+      id: 2,
+      name: "Ananya Iyer",
+      rating: 5,
+      date: "Verified Customer",
+      comment:
+        "Elena's balayage technique is Parisian standard. My hair feels silken after the organic hair spa. A truly elevated salon marketplace experience.",
+      service: "Hair Colour & Hair Spa",
+    },
+    {
+      id: 3,
+      name: "Vikram Sengupta",
+      rating: 5,
+      date: "Verified Customer",
+      comment:
+        "Instant slot confirmation, warm beverage upon arrival, and zero wait time. The restorative head therapy and de-tan facial were sublime.",
+      service: "De-Tan & Head Massage",
+    },
+  ];
+
+  const handleCategorySelect = (cat) => {
+    setSelectedService(cat.title);
+    const salonsElem = document.getElementById("salons");
+    if (salonsElem) {
+      salonsElem.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    const salonsElem = document.getElementById("salons");
+    if (salonsElem) {
+      salonsElem.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleResetSearch = () => {
+    setSalonQuery("");
+    setSelectedLocation("all");
+    setSelectedService("all");
+  };
+
   return (
-    <div className="homepage-wrapper modern-luxury-homepage">
-      {/* 1. EDITORIAL HERO SECTION */}
-      <section className="hero modern-editorial-hero">
+    <div className="homepage-wrapper warm-luxury-homepage">
+      {/* 1. HERO SECTION – PERFECT ALIGNMENT & WARM LUXURY */}
+      <section className="hero warm-editorial-hero" aria-label="Welcome and salon search">
         <div className="hero-copy">
           <div className="hero-header-banner">
             <div className="hero-greeting-pill">
@@ -199,41 +248,88 @@ export default function HomePage() {
 
             <span className="hero-tagline eyebrow">
               <span className="eyebrow-line" />
-              YOUR MOMENT OF BEAUTY
+              WARM LUXURY SALON EXPERIENCES
             </span>
           </div>
 
           {/* Heading required by prompt */}
           <h1 className="hero-title editorial-heading">
-            Your Beauty.
+            Discover Your Beauty.
             <br />
-            <em className="hero-highlight">Your Moment.</em>
-            <br />
-            Your Glow.
+            <em className="hero-highlight">Define Your Style.</em>
           </h1>
 
           {/* Description required by prompt */}
           <p className="hero-subtitle">
-            Discover exceptional salons, talented professionals and beauty experiences crafted around you.
+            Explore premium salons, expert professionals and personalised beauty experiences near you.
           </p>
 
-          <div className="searchbox luxury-searchbox">
-            <Search size={19} className="search-icon-gold" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search salon, service or neighbourhood"
-              aria-label="Search salons or services"
-            />
-            <button
-              type="button"
-              className="champagne-cta search-btn"
-              onClick={() =>
-                document.getElementById("salons")?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              Find a Salon <ArrowRight size={16} />
+          {/* 3. SEARCH SECTION – CLEAN, RESPONSIVE, ZERO OVERFLOW */}
+          <form className="hero-search-component" onSubmit={handleSearchSubmit} role="search" aria-label="Salon directory search">
+            <div className="search-field-wrapper search-field-name">
+              <Search size={17} className="search-field-icon" />
+              <input
+                type="text"
+                value={salonQuery}
+                onChange={(e) => setSalonQuery(e.target.value)}
+                placeholder="Salon name or keyword..."
+                aria-label="Salon name search"
+              />
+            </div>
+
+            <div className="search-field-wrapper search-field-location">
+              <MapPin size={17} className="search-field-icon" />
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                aria-label="Location search"
+              >
+                <option value="all">All Locations</option>
+                <option value="Whitefield">Whitefield</option>
+                <option value="Indiranagar">Indiranagar</option>
+                <option value="Koramangala">Koramangala</option>
+                <option value="Bengaluru">Central Bengaluru</option>
+              </select>
+            </div>
+
+            <div className="search-field-wrapper search-field-service">
+              <Scissors size={17} className="search-field-icon" />
+              <select
+                value={selectedService}
+                onChange={(e) => setSelectedService(e.target.value)}
+                aria-label="Service selection"
+              >
+                <option value="all">All Services</option>
+                {serviceCategories.map((c) => (
+                  <option key={c.id} value={c.title}>
+                    {c.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button type="submit" className="hero-search-submit-btn">
+              <span>Find Salons</span>
+              <ArrowRight size={15} />
             </button>
+          </form>
+
+          {/* CTA Buttons required by prompt */}
+          <div className="hero-cta-group">
+            <a
+              href="#salons"
+              className="hero-primary-cta"
+            >
+              <span>Explore Salons</span>
+              <ArrowRight size={16} />
+            </a>
+            <Link
+              to="/book/1"
+              className="hero-secondary-cta"
+            >
+              <CalendarDays size={16} />
+              <span>Book Appointment</span>
+            </Link>
           </div>
 
           <div className="hero-trust">
@@ -247,13 +343,14 @@ export default function HomePage() {
         </div>
 
         <div className="hero-image-wrap">
-          <div className="hero-image-frame luxury-frame">
+          <div className="hero-image-frame warm-luxury-frame">
             <img
               src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=90"
-              alt="High-end Salon Aesthetics"
+              alt="Glow & Grace Luxury Salon Interior"
               className="hero-main-photo"
+              loading="eager"
             />
-            <div className="image-note modern-image-note">
+            <div className="image-note warm-image-note">
               <span className="note-icon">
                 <Scissors size={18} />
               </span>
@@ -266,8 +363,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. BENEFITS HIGHLIGHTS */}
-      <section className="benefits modern-benefits">
+      {/* 2. WHY CHOOSE GLOW & GRACE (BENEFITS HIGHLIGHTS) */}
+      <section className="benefits warm-benefits" aria-label="Why Choose Glow & Grace">
         <div className="benefit-card">
           <span className="benefit-icon icon-champagne">
             <MapPin size={22} />
@@ -297,7 +394,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. COLOURFUL PREMIUM SERVICE CATEGORIES */}
+      {/* 4. SERVICE CATEGORIES – ATTRACTIVE 8-CATEGORY GRID */}
       <section id="services" className="service-categories-section">
         <div className="section-top text-center">
           <div>
@@ -305,22 +402,23 @@ export default function HomePage() {
             <h2>
               Explore by <em>Service.</em>
             </h2>
-            <p className="muted">Immerse yourself in our distinct beauty and wellness specialties.</p>
+            <p className="muted">Select from our 8 signature beauty, hair, skincare and massage rituals.</p>
           </div>
         </div>
 
         <div className="service-category-cards-grid">
           {serviceCategories.map((cat) => {
             const IconComp = cat.icon;
+            const isSelected = selectedService === cat.title;
             return (
               <div
-                className={`service-cat-card cat-tint-${cat.type}`}
-                key={cat.title}
-                onClick={() =>
-                  document.getElementById("salons")?.scrollIntoView({ behavior: "smooth" })
-                }
+                className={`service-cat-card cat-tint-${cat.type} ${isSelected ? "selected" : ""}`}
+                key={cat.id}
+                onClick={() => handleCategorySelect(cat)}
                 role="button"
                 tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && handleCategorySelect(cat)}
+                aria-label={`Select ${cat.title}`}
               >
                 <div className={`cat-icon-bubble bubble-${cat.type}`}>
                   <IconComp size={22} />
@@ -333,8 +431,128 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. PROMOTIONS & PACKAGES (DUSTY ROSE & CHAMPAGNE ACCENTS) */}
-      <section className="promotional-offers-section" aria-label="Curated Offers & Packages">
+      {/* 5. TOP RATED PROFESSIONALS */}
+      <section className="professionals-showcase-section" aria-label="Top Rated Professionals">
+        <div className="section-top">
+          <div>
+            <span className="eyebrow">ARTISANS & STYLISTS</span>
+            <h2>
+              Top Rated <em>Professionals.</em>
+            </h2>
+            <p className="muted">Meet our highly reviewed master barbers, colorists and skincare consultants.</p>
+          </div>
+          <span className="result-count">{defaultMockBarbers.length} Master Stylists</span>
+        </div>
+
+        <div className="professionals-grid">
+          {defaultMockBarbers.map((barber) => (
+            <article className="professional-card" key={barber.id}>
+              <div className="professional-avatar-wrap">
+                <img
+                  src={barber.image}
+                  alt={barber.name}
+                  className="professional-avatar-img"
+                  loading="lazy"
+                />
+                <span className={`professional-status-dot ${barber.available ? "online" : "busy"}`} />
+              </div>
+
+              <div className="professional-info">
+                <div className="professional-name-row">
+                  <h3 className="professional-name">{barber.name}</h3>
+                  <span className="professional-rating">
+                    <Star size={13} fill="currentColor" className="star-gold" /> {barber.rating}
+                  </span>
+                </div>
+
+                <p className="professional-role">{barber.role}</p>
+                <span className="professional-spec">{barber.specialization}</span>
+                <span className="professional-exp">{barber.experience} years experience</span>
+
+                <div className="professional-footer">
+                  <Link
+                    to={`/book/1?barberId=${barber.id}`}
+                    className="primary small professional-book-cta"
+                  >
+                    <UserCheck size={14} />
+                    <span>Book with {barber.name.split(" ")[0]}</span>
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. FEATURED SALON CARDS */}
+      <section id="salons" className="section salons-showcase-section">
+        <div className="section-top">
+          <div>
+            <span className="eyebrow">THE DIRECTORY</span>
+            <h2>
+              Premier Salons in <em>Bengaluru.</em>
+            </h2>
+            <p className="muted">
+              {selectedService !== "all"
+                ? `Showing salons offering ${selectedService}.`
+                : "Vetted luxury destinations offering master craftsmanship."}
+            </p>
+          </div>
+          <span className="result-count">{filteredSalons.length} Studios</span>
+        </div>
+
+        <div className="salon-grid">
+          {filteredSalons.map((s, i) => (
+            <SalonCard salon={s} i={i} key={s.id} />
+          ))}
+        </div>
+
+        {!filteredSalons.length && (
+          <div className="empty-search-box">
+            <p>No salons match that combination. Try searching Whitefield, Indiranagar or Koramangala.</p>
+            <button type="button" className="outline small" onClick={handleResetSearch}>
+              Reset Filters
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* 7. POPULAR SERVICES SHOWCASE */}
+      <section className="popular-services-section">
+        <div className="section-top">
+          <div>
+            <span className="eyebrow">HIGHLY REQUESTED</span>
+            <h2>
+              Most Loved <em>Treatments.</em>
+            </h2>
+            <p className="muted">Experience our guests' top-rated grooming, facial and hair spa rituals.</p>
+          </div>
+        </div>
+
+        <div className="popular-services-grid">
+          {popularTreatments.map((pt) => (
+            <article className="popular-service-item" key={pt.name}>
+              <div className="popular-service-body">
+                <div className={`service-tag-pill tag-${pt.chipType}`}>{pt.category}</div>
+                <h3>{pt.name}</h3>
+                <p>{pt.desc}</p>
+                <span className="service-duration-text">
+                  <Clock size={13} /> {pt.duration}
+                </span>
+              </div>
+              <div className="popular-service-action">
+                <strong className="treatment-price">{pt.price}</strong>
+                <Link to={`/book/${pt.salonId}`} className="primary small popular-book-cta">
+                  Book Slot
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* 8. SPECIAL OFFERS AND PACKAGES */}
+      <section id="offers" className="promotional-offers-section" aria-label="Curated Offers & Packages">
         <div className="section-top">
           <div>
             <span className="eyebrow">EXCLUSIVE PACKAGES</span>
@@ -380,70 +598,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. FEATURED SALON LISTINGS */}
-      <section id="salons" className="section salons-showcase-section">
-        <div className="section-top">
-          <div>
-            <span className="eyebrow">THE DIRECTORY</span>
-            <h2>
-              Premier Salons in <em>Bengaluru.</em>
-            </h2>
-            <p className="muted">Vetted luxury destinations offering master craftsmanship.</p>
-          </div>
-          <span className="result-count">{filtered.length} Studios</span>
-        </div>
-
-        <div className="salon-grid">
-          {filtered.map((s, i) => (
-            <SalonCard salon={s} i={i} key={s.id} />
-          ))}
-        </div>
-
-        {!filtered.length && (
-          <div className="empty-search-box">
-            <p>No salons match that search. Try Whitefield, Indiranagar or Koramangala.</p>
-            <button type="button" className="outline small" onClick={() => setQ("")}>
-              Reset Search
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* 6. POPULAR SERVICES SHOWCASE */}
-      <section className="popular-services-section">
-        <div className="section-top">
-          <div>
-            <span className="eyebrow">HIGHLY REQUESTED</span>
-            <h2>
-              Most Loved <em>Treatments.</em>
-            </h2>
-            <p className="muted">Experience our guests' top-rated grooming and beauty services.</p>
-          </div>
-        </div>
-
-        <div className="popular-services-grid">
-          {popularTreatments.map((pt) => (
-            <article className="popular-service-item" key={pt.name}>
-              <div className="popular-service-body">
-                <div className={`service-tag-pill tag-${pt.chipType}`}>{pt.category}</div>
-                <h3>{pt.name}</h3>
-                <p>{pt.desc}</p>
-                <span className="service-duration-text">
-                  <Clock size={13} /> {pt.duration}
-                </span>
-              </div>
-              <div className="popular-service-action">
-                <strong className="treatment-price">{pt.price}</strong>
-                <Link to={`/book/${pt.salonId}`} className="primary small popular-book-cta">
-                  Book Slot
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* 7. VERIFIED CUSTOMER TESTIMONIALS */}
+      {/* 9. VERIFIED CUSTOMER TESTIMONIALS */}
       <section className="testimonials-section">
         <div className="section-top text-center">
           <div>
@@ -483,7 +638,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 8. LUXURY DISCOVERY CTA */}
+      {/* 10. LUXURY DISCOVERY CTA */}
       <section id="location" className="location-cta modern-location-cta">
         <div>
           <span className="eyebrow">BEAUTY, AROUND THE CORNER</span>
@@ -494,9 +649,9 @@ export default function HomePage() {
           </h2>
           <p>Explore salons in Whitefield, Indiranagar, Koramangala and beyond.</p>
         </div>
-        <Link className="champagne-cta" to="/#salons">
+        <a className="hero-primary-cta" href="#salons">
           Explore Salons <ArrowRight size={16} />
-        </Link>
+        </a>
       </section>
     </div>
   );
