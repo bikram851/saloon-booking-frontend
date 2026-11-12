@@ -7496,44 +7496,254 @@ th {
   }
 }
 
-/* Barber login & demo credentials styles */
-.demo-credentials-bar {
+/* =========================================================
+   Barber Login & Portal Responsive Design
+   ========================================================= */
+
+.auth-wrap {
+  min-height: calc(100vh - 78px);
+  min-height: calc(100dvh - 78px);
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 32px 16px 60px;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: #fffdf9;
+  border: 1px solid var(--line);
+  padding: clamp(22px, 5vw, 36px);
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(45, 32, 20, 0.06);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.auth-card h1 {
+  font-size: clamp(22px, 5vw, 30px);
+  line-height: 1.25;
+  margin: 10px 0 8px;
+  color: #25221d;
+  word-break: break-word;
+}
+
+.auth-card > p.muted {
+  font-size: clamp(12px, 3.2vw, 13px);
+  line-height: 1.45;
+  margin: 0 0 18px;
+}
+
+.login-brand-image {
+  height: clamp(48px, 12vw, 64px);
+  max-width: 180px;
+  object-fit: contain;
+  margin: 0 auto 14px;
+}
+
+/* Role Selector: Customer vs Barber */
+.role-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.role-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 14px;
+  min-height: 58px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: #ffffff;
+  color: #403930;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.role-option .role-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d2925;
+  line-height: 1.2;
+}
+
+.role-option small {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.3;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.role-option:hover {
+  border-color: rgba(168, 121, 76, 0.4);
+  background: #fbf7f1;
+}
+
+.role-option.active {
+  background: linear-gradient(135deg, rgba(168, 121, 76, 0.12), rgba(242, 233, 220, 0.9));
+  border-color: var(--gold);
+  box-shadow: 0 4px 14px rgba(168, 121, 76, 0.15);
+}
+
+.role-option.active .role-title {
+  color: var(--gold-dark);
+}
+
+/* Quick Demo Sign-in Bar */
+.demo-credentials-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  background: rgba(247, 242, 235, 0.85);
+  border: 1px dashed rgba(168, 121, 76, 0.35);
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .demo-credentials-label {
-  font-size: 11px;
-  color: var(--muted);
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.demo-pills-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .demo-pill-btn {
-  background: #fff;
+  flex: 1 1 calc(50% - 4px);
+  min-width: 110px;
+  background: #ffffff;
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 11px;
+  padding: 7px 12px;
+  font-size: 11.5px;
   font-weight: 600;
   color: #403930;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
 }
 
-.demo-pill-btn.active,
-.demo-pill-btn:hover {
+.demo-pill-btn:hover,
+.demo-pill-btn.active {
   border-color: var(--gold);
   color: var(--gold-dark);
   background: #fbf5ee;
+  box-shadow: 0 2px 8px rgba(168, 121, 76, 0.12);
 }
 
+/* Form controls in Auth Card */
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+  text-align: left;
+}
+
+.auth-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #3b352e;
+}
+
+.auth-card input {
+  width: 100%;
+  min-height: 46px;
+  font-size: 15px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #25221d;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(168, 121, 76, 0.15);
+}
+
+.auth-card .primary.full {
+  width: 100%;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  margin-top: 6px;
+}
+
+.auth-switch {
+  margin-top: 18px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.auth-switch button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--gold-dark);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 4px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Staff Badges & Nav in Header */
 .nav-barber-dashboard-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   color: var(--gold) !important;
   font-weight: 600;
 }
@@ -7548,6 +7758,179 @@ th {
   padding: 3px 8px;
   border-radius: 12px;
   letter-spacing: 0.5px;
+  line-height: 1.2;
 }
+
+/* =========================================================
+   Barber Dashboard Responsive Layout & Components
+   ========================================================= */
+
+@media (max-width: 960px) {
+  .barber-dashboard {
+    padding: 16px 4% 80px;
+  }
+
+  .barber-shell {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .barber-sidebar {
+    position: static;
+    top: auto;
+    padding: 14px 16px;
+    border-radius: 16px;
+  }
+
+  .barber-profile {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Horizontal scrollable tabs on tablet & mobile */
+  .barber-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 8px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .barber-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .barber-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 9px 14px;
+    font-size: 13px;
+    border-radius: 999px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .panel-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .earnings-box {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .time-form {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 580px) {
+  .barber-dashboard {
+    padding: 12px 12px 80px;
+  }
+
+  .barber-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .barber-header button {
+    align-self: flex-start;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  .stat-card strong {
+    font-size: 1.6rem;
+    margin: 4px 0;
+  }
+
+  .stat-card small,
+  .stat-card span {
+    font-size: 11px;
+  }
+
+  .earnings-box {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .confirm-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .confirm-meta {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .confirm-card button {
+    width: 100%;
+  }
+
+  .booking-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 10px;
+    align-items: center;
+  }
+
+  .booking-row strong {
+    grid-column: 1 / 2;
+    font-size: 14px;
+  }
+
+  .booking-row b {
+    grid-column: 2 / 3;
+    text-align: right;
+    color: var(--gold);
+  }
+
+  .booking-row em {
+    grid-column: 1 / 2;
+    font-size: 12px;
+  }
+
+  .booking-row span {
+    grid-column: 2 / 3;
+    text-align: right;
+    font-size: 12px;
+  }
+
+  .booking-row small {
+    grid-column: 1 / -1;
+    margin-top: 2px;
+  }
+}
+
+/* Extra small mobile adjustments */
+@media (max-width: 360px) {
+  .role-picker {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-pill-btn {
+    flex: 1 1 100%;
+  }
+}
+
 
 

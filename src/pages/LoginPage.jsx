@@ -106,8 +106,8 @@ export default function LoginPage() {
               setError("");
             }}
           >
-            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <User size={15} /> Customer
+            <span className="role-title">
+              <User size={16} /> Customer
             </span>
             <small>{mode === "login" ? "Book & view appointments" : "Book services"}</small>
           </button>
@@ -119,8 +119,8 @@ export default function LoginPage() {
               setError("");
             }}
           >
-            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <Scissors size={15} /> Barber / Staff
+            <span className="role-title">
+              <Scissors size={16} /> Barber / Staff
             </span>
             <small>{mode === "login" ? "Manage schedule & earnings" : "Offer styling services"}</small>
           </button>
@@ -129,20 +129,22 @@ export default function LoginPage() {
         {/* Quick Demo Fill Buttons */}
         <div className="demo-credentials-bar">
           <span className="demo-credentials-label">Quick Sign-in:</span>
-          <button
-            type="button"
-            className={selectedRole === "BARBER" ? "demo-pill-btn active" : "demo-pill-btn"}
-            onClick={() => fillDemo("BARBER")}
-          >
-            💈 Demo Barber
-          </button>
-          <button
-            type="button"
-            className={selectedRole === "CUSTOMER" ? "demo-pill-btn active" : "demo-pill-btn"}
-            onClick={() => fillDemo("CUSTOMER")}
-          >
-            👤 Demo Customer
-          </button>
+          <div className="demo-pills-wrap">
+            <button
+              type="button"
+              className={selectedRole === "BARBER" ? "demo-pill-btn active" : "demo-pill-btn"}
+              onClick={() => fillDemo("BARBER")}
+            >
+              💈 Demo Barber
+            </button>
+            <button
+              type="button"
+              className={selectedRole === "CUSTOMER" ? "demo-pill-btn active" : "demo-pill-btn"}
+              onClick={() => fillDemo("CUSTOMER")}
+            >
+              👤 Demo Customer
+            </button>
+          </div>
         </div>
 
         <form onSubmit={submit}>
