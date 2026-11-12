@@ -8,16 +8,14 @@ import {
   Clock,
   Heart,
   MapPin,
-  Percent,
   Scissors,
   Search,
   ShieldCheck,
   Sparkles,
   Star,
-  Tag,
   UserCheck,
 } from "lucide-react";
-import { defaultMockBarbers, defaultMockOffers, request } from "../api";
+import { defaultMockBarbers, request } from "../api";
 import { fallback } from "../data/mockData";
 import SalonCard from "../components/SalonCard";
 
@@ -551,52 +549,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 8. SPECIAL OFFERS AND PACKAGES */}
-      <section id="offers" className="promotional-offers-section" aria-label="Curated Offers & Packages">
-        <div className="section-top">
-          <div>
-            <span className="eyebrow">EXCLUSIVE PACKAGES</span>
-            <h2>
-              Indulgent <em>Combinations.</em>
-            </h2>
-            <p className="muted">Hand-crafted combinations offering luxury care with exceptional savings.</p>
-          </div>
-          <span className="promo-badge-top">
-            <Percent size={14} /> Seasonal Privileges
-          </span>
-        </div>
-
-        <div className="promo-packages-grid">
-          {defaultMockOffers.map((off) => (
-            <article className="promo-package-card" key={off.id}>
-              <div className="package-ribbon">{off.badge}</div>
-              <h3 className="package-title">{off.title}</h3>
-              <p className="package-desc">{off.description}</p>
-
-              <div className="package-meta">
-                <span className="package-duration">
-                  <Clock size={13} /> {off.durationMinutes} mins
-                </span>
-                {off.code && (
-                  <span className="package-code">
-                    <Tag size={12} /> {off.code}
-                  </span>
-                )}
-              </div>
-
-              <div className="package-footer">
-                <div>
-                  <span className="package-original">₹{off.originalPrice}</span>
-                  <strong className="package-deal">₹{off.price}</strong>
-                </div>
-                <Link to="/book/1" className="primary small package-book-btn">
-                  Book Offer <ArrowRight size={14} />
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
 
       {/* 9. VERIFIED CUSTOMER TESTIMONIALS */}
       <section className="testimonials-section">

@@ -7,7 +7,6 @@ import {
   LogOut,
   MapPin,
   Sparkles,
-  Tag,
   UserRound,
 } from "lucide-react";
 import quickGroomLogo from "../assets/quick_groom.jpg";
@@ -126,7 +125,6 @@ export default function Header() {
               <Link to="/" onClick={handleHomeClick}>Home</Link>
               <Link to="/#salons">Explore</Link>
               <Link to="/#services">Services</Link>
-              <Link to="/#offers">Offers</Link>
               <Link to="/my-appointments">Bookings</Link>
               <Link to="/wishlist" className="nav-wishlist-link">
                 <Heart size={14} />
@@ -203,13 +201,13 @@ export default function Header() {
             <CalendarDays size={18} />
             <span>Bookings</span>
           </NavLink>
-          <a
-            href="#offers"
-            className="mobile-nav-link"
+          <NavLink
+            to="/wishlist"
+            className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <Tag size={18} />
-            <span>Offers</span>
-          </a>
+            <Heart size={18} />
+            <span>Wishlist</span>
+          </NavLink>
           {token ? (
             <button type="button" className="mobile-nav-signout" onClick={logout} title="Sign Out">
               <LogOut size={18} />
