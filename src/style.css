@@ -8395,21 +8395,230 @@ th {
   font-weight: 600;
 }
 
-@media (max-width: 650px) {
+/* =========================================================
+   Responsive Breakpoints for Barber Home & Hero Banner
+   ========================================================= */
+
+/* Tablets & Small Laptops (769px - 1024px) */
+@media (max-width: 1024px) {
+  .barber-home-hero-banner {
+    border-radius: 18px;
+    margin-bottom: 20px;
+  }
+
+  .barber-banner-content {
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .barber-banner-title {
+    font-size: 2rem;
+  }
+}
+
+/* Phablets & Large Phones (581px - 768px) */
+@media (max-width: 768px) {
+  .barber-dashboard {
+    padding: 16px 14px 80px;
+  }
+
+  .barber-home-hero-banner {
+    border-radius: 16px;
+  }
+
+  .barber-banner-content {
+    padding: 20px 18px;
+    gap: 16px;
+  }
+
   .barber-banner-top {
     flex-direction: column;
     align-items: flex-start;
+    gap: 14px;
   }
 
   .barber-banner-actions {
     width: 100%;
+    display: flex;
+    gap: 10px;
   }
 
   .barber-banner-actions button {
     flex: 1 1 auto;
     justify-content: center;
   }
+
+  .barber-banner-footer-pills {
+    gap: 8px;
+    padding-top: 12px;
+  }
 }
+
+/* Standard Mobile Devices (361px - 580px) */
+@media (max-width: 580px) {
+  .barber-dashboard {
+    padding: 12px 10px 80px;
+  }
+
+  .barber-home-hero-banner {
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+
+  .barber-banner-content {
+    padding: 16px 14px;
+    gap: 14px;
+  }
+
+  .barber-banner-badge-group {
+    gap: 12px;
+  }
+
+  .barber-salon-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .barber-banner-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  .barber-banner-title {
+    font-size: 1.55rem;
+  }
+
+  .barber-banner-subtitle {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .barber-banner-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .station-active-badge {
+    flex: 1 1 50%;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .banner-walkin-btn {
+    flex: 1 1 50%;
+    justify-content: center;
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .barber-banner-footer-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .banner-pill {
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+}
+
+/* Extra Small Phones (<= 360px, e.g. iPhone SE, Galaxy Fold 320px) */
+@media (max-width: 360px) {
+  .barber-dashboard {
+    padding: 10px 8px 75px;
+  }
+
+  .barber-home-hero-banner {
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+
+  .barber-banner-content {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  .barber-banner-badge-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .barber-salon-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+  }
+
+  .barber-banner-eyebrow {
+    font-size: 9.5px;
+  }
+
+  .barber-banner-title {
+    font-size: 1.35rem;
+  }
+
+  .barber-banner-subtitle {
+    font-size: 11.5px;
+  }
+
+  .barber-banner-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .station-active-badge,
+  .banner-walkin-btn {
+    width: 100% !important;
+    flex: 1 1 100%;
+  }
+
+  .barber-banner-footer-pills {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 6px;
+  }
+
+  .banner-pill {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 10.5px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .stat-card {
+    padding: 10px 8px;
+  }
+
+  .stat-card strong {
+    font-size: 1.35rem;
+  }
+
+  .stat-card small,
+  .stat-card span {
+    font-size: 10px;
+  }
+
+  .barber-chair-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
 
 
 
