@@ -7496,3 +7496,58 @@ th {
   }
 }
 
+/* Barber login & demo credentials styles */
+.demo-credentials-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.demo-credentials-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.demo-pill-btn {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #403930;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.demo-pill-btn.active,
+.demo-pill-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-dark);
+  background: #fbf5ee;
+}
+
+.nav-barber-dashboard-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gold) !important;
+  font-weight: 600;
+}
+
+.barber-staff-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+

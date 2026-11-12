@@ -15,11 +15,12 @@ function handleMockFallback(path, opts = {}) {
   // 1. Auth Login
   if (path.startsWith("/auth/login") && method === "POST") {
     const email = body.email || "demo@glowgrace.com";
-    const role = email.toLowerCase().includes("barber") ? "BARBER" : "CUSTOMER";
-    const name = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const role = (body.role || (email.toLowerCase().includes("barber") ? "BARBER" : "CUSTOMER")).toUpperCase();
+    const rawName = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const name = role === "BARBER" && rawName.toLowerCase() === "barber" ? "Alex Rivera (Stylist)" : rawName;
     return {
       token: "demo_token_" + Date.now(),
-      id: "usr_" + Math.abs(email.split("").reduce((a, b) => (a << 5) - a + b.charCodeAt(0), 0)),
+      id: role === "BARBER" ? "barber_1" : "usr_" + Math.abs(email.split("").reduce((a, b) => (a << 5) - a + b.charCodeAt(0), 0)),
       name,
       fullName: name,
       email,
