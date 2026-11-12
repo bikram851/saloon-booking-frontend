@@ -8888,6 +8888,370 @@ th {
   }
 }
 
+/* =========================================================
+   All-Tab Mobile Enhancements for Barber Dashboard
+   ========================================================= */
+
+.panel-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.panel-title-bar h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #25221d;
+}
+
+/* Desktop vs Mobile Appointment View */
+.desktop-table-wrap {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-appt-list {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-table-wrap {
+    display: none !important;
+  }
+
+  .mobile-appt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mobile-appt-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(40, 28, 18, 0.03);
+  }
+
+  .mobile-appt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .mobile-appt-customer {
+    font-size: 14px;
+    font-weight: 700;
+    color: #25221d;
+  }
+
+  .mobile-appt-service {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #5a5043;
+    font-weight: 500;
+  }
+
+  .mobile-appt-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(168, 121, 76, 0.15);
+    padding-top: 8px;
+    margin-top: 2px;
+  }
+
+  .mobile-appt-time {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .mobile-appt-price {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gold-dark);
+  }
+}
+
+/* Confirm Queue Mobile Enhancements */
+.confirm-info strong {
+  font-size: 14px;
+  color: #25221d;
+}
+
+.confirm-info p {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.confirm-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gold-dark);
+}
+
+.queue-empty-box {
+  padding: 32px 16px;
+  text-align: center;
+  background: #faf6f0;
+  border-radius: 16px;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+}
+
+@media (max-width: 650px) {
+  .confirm-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  .confirm-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border-top: 1px dashed rgba(168, 121, 76, 0.15);
+    padding-top: 8px;
+  }
+
+  .confirm-action-btn {
+    width: 100%;
+    min-height: 42px;
+    font-size: 13px;
+    font-weight: 700;
+    justify-content: center;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+/* Earnings Box Mobile Enhancements */
+.earnings-box {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.earnings-stat-card {
+  padding: 18px 16px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.earnings-stat-card.highlight {
+  background: linear-gradient(135deg, #fffaf5, #f8ede0);
+  border-color: rgba(168, 121, 76, 0.35);
+}
+
+.earnings-stat-card small {
+  font-size: 12px;
+  color: var(--muted);
+  display: block;
+}
+
+.earnings-stat-card strong {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  color: #25221d;
+  margin: 6px 0 2px;
+  display: block;
+}
+
+.earnings-stat-card span {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .earnings-box {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* Bookings List Mobile Enhancements */
+.booking-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+@media (max-width: 650px) {
+  .booking-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 12px 14px;
+  }
+
+  .booking-row-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .booking-row-main strong {
+    font-size: 14px;
+    color: #25221d;
+  }
+
+  .booking-row-main em {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: normal;
+  }
+
+  .booking-row-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px dashed var(--line);
+    padding-top: 6px;
+    font-size: 12px;
+  }
+
+  .booking-row-meta b {
+    color: var(--gold-dark);
+    font-size: 13.5px;
+  }
+}
+
+/* Timings Form Mobile Enhancements */
+.time-inputs-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.time-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3b352e;
+}
+
+.time-form input[type="time"] {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.full-mobile-btn {
+  min-height: 46px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 13.5px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+@media (max-width: 540px) {
+  .time-inputs-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .full-mobile-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Barbers List Mobile Enhancements */
+.barber-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.barber-option:hover {
+  border-color: rgba(168, 121, 76, 0.4);
+}
+
+.barber-option-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.barber-option-left input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+.barber-option-left strong {
+  display: block;
+  font-size: 14px;
+  color: #25221d;
+}
+
+.barber-option-left span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.barber-status-badge {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.barber-status-badge.on {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.barber-status-badge.off {
+  background: #f0ebe4;
+  color: var(--muted);
+}
+
+
 
 
 

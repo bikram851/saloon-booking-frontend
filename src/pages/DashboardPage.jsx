@@ -558,8 +558,13 @@ export default function DashboardPage() {
 
           {activeTab === "appointments" && (
             <div className="info-panel full-width">
-              <h3>Appointment overview</h3>
-              <div className="table-wrap">
+              <div className="panel-title-bar">
+                <h3>Appointment Overview</h3>
+                <span className="eyebrow">{bookings.length} Total</span>
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="desktop-table-wrap">
                 <table>
                   <thead>
                     <tr>
@@ -587,47 +592,88 @@ export default function DashboardPage() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          )}
 
-          {activeTab === "confirm" && (
-            <div className="info-panel full-width">
-              <h3>Confirm appointments</h3>
-              <div className="confirm-list">
-                {confirmQueue.map((entry) => (
-                  <div className="confirm-card" key={entry.id}>
-                    <div>
-                      <strong>{entry.customer}</strong>
-                      <p>{entry.service}</p>
+              {/* Mobile Card View */}
+              <div className="mobile-appt-list">
+                {bookings.map((entry) => (
+                  <div className="mobile-appt-card" key={entry.id}>
+                    <div className="mobile-appt-header">
+                      <strong className="mobile-appt-customer">{entry.customer}</strong>
+                      <span className={entry.status === "Confirmed" ? "status-pill confirmed" : "status-pill pending"}>
+                        {entry.status}
+                      </span>
                     </div>
-                    <div className="confirm-meta">
-                      <span>{entry.time}</span>
-                      <strong>₹{entry.price}</strong>
+                    <div className="mobile-appt-service">
+                      <Scissors size={13} style={{ color: "var(--gold)" }} />
+                      <span>{entry.service}</span>
                     </div>
-                    <button type="button" className="primary small" onClick={() => confirmBooking(entry.id)}>
-                      Confirm
-                    </button>
+                    <div className="mobile-appt-footer">
+                      <span className="mobile-appt-time">⏰ {entry.time}</span>
+                      <strong className="mobile-appt-price">₹{entry.price}</strong>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
+          {activeTab === "confirm" && (
+            <div className="info-panel full-width">
+              <div className="panel-title-bar">
+                <h3>Confirm Appointments</h3>
+                <span className="eyebrow">{confirmQueue.length} Pending</span>
+              </div>
+              <div className="confirm-list">
+                {confirmQueue.map((entry) => (
+                  <div className="confirm-card" key={entry.id}>
+                    <div className="confirm-info">
+                      <strong>{entry.customer}</strong>
+                      <p>{entry.service}</p>
+                    </div>
+                    <div className="confirm-meta">
+                      <span>⏰ {entry.time}</span>
+                      <strong className="confirm-price">₹{entry.price}</strong>
+                    </div>
+                    <button
+                      type="button"
+                      className="primary small confirm-action-btn"
+                      onClick={() => confirmBooking(entry.id)}
+                    >
+                      <CheckCircle2 size={14} /> Confirm
+                    </button>
+                  </div>
+                ))}
+                {confirmQueue.length === 0 && (
+                  <div className="queue-empty-box">
+                    <CheckCircle2 size={32} style={{ color: "#22c55e", margin: "0 auto 8px" }} />
+                    <p>All pending appointments have been confirmed!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {activeTab === "earnings" && (
             <div className="info-panel full-width">
-              <h3>Today earnings</h3>
+              <div className="panel-title-bar">
+                <h3>Today's Earnings & Performance</h3>
+                <span className="eyebrow">Chair #1 Takings</span>
+              </div>
               <div className="earnings-box">
-                <div>
-                  <small>Total revenue</small>
+                <div className="earnings-stat-card highlight">
+                  <small>Total Revenue</small>
                   <strong>₹{todayRevenue}</strong>
+                  <span>Gross daily takings</span>
                 </div>
-                <div>
-                  <small>Confirmed appointments</small>
+                <div className="earnings-stat-card">
+                  <small>Confirmed Services</small>
                   <strong>{confirmedCount}</strong>
+                  <span>Completed or ready</span>
                 </div>
-                <div>
-                  <small>Pending bookings</small>
+                <div className="earnings-stat-card">
+                  <small>Pending Bookings</small>
                   <strong>{pendingCount}</strong>
+                  <span>Awaiting action</span>
                 </div>
               </div>
             </div>
@@ -635,15 +681,24 @@ export default function DashboardPage() {
 
           {activeTab === "bookings" && (
             <div className="info-panel full-width">
-              <h3>Today bookings</h3>
+              <div className="panel-title-bar">
+                <h3>Today's Bookings Schedule</h3>
+                <span className="eyebrow">{bookings.length} Booked</span>
+              </div>
               <div className="booking-list">
                 {bookings.map((entry) => (
                   <div key={entry.id} className="booking-row">
-                    <span>{entry.time}</span>
-                    <strong>{entry.customer}</strong>
-                    <em>{entry.service}</em>
-                    <b>₹{entry.price}</b>
-                    <small>{entry.status}</small>
+                    <div className="booking-row-main">
+                      <strong>{entry.customer}</strong>
+                      <em>{entry.service}</em>
+                    </div>
+                    <div className="booking-row-meta">
+                      <span>⏰ {entry.time}</span>
+                      <b>₹{entry.price}</b>
+                    </div>
+                    <span className={entry.status === "Confirmed" ? "status-pill confirmed" : "status-pill pending"}>
+                      {entry.status}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -652,18 +707,27 @@ export default function DashboardPage() {
 
           {activeTab === "timings" && (
             <div className="info-panel full-width">
-              <h3>Saloon open and close time</h3>
+              <div className="panel-title-bar">
+                <h3>Saloon Operating Timings</h3>
+                <span className="eyebrow">Opening & Closing</span>
+              </div>
               <div className="time-form">
-                <label>
-                  Open time
-                  <input type="time" value={openTime} onChange={(event) => setOpenTime(event.target.value)} />
-                </label>
-                <label>
-                  Close time
-                  <input type="time" value={closeTime} onChange={(event) => setCloseTime(event.target.value)} />
-                </label>
-                <button type="button" className="primary">
-                  Save timings
+                <div className="time-inputs-group">
+                  <label>
+                    Opening Time
+                    <input type="time" value={openTime} onChange={(event) => setOpenTime(event.target.value)} />
+                  </label>
+                  <label>
+                    Closing Time
+                    <input type="time" value={closeTime} onChange={(event) => setCloseTime(event.target.value)} />
+                  </label>
+                </div>
+                <button
+                  type="button"
+                  className="primary full-mobile-btn"
+                  onClick={() => showToast("Salon timings updated successfully!")}
+                >
+                  Save Timings
                 </button>
               </div>
             </div>
@@ -671,20 +735,27 @@ export default function DashboardPage() {
 
           {activeTab === "barbers" && (
             <div className="info-panel full-width">
-              <h3>Available barbers for today</h3>
+              <div className="panel-title-bar">
+                <h3>Available Barbers Today</h3>
+                <span className="eyebrow">{availableNow} Active</span>
+              </div>
               <div className="barber-list">
                 {barbers.map((barber) => (
                   <label key={barber.id} className={barber.available ? "barber-option" : "barber-option disabled"}>
-                    <input
-                      type="checkbox"
-                      checked={barber.available}
-                      onChange={() => toggleBarber(barber.id)}
-                    />
-                    <div>
-                      <strong>{barber.name}</strong>
-                      <span>{barber.role}</span>
+                    <div className="barber-option-left">
+                      <input
+                        type="checkbox"
+                        checked={barber.available}
+                        onChange={() => toggleBarber(barber.id)}
+                      />
+                      <div>
+                        <strong>{barber.name}</strong>
+                        <span>{barber.role}</span>
+                      </div>
                     </div>
-                    <em>{barber.available ? "Available" : "Off duty"}</em>
+                    <em className={barber.available ? "barber-status-badge on" : "barber-status-badge off"}>
+                      {barber.available ? "● Available" : "○ Off Duty"}
+                    </em>
                   </label>
                 ))}
               </div>
