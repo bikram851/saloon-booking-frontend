@@ -84,22 +84,17 @@ export default function SalonCard({ salon, i }) {
     return hours >= 9 && hours < 21;
   }, []);
 
-  // Popular services specified in design requirements:
-  // Haircut, Hair + Beard Cut, De-Tan, Face Scrub, Facial, Hair Spa and Massage
-  const popularChips = [
-    { name: "Haircut", type: "champagne" },
-    { name: "Hair + Beard Cut", type: "terracotta" },
-    { name: "De-Tan", type: "rose" },
-    { name: "Face Scrub", type: "rose" },
-    { name: "Facial", type: "rose" },
-    { name: "Hair Spa", type: "sage" },
-    { name: "Massage", type: "lavender" },
+  const popularChips = salon.servicesSample || [
+    "Haircut",
+    "Hair Spa",
+    "Facial",
+    "Grooming",
   ];
 
   const startingPrice = salon.startingPrice || 650;
 
   return (
-    <article className="salon-card modern-rich-luxury-card" style={{ "--card-delay": `${i * 100}ms` }}>
+    <article className="salon-card warm-luxury-card" style={{ "--card-delay": `${i * 100}ms` }}>
       <div className="salon-image-slider">
         <Link
           to={"/salon/" + salon.id}
@@ -158,7 +153,7 @@ export default function SalonCard({ salon, i }) {
           <Heart size={16} fill={isFavorite ? "currentColor" : "none"} strokeWidth={2.2} />
         </button>
 
-        {/* Sage Availability Badge */}
+        {/* Status Badge */}
         <div className={`salon-live-status-badge ${isOpen ? "open" : "closed"}`}>
           <span className="live-status-dot" />
           <span>{isOpen ? "Open Now" : "Closed"}</span>
@@ -168,27 +163,27 @@ export default function SalonCard({ salon, i }) {
       <div className="salon-info">
         <div className="salon-heading">
           <Link to={"/salon/" + salon.id} className="salon-title-link">
-            <h3 className="salon-title-burgundy">{salon.name}</h3>
+            <h3>{salon.name}</h3>
           </Link>
-          <span className="rating gold-rating">
+          <span className="rating warm-gold-rating">
             <Star size={14} fill="currentColor" /> {salon.rating}
           </span>
         </div>
 
         <p className="muted salon-card-location">
-          <MapPin size={13} className="location-icon" /> {salon.area}
+          <MapPin size={13} className="gold-icon" /> {salon.area}
         </p>
 
         <p className="desc">{salon.description}</p>
 
-        {/* Coloured Service Chips (Soft pastel backgrounds with readable dark text) */}
+        {/* Popular Service Chips (Soft peach and ivory with gold accents) */}
         <div className="salon-service-chips-row" aria-label="Popular services">
-          {popularChips.map((chip) => (
+          {popularChips.map((chip, idx) => (
             <span
-              key={chip.name}
-              className={`service-chip chip-${chip.type}`}
+              key={chip}
+              className={`service-chip ${idx % 2 === 0 ? "chip-peach" : "chip-ivory"}`}
             >
-              {chip.name}
+              {chip}
             </span>
           ))}
         </div>
@@ -205,7 +200,7 @@ export default function SalonCard({ salon, i }) {
               className="outline small salon-explore-btn"
               to={"/salon/" + salon.id}
             >
-              Explore Salon
+              Explore
             </Link>
 
             <Link
@@ -213,7 +208,7 @@ export default function SalonCard({ salon, i }) {
               to={"/book/" + salon.id}
             >
               <CalendarDays size={13} />
-              <span>Book Appointment</span>
+              <span>Book</span>
             </Link>
           </div>
         </div>
