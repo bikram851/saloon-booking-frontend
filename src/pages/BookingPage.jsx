@@ -781,78 +781,84 @@ export default function BookingPage() {
               )}
 
             {/* =============================================
-                DATE + TIME
+                DATE & TIME SECTIONS
             ============================================= */}
 
-            <div className="form-grid">
+            <div className="booking-datetime-group">
               {/* DATE */}
+              <div className="booking-field-block">
+                <label className="booking-field-label">
+                  3. Appointment date
 
-              <label>
-                3. Appointment date
+                  <input
+                    type="date"
+                    min={new Date(
+                      Date.now() -
+                        new Date().getTimezoneOffset() *
+                          60000,
+                    )
+                      .toISOString()
+                      .slice(0, 10)}
+                    required
+                    value={date}
+                    onChange={(e) => {
+                      setDate(e.target.value);
+                      setTime("");
+                    }}
+                  />
+                </label>
+              </div>
 
-                <input
-                  type="date"
-                  min={new Date(
-                    Date.now() -
-                      new Date().getTimezoneOffset() *
-                        60000,
-                  )
-                    .toISOString()
-                    .slice(0, 10)}
-                  required
-                  value={date}
-                  onChange={(e) => {
-                    setDate(e.target.value);
-                    setTime("");
-                  }}
-                />
-              </label>
+              {/* TIME SLOTS */}
+              <div className="booking-field-block time-slot-block">
+                <label className="booking-field-label">
+                  4. Available time
 
-              {/* TIME */}
+                  <div className="time-slot-wrapper">
+                    {!activeBarberId ? (
+                      <p className="muted small-placeholder">
+                        Choose barber first
+                      </p>
+                    ) : loadingSlots ? (
+                      <p className="muted small-placeholder">
+                        Checking availability...
+                      </p>
+                    ) : (
+                      <div className="time-slot-grid">
+                        {timeButtons.map(({ value, available }) => {
+                          const isSelected = time === value;
 
-              <label>
-                4. Available time
-
-                <div className="time-slot-wrapper">
-                  {!activeBarberId ? (
-                    <p className="muted small-placeholder">
-                      Choose barber first
-                    </p>
-                  ) : loadingSlots ? (
-                    <p className="muted small-placeholder">
-                      Checking availability...
-                    </p>
-                  ) : (
-                    <div className="time-slot-grid">
-                      {timeButtons.map(({ value, available }) => {
-                        const isSelected = time === value;
-
-                        return (
-                          <button
-                            key={value}
-                            type="button"
-                            className={`time-slot ${
-                              available ? "available" : "unavailable booked"
-                            } ${isSelected ? "selected" : ""}`}
-                            disabled={!available}
-                            onClick={() => {
-                              if (available) setTime(value);
-                            }}
-                            title={available ? `Select ${value}` : `Time slot ${value} is already booked`}
-                          >
-                            <span className="slot-val-time">{value}</span>
-                            {!available ? (
-                              <span className="slot-state-badge booked">Booked</span>
-                            ) : (
-                              <span className="slot-state-badge free">Free</span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </label>
+                          return (
+                            <button
+                              key={value}
+                              type="button"
+                              className={`time-slot ${
+                                available ? "available" : "unavailable booked"
+                              } ${isSelected ? "selected" : ""}`}
+                              disabled={!available}
+                              onClick={() => {
+                                if (available) setTime(value);
+                              }}
+                              title={
+                                available
+                                  ? `Select ${value}`
+                                  : `Time slot ${value} is already booked`
+                              }
+                            >
+                              <span className="slot-val-time">{value}</span>
+                              {!available && (
+                                <span className="slot-state-badge booked">
+                                  Booked
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </label>
+              </div>
             </div>
 
             {loadingSlots && (

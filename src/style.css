@@ -5705,80 +5705,204 @@ footer .brand {
 }
 
 /* =========================================================
-   GLOW & GRACE — DESKTOP & TABLET AVAILABLE SLOT BUTTONS
-   Elegant Green Appointment Slot Design
+   GLOW & GRACE — TIME SLOT SELECTION & RESPONSIVE GRID
+   Signature Dark & Golden Luxury Theme
 ========================================================= */
 
-@media screen and (min-width: 651px) {
+.booking-datetime-group {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
 
-  /* Available appointment slots */
-  .booking-form button:not(.primary):not(.outline),
-  .booking-form .time-slot,
-  .booking-form .slot-button,
-  .booking-form button.available-slot {
+.booking-field-block {
+  width: 100%;
+}
 
-    background: linear-gradient(135deg, #e7f5eb, #d5eddd) !important;
-    color: #247344 !important;
+.booking-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #25221d;
+}
 
-    border: 1px solid #9bc9a9 !important;
-    border-radius: 10px !important;
+.time-slot-wrapper {
+  width: 100%;
+  margin-top: 4px;
+}
 
-    padding: 12px 18px !important;
-    min-height: 44px;
+/* Base Responsive Time Slot Grid */
+.time-slot-grid {
+  display: grid !important;
+  width: 100% !important;
+  gap: 10px !important;
+  box-sizing: border-box !important;
+}
 
+/* Desktop: 4–5 slots per row depending on available width */
+@media screen and (min-width: 1200px) {
+  .time-slot-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+@media screen and (min-width: 901px) and (max-width: 1199px) {
+  .time-slot-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+/* Tablet: Display 3 slots per row */
+@media screen and (min-width: 651px) and (max-width: 900px) {
+  .time-slot-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+/* Mobile: Exactly 3 slots per row on standard mobile screens (360px, 375px, 390px, 430px) */
+@media screen and (max-width: 650px) {
+  .time-slot-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+}
+
+/* Extremely narrow mobile (320px – 345px): 2 columns */
+@media screen and (max-width: 345px) {
+  .time-slot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+}
+
+/* Compact, Elegant Selectable Slot Button */
+.booking-form button.time-slot,
+.booking-form .time-slot,
+.time-slot {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  padding: 6px 4px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-align: center !important;
+
+  /* State: Available (Light background with elegant gold border) */
+  background: #fffdf9 !important;
+  color: #25221d !important;
+  border: 1.5px solid #d49a5b !important;
+  box-shadow: 0 2px 6px rgba(212, 154, 91, 0.08) !important;
+}
+
+/* Available Slot Hover & Tap Transitions */
+.booking-form button.time-slot:hover:not(:disabled),
+.booking-form .time-slot:hover:not(:disabled),
+.time-slot:hover:not(:disabled) {
+  background: #fdf6ec !important;
+  border-color: #b47535 !important;
+  color: #25221d !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 4px 12px rgba(212, 154, 91, 0.2) !important;
+}
+
+.booking-form button.time-slot:active:not(:disabled),
+.booking-form .time-slot:active:not(:disabled),
+.time-slot:active:not(:disabled) {
+  transform: scale(0.97) !important;
+}
+
+/* State: Selected (Gold background with dark text) */
+.booking-form button.time-slot.selected,
+.booking-form .time-slot.selected,
+.booking-form button.selected,
+.time-slot.selected {
+  background: linear-gradient(135deg, #d49a5b 0%, #b47535 100%) !important;
+  color: #25221d !important;
+  border: 1.5px solid #8c531b !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(180, 117, 53, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+.booking-form .time-slot.selected .slot-val-time,
+.time-slot.selected .slot-val-time {
+  color: #25221d !important;
+  font-weight: 700 !important;
+}
+
+/* State: Booked (Muted grey background, disabled and non-selectable) */
+.booking-form button.time-slot:disabled,
+.booking-form .time-slot:disabled,
+.booking-form .time-slot.booked,
+.time-slot:disabled,
+.time-slot.booked {
+  background: #f1efeb !important;
+  color: #9ca3af !important;
+  border: 1px solid #e3ded6 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  transform: none !important;
+  opacity: 0.65 !important;
+}
+
+/* State: Unavailable (Disabled with reduced opacity) */
+.booking-form .time-slot.unavailable:not(.booked),
+.time-slot.unavailable:not(.booked) {
+  opacity: 0.45 !important;
+  background: #f7f5f1 !important;
+  border: 1px dashed #dcd6cd !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* Slot Time Typography */
+.slot-val-time {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  letter-spacing: -0.2px;
+}
+
+/* Booked Badge */
+.slot-state-badge.booked {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #a8a29e;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+/* Mobile Typography Fine-Tuning */
+@media screen and (max-width: 430px) {
+  .slot-val-time {
+    font-size: 11.5px;
+    letter-spacing: -0.3px;
+  }
+}
+
+@media screen and (max-width: 345px) {
+  .slot-val-time {
     font-size: 12px;
-    font-weight: 700;
-
-    box-shadow: 0 3px 9px rgba(39, 115, 68, 0.07);
-
-    transition: all 0.25s ease;
   }
-
-  /* Hover effect */
-  .booking-form button:not(.primary):not(.outline):hover,
-  .booking-form .time-slot:hover,
-  .booking-form .slot-button:hover,
-  .booking-form button.available-slot:hover {
-
-    background: linear-gradient(135deg, #c9e9d2, #b6dfc2) !important;
-
-    color: #155b32 !important;
-    border-color: #65a87a !important;
-
-    transform: translateY(-2px);
-
-    box-shadow: 0 7px 16px rgba(39, 115, 68, 0.16);
-  }
-
-  /* Selected appointment slot */
-  .booking-form button.selected,
-  .booking-form button.active,
-  .booking-form .time-slot.selected,
-  .booking-form .slot-button.selected {
-
-    background: linear-gradient(135deg, #287a49, #185c35) !important;
-
-    color: #ffffff !important;
-    border: 1px solid #185c35 !important;
-
-    box-shadow: 0 5px 14px rgba(24, 92, 53, 0.22);
-
-  }
-
-  /* Disabled / booked slots */
-  .booking-form button:disabled {
-
-    background: #f1efeb !important;
-    color: #aaa49c !important;
-
-    border: 1px solid #e3ded6 !important;
-
-    box-shadow: none;
-    cursor: not-allowed;
-    transform: none;
-    opacity: 0.7;
-  }
-
 }
 
 /* =========================================================
@@ -5849,69 +5973,7 @@ footer .brand {
 
 }
 
-/* =========================================================
-   GLOW & GRACE — MOBILE AVAILABLE TIME SLOTS
-========================================================= */
 
-@media screen and (max-width: 650px) {
-
-  /* Available slots */
-  .booking-form button.time-slot,
-  .booking-form button.slot-button,
-  .booking-form button.available-slot,
-  .booking-form .time-slot,
-  .booking-form .slot-button {
-
-    background: linear-gradient(135deg, #e4f4e9, #ccebd5) !important;
-    color: #247344 !important;
-
-    border: 1px solid #9bc9a9 !important;
-    border-radius: 10px !important;
-
-    min-height: 44px;
-    padding: 11px 15px !important;
-
-    font-size: 12px !important;
-    font-weight: 700 !important;
-
-    box-shadow: 0 3px 9px rgba(39, 115, 68, 0.08);
-    transition: all 0.2s ease;
-  }
-
-  /* Selected slot */
-  .booking-form button.time-slot.selected,
-  .booking-form button.slot-button.selected,
-  .booking-form button.available-slot.selected,
-  .booking-form .time-slot.selected,
-  .booking-form .slot-button.selected {
-
-    background: linear-gradient(135deg, #287a49, #185c35) !important;
-    color: #ffffff !important;
-
-    border: 1px solid #185c35 !important;
-
-    box-shadow: 0 4px 12px rgba(24, 92, 53, 0.22);
-  }
-
-  /* Hover / tap feedback */
-  .booking-form button.time-slot:active,
-  .booking-form button.slot-button:active,
-  .booking-form button.available-slot:active {
-
-    transform: scale(0.96);
-  }
-
-  /* Unavailable slots */
-  .booking-form button:disabled {
-
-    background: #f1efeb !important;
-    color: #aaa49c !important;
-    border-color: #e3ded6 !important;
-    opacity: 0.65;
-    box-shadow: none;
-  }
-
-}
 /* =========================================================
    GLOW & GRACE — PREMIUM MOBILE BOTTOM NAVIGATION
 ========================================================= */
@@ -10766,48 +10828,7 @@ th {
   color: #78716c;
 }
 
-/* Booking Page Time Slot Badges */
-.time-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 6px 10px;
-  position: relative;
-}
-
-.slot-val-time {
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.slot-state-badge {
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-top: 2px;
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-
-.slot-state-badge.free {
-  color: #15803d;
-  background: #dcfce7;
-}
-
-.slot-state-badge.booked {
-  color: #991b1b;
-  background: #fee2e2;
-}
-
-.time-slot.unavailable.booked {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-  opacity: 0.65;
-  cursor: not-allowed;
-}
+/* (Time slot grid and button styles are consolidated in the dedicated Glow & Grace slot section above) */
 
 /* Responsiveness for Mobile Devices */
 @media (max-width: 768px) {
