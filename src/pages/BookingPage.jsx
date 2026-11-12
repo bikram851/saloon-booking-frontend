@@ -306,6 +306,21 @@ export default function BookingPage() {
       });
 
       setMessage("Your appointment is confirmed!");
+
+      const svcObj = services.find((s) => s.id === Number(serviceId));
+      const newApptEvent = {
+        id: Date.now(),
+        customer: user.name || "Guest Client",
+        service: svcObj?.name || "Haircut & Beard Grooming",
+        time: time,
+        price: svcObj?.price || 650,
+        date: date,
+        createdAt: new Date().toISOString(),
+      };
+      try {
+        localStorage.setItem("gg_incoming_booking", JSON.stringify(newApptEvent));
+        window.dispatchEvent(new CustomEvent("gg_appointment_received", { detail: newApptEvent }));
+      } catch (e) {}
     } catch (err) {
       console.error("Booking failed:", err);
 

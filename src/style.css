@@ -9766,6 +9766,385 @@ th {
   }
 }
 
+/* =========================================================
+   10-Second Incoming Appointment Ring Alert Modal & Banner
+   ========================================================= */
+
+.incoming-ring-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(18, 14, 10, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: ringOverlayFadeIn 0.25s ease-out;
+}
+
+@keyframes ringOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.incoming-ring-card {
+  position: relative;
+  background: linear-gradient(145deg, #1f1a15 0%, #13100c 100%);
+  border: 2px solid #d49a5b;
+  border-radius: 22px;
+  padding: 22px 24px;
+  width: 100%;
+  max-width: 480px;
+  color: #ffffff;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.65), 0 0 40px rgba(212, 154, 91, 0.35);
+  overflow: hidden;
+  animation: ringCardBounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes ringCardBounce {
+  from {
+    transform: translateY(-30px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.ring-pulse-aura {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(212, 154, 91, 0.15) 0%, transparent 65%);
+  pointer-events: none;
+  animation: ringAuraPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes ringAuraPulse {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.ring-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.ring-bell-badge {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d49a5b, #b37336);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(212, 154, 91, 0.4);
+}
+
+.ringing-bell-anim {
+  animation: ringingBellSwing 0.7s infinite ease-in-out;
+  transform-origin: top center;
+}
+
+@keyframes ringingBellSwing {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-22deg); }
+  40% { transform: rotate(22deg); }
+  60% { transform: rotate(-14deg); }
+  80% { transform: rotate(14deg); }
+}
+
+.ring-live-dot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #1f1a15;
+  animation: liveDotPulse 1s infinite alternate;
+}
+
+@keyframes liveDotPulse {
+  from { transform: scale(0.9); opacity: 0.8; }
+  to { transform: scale(1.2); opacity: 1; }
+}
+
+.ring-top-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ring-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #eab308;
+  text-transform: uppercase;
+}
+
+.ring-title {
+  margin: 2px 0 0;
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.ring-quick-mute-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ring-quick-mute-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* 10-Second Countdown Progress Bar */
+.ring-timer-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 16px 0 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.ring-timer-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #eab308, #22c55e);
+  border-radius: 999px;
+  transition: width 0.95s linear;
+}
+
+.ring-countdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  position: relative;
+  z-index: 1;
+  color: #dcd0c2;
+}
+
+.ring-countdown-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.volume-pulse-icon {
+  animation: volumePulse 0.9s infinite alternate;
+  color: #22c55e;
+}
+
+@keyframes volumePulse {
+  from { transform: scale(0.9); opacity: 0.7; }
+  to { transform: scale(1.2); opacity: 1; }
+}
+
+.ring-countdown-seconds {
+  color: #f5c48b;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* Client Details Box */
+.ring-client-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(212, 154, 91, 0.28);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 14px 0 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.ring-client-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d49a5b, #8c5d2d);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ring-client-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.ring-client-name {
+  font-size: 15px;
+  color: #ffffff;
+  display: block;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.ring-client-service {
+  font-size: 12px;
+  color: #dcd0c2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  word-break: break-word;
+}
+
+.ring-client-time {
+  font-size: 11.5px;
+  color: #baa996;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.ring-price-badge {
+  text-align: right;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.ring-price-badge small {
+  font-size: 10px;
+  color: #baa996;
+  display: block;
+  text-transform: uppercase;
+}
+
+.ring-price-badge strong {
+  font-size: 17px;
+  color: #f5c48b;
+  font-weight: 800;
+}
+
+/* Action Buttons */
+.ring-actions-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.ring-accept-action-btn {
+  flex: 1.5;
+  min-height: 46px;
+  font-weight: 700;
+  font-size: 13.5px;
+  justify-content: center;
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  border-color: #16a34a !important;
+  color: #ffffff !important;
+}
+
+.ring-mute-action-btn {
+  flex: 1;
+  min-height: 46px;
+  font-weight: 600;
+  font-size: 12.5px;
+  justify-content: center;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.ring-mute-action-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Banner Test Ring Button */
+.banner-test-ring-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(212, 154, 91, 0.4);
+  color: #fad7b0;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-test-ring-btn:hover {
+  background: rgba(212, 154, 91, 0.25);
+  color: #ffffff;
+}
+
+.ring-pulse-icon {
+  color: #eab308;
+  animation: bellVibrate 1.2s infinite ease-in-out;
+}
+
+@keyframes bellVibrate {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15) rotate(8deg); }
+}
+
+@media (max-width: 580px) {
+  .incoming-ring-overlay {
+    padding: 16px 10px;
+    align-items: flex-start;
+  }
+
+  .incoming-ring-card {
+    padding: 16px 14px;
+    border-radius: 18px;
+  }
+
+  .ring-actions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ring-accept-action-btn,
+  .ring-mute-action-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
 
 
 

@@ -12,10 +12,15 @@ import {
   Coins,
   X,
   Bell,
+  BellRing,
+  Volume2,
+  VolumeX,
+  PhoneCall,
   Calendar,
 } from "lucide-react";
 import { request } from "../api";
 import quickGroomLogo from "../assets/quick_groom.jpg";
+import { ringtoneManager } from "../utils/audioRing";
 
 const navItems = [
   { key: "home", label: "Station Home", icon: Scissors },
@@ -125,10 +130,100 @@ export default function DashboardPage() {
   });
   const [toastMessage, setToastMessage] = useState("");
 
+  /* Incoming Appointment 10-Second Ring Alert State */
+  const [incomingAlert, setIncomingAlert] = useState(null);
+  const [ringRemaining, setRingRemaining] = useState(10);
+
   function showToast(msg) {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 3500);
   }
+
+  function triggerIncomingAppointment(customData) {
+    const demoClients = [
+      { customer: "Vikram Malhotra", service: "Signature Skin Fade & Hot Towel", price: 680, time: "Today 02:30 PM" },
+      { customer: "Rohan Kapoor", service: "Royal Beard Sculpt & Head Spa", price: 740, time: "Today 03:15 PM" },
+      { customer: "Aakash Mehta", service: "Classic Haircut & Charcoal Mask", price: 580, time: "Today 04:00 PM" },
+      { customer: "Devendra Singhania", service: "Executive Grooming & Shave", price: 820, time: "Today 05:30 PM" },
+    ];
+    const picked = customData || demoClients[Math.floor(Math.random() * demoClients.length)];
+    const appt = {
+      id: picked.id || Date.now(),
+      customer: picked.customer || "Walk-in Guest",
+      service: picked.service || "Signature Cut",
+      price: Number(picked.price) || 650,
+      time: picked.time || "Today 02:30 PM",
+      status: "Pending",
+    };
+
+    setIncomingAlert(appt);
+    setRingRemaining(10);
+
+    ringtoneManager.start10SecondRing({
+      onTick: (left) => {
+        setRingRemaining(left);
+      },
+      onEnd: () => {
+        // Automatically add to confirm queue if 10 seconds elapse without action
+        setConfirmQueue((prev) => {
+          if (prev.some((item) => item.id === appt.id)) return prev;
+          return [appt, ...prev];
+        });
+        setIncomingAlert(null);
+        showToast(`🔔 10s ring finished. ${appt.customer}'s booking added to Confirm Queue.`);
+      },
+    });
+  }
+
+  function handleAcceptRing() {
+    if (!incomingAlert) return;
+    ringtoneManager.stop();
+    const confirmedAppt = { ...incomingAlert, status: "Confirmed" };
+    setBookings((prev) => [confirmedAppt, ...prev]);
+    setConfirmQueue((prev) => prev.filter((item) => item.id !== incomingAlert.id));
+    showToast(`💈 Accepted & Confirmed appointment for ${incomingAlert.customer}!`);
+    setIncomingAlert(null);
+  }
+
+  function handleMuteRing() {
+    if (!incomingAlert) return;
+    ringtoneManager.stop();
+    setConfirmQueue((prev) => {
+      if (prev.some((item) => item.id === incomingAlert.id)) return prev;
+      return [incomingAlert, ...prev];
+    });
+    showToast(`🔕 Ring muted. Appointment moved to Confirm Queue.`);
+    setIncomingAlert(null);
+  }
+
+  useEffect(() => {
+    // Listen for custom appointment events dispatched within the app
+    const handleCustomAppt = (e) => {
+      if (e.detail) {
+        triggerIncomingAppointment(e.detail);
+      }
+    };
+
+    // Listen for storage events (e.g. customer booked from another tab or booking modal)
+    const handleStorageAppt = (e) => {
+      if (e.key === "gg_incoming_booking" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          triggerIncomingAppointment(parsed);
+          localStorage.removeItem("gg_incoming_booking");
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("gg_appointment_received", handleCustomAppt);
+    window.addEventListener("storage", handleStorageAppt);
+
+    return () => {
+      window.removeEventListener("gg_appointment_received", handleCustomAppt);
+      window.removeEventListener("storage", handleStorageAppt);
+      ringtoneManager.stop();
+    };
+  }, []);
 
   function finishInChairCut() {
     if (!inChair) return;
@@ -200,6 +295,88 @@ export default function DashboardPage() {
 
   return (
     <main className="barber-dashboard">
+      {/* 10-Second Incoming Appointment Ring Alert Banner */}
+      {incomingAlert && (
+        <div className="incoming-ring-overlay" role="dialog" aria-modal="true" aria-label="Incoming appointment alert">
+          <div className="incoming-ring-card">
+            <div className="ring-pulse-aura" />
+
+            <div className="ring-card-top">
+              <div className="ring-bell-badge">
+                <BellRing size={20} className="ringing-bell-anim" />
+                <span className="ring-live-dot" />
+              </div>
+              <div className="ring-top-info">
+                <span className="ring-eyebrow">NEW APPOINTMENT RECEIVED</span>
+                <h3 className="ring-title">Station #1 Ringing</h3>
+              </div>
+              <button
+                type="button"
+                className="ring-quick-mute-btn"
+                onClick={handleMuteRing}
+                title="Mute 10s Ring"
+              >
+                <VolumeX size={18} />
+              </button>
+            </div>
+
+            {/* Visual 10s Countdown Progress Bar */}
+            <div className="ring-timer-track">
+              <div
+                className="ring-timer-fill"
+                style={{ width: `${(ringRemaining / 10) * 100}%` }}
+              />
+            </div>
+            <div className="ring-countdown-row">
+              <span className="ring-countdown-status">
+                <Volume2 size={13} className="volume-pulse-icon" /> Ringing live on station...
+              </span>
+              <strong className="ring-countdown-seconds">
+                {ringRemaining}s ring
+              </strong>
+            </div>
+
+            {/* Client & Service Info */}
+            <div className="ring-client-box">
+              <div className="ring-client-avatar">
+                {incomingAlert.customer.charAt(0).toUpperCase()}
+              </div>
+              <div className="ring-client-main">
+                <strong className="ring-client-name">{incomingAlert.customer}</strong>
+                <span className="ring-client-service">
+                  <Scissors size={13} style={{ color: "var(--gold)" }} /> {incomingAlert.service}
+                </span>
+                <span className="ring-client-time">
+                  <Clock size={13} /> {incomingAlert.time}
+                </span>
+              </div>
+              <div className="ring-price-badge">
+                <small>Fee</small>
+                <strong>₹{incomingAlert.price}</strong>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="ring-actions-row">
+              <button
+                type="button"
+                className="outline ring-mute-action-btn"
+                onClick={handleMuteRing}
+              >
+                <VolumeX size={15} /> Mute & Queue Later
+              </button>
+              <button
+                type="button"
+                className="primary ring-accept-action-btn"
+                onClick={handleAcceptRing}
+              >
+                <CheckCircle2 size={16} /> Accept & Confirm (₹{incomingAlert.price})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="barber-shell">
         <aside className="barber-sidebar">
           <div className="barber-profile">
@@ -272,6 +449,14 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="barber-banner-actions">
+                    <button
+                      type="button"
+                      className="outline small banner-test-ring-btn"
+                      onClick={() => triggerIncomingAppointment()}
+                      title="Test 10s incoming appointment ring"
+                    >
+                      <BellRing size={14} className="ring-pulse-icon" /> Test 10s Ring
+                    </button>
                     <button
                       type="button"
                       className={stationActive ? "station-active-badge active" : "station-active-badge break"}
@@ -765,15 +950,25 @@ export default function DashboardPage() {
                   <h3>Confirm Appointments</h3>
                   <span className="eyebrow">{confirmQueue.length} Pending Approval</span>
                 </div>
-                {confirmQueue.length > 1 && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                   <button
                     type="button"
-                    className="outline small confirm-all-btn"
-                    onClick={confirmAllBookings}
+                    className="outline small test-ring-btn"
+                    onClick={() => triggerIncomingAppointment()}
+                    title="Simulate incoming appointment with 10s ring"
                   >
-                    <CheckCircle2 size={13} /> Confirm All ({confirmQueue.length})
+                    <BellRing size={13} /> Simulate Booking (10s Ring)
                   </button>
-                )}
+                  {confirmQueue.length > 1 && (
+                    <button
+                      type="button"
+                      className="outline small confirm-all-btn"
+                      onClick={confirmAllBookings}
+                    >
+                      <CheckCircle2 size={13} /> Confirm All ({confirmQueue.length})
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="confirm-list">
                 {confirmQueue.map((entry) => (
