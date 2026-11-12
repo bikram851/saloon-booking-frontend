@@ -53,7 +53,9 @@ export default function Footer() {
           <>
             <div>
               <span>Explore</span>
-              <Link to="/">Home</Link>
+              <Link to="/" onClick={() => window.scrollTo({ top: 0, left: 0, behavior: "smooth" })}>
+                Home
+              </Link>
               <Link to="/#salons">Salons</Link>
               <Link to="/#services">Services</Link>
             </div>

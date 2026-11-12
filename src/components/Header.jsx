@@ -72,10 +72,19 @@ export default function Header() {
 
   const isBarber = (user?.role || "").toUpperCase() === "BARBER";
 
+  const handleHomeClick = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  };
+
   return (
     <header className="header">
       <div className="header-top-row">
-        <Link to="/" className="brand brand-logo" aria-label="Quick Groom home">
+        <Link
+          to={isBarber ? "/dashboard" : "/"}
+          className="brand brand-logo"
+          aria-label="Quick Groom home"
+          onClick={handleHomeClick}
+        >
           <img src={quickGroomLogo} alt="Quick Groom" className="brand-image" />
         </Link>
 
@@ -97,13 +106,13 @@ export default function Header() {
 
         <nav className="desktop-nav">
           {isBarber ? (
-            <Link to="/dashboard" className="nav-barber-dashboard-link">
+            <Link to="/dashboard" className="nav-barber-dashboard-link" onClick={handleHomeClick}>
               <Sparkles size={14} />
               <span>Barber Dashboard</span>
             </Link>
           ) : (
             <>
-              <Link to="/">Discover</Link>
+              <Link to="/" onClick={handleHomeClick}>Home</Link>
               <Link to="/#services">Services</Link>
               <Link to="/#location">Locations</Link>
               <Link to="/my-appointments">My appointments</Link>
@@ -159,7 +168,12 @@ export default function Header() {
             <MapPin size={16} />
             <span>Map</span>
           </NavLink>
-          <NavLink to="/" end className={({ isActive }) => (isActive ? "active home-item" : "home-item")}>
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => (isActive ? "active home-item" : "home-item")}
+            onClick={handleHomeClick}
+          >
             <House size={16} />
             <span>Home</span>
           </NavLink>

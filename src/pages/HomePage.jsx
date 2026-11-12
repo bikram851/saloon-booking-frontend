@@ -52,6 +52,8 @@ export default function HomePage() {
       .catch(() => {});
     if (window.location.hash) {
       window.setTimeout(() => document.querySelector(window.location.hash)?.scrollIntoView({ behavior: "smooth" }), 80);
+    } else {
+      window.scrollTo(0, 0);
     }
   }, []);
 
