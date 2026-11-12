@@ -1,6 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight, Clock, Heart, MapPin, Star } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Heart,
+  MapPin,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import { photos } from "../data/mockData";
 
 function getWishlistIds() {
@@ -13,7 +23,9 @@ function getWishlistIds() {
 }
 
 export default function SalonCard({ salon, i }) {
-  const [isFavorite, setIsFavorite] = useState(() => getWishlistIds().includes(String(salon.id)));
+  const [isFavorite, setIsFavorite] = useState(() =>
+    getWishlistIds().includes(String(salon.id)),
+  );
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const images = useMemo(() => {
@@ -38,7 +50,7 @@ export default function SalonCard({ salon, i }) {
 
     const timer = window.setInterval(() => {
       setActiveImageIndex((prev) => (prev + 1) % images.length);
-    }, 3000);
+    }, 3500);
 
     return () => window.clearInterval(timer);
   }, [images.length]);
@@ -66,8 +78,23 @@ export default function SalonCard({ salon, i }) {
     });
   }
 
+  // Live open status (9:00 AM - 9:00 PM)
+  const isOpen = useMemo(() => {
+    const hours = new Date().getHours();
+    return hours >= 9 && hours < 21;
+  }, []);
+
+  const popularChips = salon.servicesSample || [
+    "Haircut",
+    "Hair Spa",
+    "Facial",
+    "Grooming",
+  ];
+
+  const startingPrice = salon.startingPrice || 650;
+
   return (
-    <article className="salon-card" style={{ "--card-delay": `${i * 120}ms` }}>
+    <article className="salon-card warm-luxury-card" style={{ "--card-delay": `${i * 100}ms` }}>
       <div className="salon-image-slider">
         <Link
           to={"/salon/" + salon.id}
@@ -75,6 +102,7 @@ export default function SalonCard({ salon, i }) {
           style={{
             backgroundImage: `url(${images[activeImageIndex]})`,
           }}
+          aria-label={`View ${salon.name}`}
         />
 
         <button
@@ -122,32 +150,67 @@ export default function SalonCard({ salon, i }) {
           onClick={toggleFavorite}
           aria-label={isFavorite ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart size={17} fill={isFavorite ? "currentColor" : "none"} strokeWidth={2.2} />
+          <Heart size={16} fill={isFavorite ? "currentColor" : "none"} strokeWidth={2.2} />
         </button>
 
-        <span className="tag">Premium salon</span>
+        {/* Status Badge */}
+        <div className={`salon-live-status-badge ${isOpen ? "open" : "closed"}`}>
+          <span className="live-status-dot" />
+          <span>{isOpen ? "Open Now" : "Closed"}</span>
+        </div>
       </div>
 
       <div className="salon-info">
         <div className="salon-heading">
-          <h3>{salon.name}</h3>
-          <span className="rating">
+          <Link to={"/salon/" + salon.id} className="salon-title-link">
+            <h3>{salon.name}</h3>
+          </Link>
+          <span className="rating warm-gold-rating">
             <Star size={14} fill="currentColor" /> {salon.rating}
           </span>
         </div>
 
-        <p className="muted">
-          <MapPin size={14} /> {salon.area}
+        <p className="muted salon-card-location">
+          <MapPin size={13} className="gold-icon" /> {salon.area}
         </p>
+
         <p className="desc">{salon.description}</p>
 
-        <div className="card-bottom">
-          <span className="muted">
-            <Clock size={14} /> 45–90 min
-          </span>
-          <Link className="text-link" to={"/salon/" + salon.id}>
-            Explore salon <ArrowRight size={15} />
-          </Link>
+        {/* Popular Service Chips (Soft peach and ivory with gold accents) */}
+        <div className="salon-service-chips-row" aria-label="Popular services">
+          {popularChips.map((chip, idx) => (
+            <span
+              key={chip}
+              className={`service-chip ${idx % 2 === 0 ? "chip-peach" : "chip-ivory"}`}
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
+
+        {/* Starting Price & CTAs */}
+        <div className="salon-card-footer">
+          <div className="salon-price-block">
+            <span className="price-label">Starts at</span>
+            <strong className="price-value">₹{startingPrice}</strong>
+          </div>
+
+          <div className="salon-actions-group">
+            <Link
+              className="outline small salon-explore-btn"
+              to={"/salon/" + salon.id}
+            >
+              Explore
+            </Link>
+
+            <Link
+              className="primary small salon-book-btn"
+              to={"/book/" + salon.id}
+            >
+              <CalendarDays size={13} />
+              <span>Book</span>
+            </Link>
+          </div>
         </div>
       </div>
     </article>

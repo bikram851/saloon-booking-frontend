@@ -3,46 +3,41 @@
 
 
 :root {
+  /* =========================================================================
+     WARM LUXURY DESIGN SYSTEM
+     ========================================================================= */
+  --color-primary: #D9B68C;
+  --color-secondary: #F7D9CE;
+  --color-accent: #C77D82;
+  --color-gold: #B68A4A;
+  --color-background: #FFFBF7;
+  --color-surface: #FFFFFF;
+  --color-text: #292522;
+  --color-muted: #817873;
+  --color-success: #739B7A;
+  --color-border: #EDE3D9;
+  --color-soft: #F8F0E9;
 
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
 
+  --radius-card: 18px;
+  --radius-button: 12px;
 
-  font-family: 'DM Sans', sans-serif;
+  /* Legacy & compatibility aliases */
+  --gold: var(--color-gold);
+  --gold-dark: #9c7339;
+  --cream: var(--color-soft);
+  --muted: var(--color-muted);
+  --line: var(--color-border);
+  --brown: var(--color-text);
+  --brown-dark: #1f1b18;
 
-
-
-  color: #252522;
-
-
-
-  background: #fbf8f3;
-
-
-
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-background);
   font-synthesis: none;
-
-
-
   text-rendering: optimizeLegibility;
-
-
-
-  --gold: #a8794c;
-
-
-
-  --gold-dark: #805631;
-
-
-
-  --cream: #f2e9dc;
-
-
-
-  --muted: #77756f;
-
-
-
-  --line: #e7dfd4
 }
 
 em, i {
@@ -507,89 +502,46 @@ button {
 
 
 .outline,
-
-
-
 .primary {
-
-
-
   display: inline-flex;
-
-
-
   align-items: center;
-
-
-
   justify-content: center;
-
-
-
-  gap: 9px;
-
-
-
-  border: 1px solid #d9c8b4;
-
-
-
+  gap: 8px;
+  border-radius: var(--radius-button);
   padding: 12px 18px;
-
-
-
-  border-radius: 5px;
-
-
-
-  background: transparent;
-
-
-
-  color: #433a30;
-
-
-
-  font-size: 12px;
-
-
-
-  font-weight: 600
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-
+.outline {
+  background: var(--color-surface);
+  border: 1px solid var(--color-gold);
+  color: var(--color-text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
 
 .outline:hover {
-
-
-
-  background: #f1e8dc
+  background: var(--color-soft);
+  border-color: var(--color-gold);
+  color: var(--color-text);
+  transform: translateY(-1px);
 }
-
-
 
 .primary {
-
-
-
-  background: var(--gold);
-
-
-
-  color: white;
-
-
-
-  border-color: var(--gold)
+  background: var(--color-primary);
+  color: var(--color-text) !important;
+  border: 1px solid rgba(182, 138, 74, 0.45);
+  box-shadow: 0 4px 14px rgba(217, 182, 140, 0.35);
 }
 
-
-
 .primary:hover {
-
-
-
-  background: var(--gold-dark)
+  background: #cfab7f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(182, 138, 74, 0.3);
+  color: var(--color-text) !important;
 }
 
 
@@ -12649,6 +12601,862 @@ th {
     gap: 10px;
   }
 }
+
+/* =========================================================================
+   WARM LUXURY DESIGN SYSTEM – COMPREHENSIVE COMPONENT STYLESHEET
+   ========================================================================= */
+
+/* 1. Global Typography & Core Elements */
+body, #root, .homepage-wrapper, .booking-layout, .detail-page, .page-shell {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4,
+.hero-title,
+.section-top h2,
+.package-title,
+.salon-heading h3,
+.explore-hero-title,
+.explore-menu-title,
+.panel h2 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+  letter-spacing: -0.015em;
+}
+
+.hero-highlight, h1 em, h2 em {
+  font-family: var(--font-heading);
+  font-style: italic;
+  color: var(--color-gold);
+}
+
+.eyebrow {
+  color: var(--color-gold);
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* 2. Primary & Secondary Buttons */
+.primary,
+button.primary,
+a.primary {
+  background: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  border: 1px solid rgba(182, 138, 74, 0.45) !important;
+  border-radius: var(--radius-button) !important;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(217, 182, 140, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.primary:hover,
+button.primary:hover,
+a.primary:hover {
+  background: #cfab7f !important;
+  color: var(--color-text) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(182, 138, 74, 0.32);
+}
+
+.outline,
+button.outline,
+a.outline {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-gold) !important;
+  color: var(--color-text) !important;
+  border-radius: var(--radius-button) !important;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.outline:hover,
+button.outline:hover,
+a.outline:hover {
+  background: var(--color-soft) !important;
+  border-color: var(--color-gold) !important;
+  color: var(--color-text) !important;
+  transform: translateY(-1px);
+}
+
+/* 3. Inputs, Selects & Forms */
+input, select, textarea {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(217, 182, 140, 0.25);
+}
+
+/* 4. Navigation (Desktop & Mobile) */
+.header {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 12px rgba(41, 37, 34, 0.03);
+}
+
+.desktop-location-pill {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+
+.desktop-location-inline-change {
+  background: var(--color-soft);
+  color: var(--color-gold);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.mobile-bottom-nav {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -4px 18px rgba(41, 37, 34, 0.05);
+}
+
+.mobile-bottom-nav a.active,
+.mobile-bottom-nav a.active span,
+.mobile-bottom-nav a.active svg {
+  color: var(--color-gold) !important;
+  font-weight: 700;
+}
+
+/* 5. Homepage Warm Luxury Components */
+.homepage-wrapper {
+  overflow-x: hidden;
+}
+
+.warm-luxury-hero {
+  background: var(--color-background);
+  padding: 40px 6.2% 48px;
+}
+
+.hero-greeting-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gold);
+  margin-bottom: 12px;
+}
+
+.gold-sparkle, .star-gold {
+  color: var(--color-gold);
+}
+
+.warm-searchbox {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-button) !important;
+  box-shadow: 0 8px 24px rgba(182, 138, 74, 0.08) !important;
+  padding: 6px 6px 6px 16px;
+}
+
+.search-icon {
+  color: var(--color-gold);
+}
+
+.warm-searchbox input {
+  border: none !important;
+  padding: 8px !important;
+  background: transparent !important;
+}
+
+.warm-searchbox .search-btn {
+  background: var(--color-primary);
+  color: var(--color-text);
+  border: 1px solid rgba(182, 138, 74, 0.4);
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.warm-searchbox .search-btn:hover {
+  background: #cfab7f;
+}
+
+.hero-trust .trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  color: var(--color-text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.hero-image-frame {
+  position: relative;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(182, 138, 74, 0.12);
+  border: 2px solid var(--color-border);
+}
+
+.hero-main-photo {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  display: block;
+}
+
+.warm-image-note {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(41, 37, 34, 0.08);
+}
+
+.warm-image-note .note-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Benefits Section */
+.warm-benefits {
+  margin: 0 6.2%;
+  padding: 24px 2%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.benefit-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+}
+
+.benefit-card .benefit-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-gold);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+/* Promotional Offers & Packages Section (Soft Peach Background) */
+.promotional-offers-section {
+  padding: 60px 6.2%;
+  background: linear-gradient(180deg, var(--color-soft) 0%, #FFF7F2 100%);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.promo-badge-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-secondary);
+  color: var(--color-text);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(199, 125, 130, 0.3);
+}
+
+.promo-packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.promo-package-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 6px 22px rgba(182, 138, 74, 0.06);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.promo-package-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(182, 138, 74, 0.12);
+  border-color: var(--color-primary);
+}
+
+.package-ribbon {
+  display: inline-block;
+  background: var(--color-secondary);
+  color: var(--color-text);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  align-self: flex-start;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(199, 125, 130, 0.25);
+}
+
+.package-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--color-text);
+}
+
+.package-desc {
+  font-size: 12.5px;
+  color: var(--color-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.package-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.package-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--color-muted);
+}
+
+.package-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--color-soft);
+  color: var(--color-gold);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px dashed var(--color-gold);
+}
+
+.package-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border);
+  padding-top: 14px;
+}
+
+.package-original {
+  text-decoration: line-through;
+  color: #a8a09a;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.package-deal {
+  font-size: 20px;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+/* Service Category Cards */
+.service-categories-section {
+  padding: 60px 6.2%;
+  background: var(--color-background);
+}
+
+.service-category-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.service-cat-card {
+  padding: 22px 18px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.service-cat-card.card-peach {
+  background: #FFF5F0;
+  border-color: rgba(247, 217, 206, 0.8);
+}
+
+.service-cat-card.card-ivory {
+  background: var(--color-soft);
+  border-color: var(--color-border);
+}
+
+.service-cat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(182, 138, 74, 0.1);
+  border-color: var(--color-gold);
+}
+
+.cat-icon-bubble {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-gold);
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.service-cat-card b {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  color: var(--color-text);
+  margin-bottom: 5px;
+}
+
+.service-cat-card small {
+  font-size: 11.5px;
+  color: var(--color-muted);
+  line-height: 1.4;
+}
+
+/* 6. Salon Cards – Warm Luxury Redesign */
+.salon-card.warm-luxury-card {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 4px 20px rgba(182, 138, 74, 0.08) !important;
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  opacity: 1 !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.salon-card.warm-luxury-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(182, 138, 74, 0.14) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.salon-live-status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+}
+
+.salon-live-status-badge.open {
+  background: rgba(234, 247, 237, 0.92);
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.salon-live-status-badge.closed {
+  background: rgba(254, 243, 199, 0.92);
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.live-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.salon-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.warm-gold-rating {
+  color: var(--color-gold) !important;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.salon-card-location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--color-muted);
+  margin-bottom: 8px;
+}
+
+.gold-icon {
+  color: var(--color-gold);
+}
+
+.salon-service-chips-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 16px;
+}
+
+.service-chip {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+.service-chip.chip-peach {
+  background: var(--color-secondary);
+  color: #7c3a40;
+  border: 1px solid rgba(199, 125, 130, 0.3);
+}
+
+.service-chip.chip-ivory {
+  background: var(--color-soft);
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+}
+
+.salon-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border);
+  padding-top: 14px;
+  margin-top: auto;
+}
+
+.salon-price-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-label {
+  font-size: 10px;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.salon-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.salon-explore-btn {
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+}
+
+.salon-book-btn {
+  padding: 8px 14px !important;
+  font-size: 12px !important;
+  gap: 4px !important;
+}
+
+/* 7. Popular Services Showcase */
+.popular-services-section {
+  padding: 60px 6.2%;
+  background: var(--color-background);
+}
+
+.popular-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.popular-service-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(182, 138, 74, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.popular-service-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+}
+
+.service-tag-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--color-secondary);
+  color: #7c3a40;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.popular-service-body h3 {
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.popular-service-body p {
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.service-duration-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #9c948e;
+}
+
+.popular-service-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+  margin-top: 14px;
+}
+
+.popular-service-action strong {
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+/* 8. Customer Testimonials */
+.testimonials-section {
+  padding: 60px 6.2%;
+  background: linear-gradient(180deg, var(--color-background) 0%, var(--color-soft) 100%);
+  border-top: 1px solid var(--color-border);
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.testimonial-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 18px rgba(182, 138, 74, 0.05);
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.testimonial-comment {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text);
+  font-style: italic;
+  margin: 0 0 18px;
+  flex: 1;
+}
+
+.testimonial-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+}
+
+.testimonial-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+
+/* 9. Location CTA */
+.warm-location-cta {
+  background: linear-gradient(135deg, var(--color-soft) 0%, #FFF3EC 100%) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  margin: 0 6.2% 60px !important;
+  padding: 44px !important;
+}
+
+/* 10. Barber Cards & Booking Page Theme Overrides */
+.barber-select-card {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 4px 16px rgba(182, 138, 74, 0.05) !important;
+}
+
+.barber-select-card.selected {
+  border: 2px solid var(--color-gold) !important;
+  background: #FFFDF9 !important;
+  box-shadow: 0 0 0 4px rgba(217, 182, 140, 0.3), 0 8px 20px rgba(182, 138, 74, 0.12) !important;
+}
+
+.barber-card-avatar {
+  border-radius: 50% !important;
+  border: 2px solid var(--color-border) !important;
+}
+
+.barber-card-avatar-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+/* Selected Time Slots: Champagne gold background and dark charcoal text */
+.slot-grid-btn.is-selected,
+.time-slot-btn.is-selected {
+  background: var(--color-primary) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-gold) !important;
+  box-shadow: 0 0 0 3px rgba(217, 182, 140, 0.35), 0 4px 12px rgba(182, 138, 74, 0.2) !important;
+  font-weight: 700 !important;
+}
+
+.slot-grid-btn,
+.time-slot-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius-button);
+}
+
+.booking-main,
+.booking-summary,
+.panel {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 6px 24px rgba(182, 138, 74, 0.06) !important;
+}
+
+/* 11. Mobile Responsiveness */
+@media (max-width: 768px) {
+  .warm-luxury-hero {
+    padding: 24px 14px 32px;
+  }
+
+  .warm-benefits {
+    margin: 0 14px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px 8px;
+  }
+
+  .benefit-card {
+    justify-content: flex-start;
+  }
+
+  .promotional-offers-section,
+  .service-categories-section,
+  .popular-services-section,
+  .testimonials-section,
+  .section {
+    padding: 36px 14px;
+  }
+
+  .warm-location-cta {
+    margin: 0 14px 40px !important;
+    padding: 24px 16px !important;
+  }
+
+  .hero-main-photo {
+    height: 240px;
+  }
+}
+
 
 
 
