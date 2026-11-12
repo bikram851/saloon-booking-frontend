@@ -246,7 +246,7 @@ export default function HomePage() {
 
             <span className="hero-tagline eyebrow">
               <span className="eyebrow-line" />
-              WARM LUXURY SALON EXPERIENCES
+              YOUR MOMENT OF BEAUTY
             </span>
           </div>
 

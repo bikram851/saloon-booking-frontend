@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   CalendarDays,
   Heart,
@@ -31,6 +31,8 @@ export default function Header() {
   });
   const [isLocating, setIsLocating] = useState(false);
   const navigate = useNavigate();
+  const locationObj = useLocation();
+  const isAuthPage = locationObj.pathname === "/login";
 
   useEffect(() => {
     const refreshAuth = () => {
@@ -151,7 +153,7 @@ export default function Header() {
 
         <div className="header-actions">
           {!isStaff && (
-            <Link className="primary small desktop-book-cta" to="/#salons">
+            <Link className="primary small mmt-btn-orange desktop-book-cta" to="/#salons">
               <CalendarDays size={14} />
               <span>Book Appointment</span>
             </Link>
@@ -176,7 +178,7 @@ export default function Header() {
         </div>
       </div>
 
-      {!isStaff && (
+      {!isStaff && !isAuthPage && (
         <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
           <NavLink
             to="/"
