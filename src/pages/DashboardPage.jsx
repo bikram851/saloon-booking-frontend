@@ -11,18 +11,20 @@ import {
   CheckCircle2,
   Coins,
   X,
+  Bell,
+  Calendar,
 } from "lucide-react";
 import { request } from "../api";
 import quickGroomLogo from "../assets/quick_groom.jpg";
 
 const navItems = [
-  { key: "home", label: "Home" },
-  { key: "appointments", label: "Appointments" },
-  { key: "confirm", label: "Confirm Appointments" },
-  { key: "earnings", label: "Today Earnings" },
-  { key: "bookings", label: "Today Bookings" },
-  { key: "timings", label: "Salon Timings" },
-  { key: "barbers", label: "Available Barbers" },
+  { key: "home", label: "Station Home", icon: Scissors },
+  { key: "appointments", label: "Appointments", icon: Calendar },
+  { key: "confirm", label: "Confirm", badgeKey: "confirm", icon: Bell },
+  { key: "earnings", label: "Today Earnings", icon: Coins },
+  { key: "bookings", label: "Schedule", icon: Clock },
+  { key: "timings", label: "Salon Timings", icon: Sparkles },
+  { key: "barbers", label: "Available Barbers", icon: User },
 ];
 
 const initialBookings = [
@@ -190,16 +192,25 @@ export default function DashboardPage() {
           </div>
 
           <nav className="barber-nav" aria-label="Barber dashboard navigation">
-            {navItems.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                className={activeTab === item.key ? "barber-tab active" : "barber-tab"}
-                onClick={() => setActiveTab(item.key)}
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) => {
+              const IconComp = item.icon;
+              const badgeCount = item.badgeKey === "confirm" ? confirmQueue.length : 0;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  className={activeTab === item.key ? "barber-tab active" : "barber-tab"}
+                  onClick={() => {
+                    setActiveTab(item.key);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                >
+                  {IconComp && <IconComp size={15} className="barber-tab-icon" />}
+                  <span>{item.label}</span>
+                  {badgeCount > 0 && <span className="barber-tab-badge">{badgeCount}</span>}
+                </button>
+              );
+            })}
           </nav>
         </aside>
 
@@ -305,10 +316,21 @@ export default function DashboardPage() {
                         <Scissors size={14} className="spin-slow" /> LIVE IN CHAIR
                       </span>
                       <span className="chair-timer">
-                        <Clock size={13} /> Started at {inChair.startedAt || "10:15 AM"}
+                        <Clock size={13} /> Started at {inChair.startedAt || "10:15 AM"} · ~15m left
                       </span>
                     </div>
                     <span className="chair-price-tag">₹{inChair.price}</span>
+                  </div>
+
+                  {/* Visual Cut Progress Bar */}
+                  <div className="chair-progress-wrap">
+                    <div className="chair-progress-bar">
+                      <div className="chair-progress-fill" style={{ width: "65%" }} />
+                    </div>
+                    <div className="chair-progress-labels">
+                      <small>Fade & Beard Sculpt in progress</small>
+                      <small>65% completed</small>
+                    </div>
                   </div>
 
                   <div className="barber-chair-body">
@@ -319,18 +341,30 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="barber-chair-actions">
-                      <button
-                        type="button"
-                        className="outline small chair-addon-btn"
-                        onClick={() => {
-                          setInChair({ ...inChair, price: inChair.price + 150, service: inChair.service + " + Hot Towel" });
-                          showToast("♨️ Added Hot Towel & Beard Oil (+₹150)!");
-                        }}
-                      >
-                        + Add Hot Towel (+₹150)
-                      </button>
+                      <div className="chair-addons-row">
+                        <button
+                          type="button"
+                          className="outline small chair-addon-btn"
+                          onClick={() => {
+                            setInChair({ ...inChair, price: inChair.price + 150, service: inChair.service + " + Hot Towel" });
+                            showToast("♨️ Added Hot Towel Steamer (+₹150)!");
+                          }}
+                        >
+                          <Flame size={13} /> + Hot Towel (+₹150)
+                        </button>
+                        <button
+                          type="button"
+                          className="outline small chair-addon-btn"
+                          onClick={() => {
+                            setInChair({ ...inChair, price: inChair.price + 100, service: inChair.service + " + Beard Balm" });
+                            showToast("🧴 Added Organic Beard Balm (+₹100)!");
+                          }}
+                        >
+                          <Sparkles size={13} /> + Beard Balm (+₹100)
+                        </button>
+                      </div>
                       <button type="button" className="primary chair-finish-btn" onClick={finishInChairCut}>
-                        <CheckCircle2 size={16} /> Finish Cut & Bill
+                        <CheckCircle2 size={16} /> Finish Cut & Collect ₹{inChair.price}
                       </button>
                     </div>
                   </div>
@@ -763,6 +797,17 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
+
+      {/* Mobile Floating Action Button (FAB) for Instant Walk-In */}
+      <button
+        type="button"
+        className="barber-mobile-fab"
+        onClick={() => setShowWalkIn(true)}
+        aria-label="Add Walk-in Cut"
+      >
+        <Scissors size={18} />
+        <span>+ Walk-in</span>
+      </button>
     </main>
   );
 }

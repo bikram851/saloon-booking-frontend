@@ -146,56 +146,40 @@ export default function Header() {
         </div>
       </div>
 
-      <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
-        {isBarber ? (
-          <>
-            <NavLink
-              to="/dashboard"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              <Sparkles size={16} />
-              <span>Barber Dashboard</span>
-            </NavLink>
+      {!isBarber && (
+        <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
+          <NavLink
+            to="/my-appointments"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            <CalendarDays size={16} />
+            <span>Bookings</span>
+          </NavLink>
+          <NavLink to={{ pathname: "/", hash: "#location" }} className={({ isActive }) => (isActive ? "active" : "")}>
+            <MapPin size={16} />
+            <span>Map</span>
+          </NavLink>
+          <NavLink to="/" end className={({ isActive }) => (isActive ? "active home-item" : "home-item")}>
+            <House size={16} />
+            <span>Home</span>
+          </NavLink>
+          <NavLink to="/wishlist" className={({ isActive }) => (isActive ? "active" : "")}>
+            <Heart size={16} />
+            <span>Wishlist</span>
+          </NavLink>
+          {token ? (
             <button type="button" className="mobile-nav-signout" onClick={logout}>
               <LogOut size={16} />
-              <span>Sign out</span>
+              <span>Out</span>
             </button>
-          </>
-        ) : (
-          <>
-            <NavLink
-              to="/my-appointments"
-              className={({ isActive }) => (isActive ? "active" : "")}
-            >
-              <CalendarDays size={16} />
-              <span>Bookings</span>
+          ) : (
+            <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
+              <UserRound size={16} />
+              <span>Profile</span>
             </NavLink>
-            <NavLink to={{ pathname: "/", hash: "#location" }} className={({ isActive }) => (isActive ? "active" : "")}>
-              <MapPin size={16} />
-              <span>Map</span>
-            </NavLink>
-            <NavLink to="/" end className={({ isActive }) => (isActive ? "active home-item" : "home-item")}>
-              <House size={16} />
-              <span>Home</span>
-            </NavLink>
-            <NavLink to="/wishlist" className={({ isActive }) => (isActive ? "active" : "")}>
-              <Heart size={16} />
-              <span>Wishlist</span>
-            </NavLink>
-            {token ? (
-              <button type="button" className="mobile-nav-signout" onClick={logout}>
-                <LogOut size={16} />
-                <span>Out</span>
-              </button>
-            ) : (
-              <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
-                <UserRound size={16} />
-                <span>Profile</span>
-              </NavLink>
-            )}
-          </>
-        )}
-      </nav>
+          )}
+        </nav>
+      )}
     </header>
   );
 }
