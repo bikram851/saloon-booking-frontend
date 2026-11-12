@@ -220,7 +220,7 @@ export default function LoginPage() {
         </p>
 
         <Link to="/" className="back-link">
-          ← Back to salon discovery
+          {selectedRole === "BARBER" ? "← Back to home" : "← Back to salon discovery"}
         </Link>
       </div>
     </main>

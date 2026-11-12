@@ -79,44 +79,13 @@ export default function Header() {
           <img src={quickGroomLogo} alt="Quick Groom" className="brand-image" />
         </Link>
 
-        <div className="mobile-header-location">
-          <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
-          <strong>{isLocating ? "Locating..." : location}</strong>
-          <button
-            type="button"
-            className="mobile-header-location-change"
-            onClick={pickFromGoogleMaps}
-            disabled={isLocating}
-            title="Pick current location from Google Maps"
-          >
-            {isLocating ? "Locating..." : "Change location"}
-          </button>
-        </div>
-
-        <nav className="desktop-nav">
-          <Link to="/">Discover</Link>
-          <Link to="/#services">Services</Link>
-          <Link to="/#location">Locations</Link>
-          {isBarber ? (
-            <Link to="/dashboard" className="nav-barber-dashboard-link">
-              <Sparkles size={14} />
-              <span>Barber Dashboard</span>
-            </Link>
-          ) : (
-            <Link to="/my-appointments">My appointments</Link>
-          )}
-          <Link to="/wishlist" className="nav-wishlist-link">
-            <Heart size={14} />
-            <span>Wishlist</span>
-          </Link>
-          <div className="desktop-location-pill">
+        {!isBarber && (
+          <div className="mobile-header-location">
             <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
-            <strong className="desktop-location-value">
-              {isLocating ? "Locating via Google Maps..." : location}
-            </strong>
+            <strong>{isLocating ? "Locating..." : location}</strong>
             <button
               type="button"
-              className="desktop-location-inline-change"
+              className="mobile-header-location-change"
               onClick={pickFromGoogleMaps}
               disabled={isLocating}
               title="Pick current location from Google Maps"
@@ -124,6 +93,41 @@ export default function Header() {
               {isLocating ? "Locating..." : "Change location"}
             </button>
           </div>
+        )}
+
+        <nav className="desktop-nav">
+          {isBarber ? (
+            <Link to="/dashboard" className="nav-barber-dashboard-link">
+              <Sparkles size={14} />
+              <span>Barber Dashboard</span>
+            </Link>
+          ) : (
+            <>
+              <Link to="/">Discover</Link>
+              <Link to="/#services">Services</Link>
+              <Link to="/#location">Locations</Link>
+              <Link to="/my-appointments">My appointments</Link>
+              <Link to="/wishlist" className="nav-wishlist-link">
+                <Heart size={14} />
+                <span>Wishlist</span>
+              </Link>
+              <div className="desktop-location-pill">
+                <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
+                <strong className="desktop-location-value">
+                  {isLocating ? "Locating via Google Maps..." : location}
+                </strong>
+                <button
+                  type="button"
+                  className="desktop-location-inline-change"
+                  onClick={pickFromGoogleMaps}
+                  disabled={isLocating}
+                  title="Pick current location from Google Maps"
+                >
+                  {isLocating ? "Locating..." : "Change location"}
+                </button>
+              </div>
+            </>
+          )}
         </nav>
 
         <div className="header-actions">
@@ -143,35 +147,53 @@ export default function Header() {
       </div>
 
       <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
-        <NavLink
-          to={isBarber ? "/dashboard" : "/my-appointments"}
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          {isBarber ? <Sparkles size={16} /> : <CalendarDays size={16} />}
-          <span>{isBarber ? "Dashboard" : "Bookings"}</span>
-        </NavLink>
-        <NavLink to={{ pathname: "/", hash: "#location" }} className={({ isActive }) => (isActive ? "active" : "")}>
-          <MapPin size={16} />
-          <span>Map</span>
-        </NavLink>
-        <NavLink to="/" end className={({ isActive }) => (isActive ? "active home-item" : "home-item")}>
-          <House size={16} />
-          <span>Home</span>
-        </NavLink>
-        <NavLink to="/wishlist" className={({ isActive }) => (isActive ? "active" : "")}>
-          <Heart size={16} />
-          <span>Wishlist</span>
-        </NavLink>
-        {token ? (
-          <button type="button" className="mobile-nav-signout" onClick={logout}>
-            <LogOut size={16} />
-            <span>Out</span>
-          </button>
+        {isBarber ? (
+          <>
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              <Sparkles size={16} />
+              <span>Barber Dashboard</span>
+            </NavLink>
+            <button type="button" className="mobile-nav-signout" onClick={logout}>
+              <LogOut size={16} />
+              <span>Sign out</span>
+            </button>
+          </>
         ) : (
-          <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
-            <UserRound size={16} />
-            <span>Profile</span>
-          </NavLink>
+          <>
+            <NavLink
+              to="/my-appointments"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              <CalendarDays size={16} />
+              <span>Bookings</span>
+            </NavLink>
+            <NavLink to={{ pathname: "/", hash: "#location" }} className={({ isActive }) => (isActive ? "active" : "")}>
+              <MapPin size={16} />
+              <span>Map</span>
+            </NavLink>
+            <NavLink to="/" end className={({ isActive }) => (isActive ? "active home-item" : "home-item")}>
+              <House size={16} />
+              <span>Home</span>
+            </NavLink>
+            <NavLink to="/wishlist" className={({ isActive }) => (isActive ? "active" : "")}>
+              <Heart size={16} />
+              <span>Wishlist</span>
+            </NavLink>
+            {token ? (
+              <button type="button" className="mobile-nav-signout" onClick={logout}>
+                <LogOut size={16} />
+                <span>Out</span>
+              </button>
+            ) : (
+              <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
+                <UserRound size={16} />
+                <span>Profile</span>
+              </NavLink>
+            )}
+          </>
         )}
       </nav>
     </header>
