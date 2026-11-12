@@ -189,14 +189,19 @@ export default function HomePage() {
       {/* 1. EDITORIAL HERO SECTION */}
       <section className="hero modern-editorial-hero">
         <div className="hero-copy">
-          <div className="hero-greeting-pill">
-            <Sparkles size={14} className="gold-accent-icon" />
-            <span>
-              {greeting}, {user.name?.trim() || "there"}!
+          <div className="hero-header-banner">
+            <div className="hero-greeting-pill">
+              <Sparkles size={14} className="gold-accent-icon" />
+              <span>
+                {greeting}, {user.name?.trim() || "there"}!
+              </span>
+            </div>
+
+            <span className="hero-tagline eyebrow">
+              <span className="eyebrow-line" />
+              YOUR MOMENT OF BEAUTY
             </span>
           </div>
-
-          <span className="eyebrow">MODERN RICH LUXURY</span>
 
           {/* Heading required by prompt */}
           <h1 className="hero-title editorial-heading">
