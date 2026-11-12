@@ -73,9 +73,11 @@ export default function BookingPage() {
   const [error, setError] = useState("");
   const [booking, setBooking] = useState(false);
 
+  const [confirmedAppt, setConfirmedAppt] = useState(null);
+
   const activeBarberId =
     selectedBarber === "any"
-      ? barbers[0]?.id ?? ""
+      ? "any"
       : selectedBarber;
 
   /* =========================================================
@@ -287,31 +289,33 @@ export default function BookingPage() {
     try {
       setBooking(true);
 
-      await request("/appointments", {
+      const res = await request("/appointments", {
         method: "POST",
-
         body: JSON.stringify({
           customerId: user.id,
+          customerName: user.name || user.fullName || "Valued Client",
           salonId: Number(id),
           serviceId: Number(serviceId),
-          barberId: Number(
-            selectedBarber === "any"
-              ? barbers[0]?.id ?? 0
-              : selectedBarber,
-          ),
+          barberId: selectedBarber === "any" ? "any" : Number(selectedBarber),
           appointmentDate: date,
           appointmentTime: time,
           notes: notes.trim(),
         }),
       });
 
+      setConfirmedAppt(res);
       setMessage("Your appointment is confirmed!");
 
       const svcObj = services.find((s) => s.id === Number(serviceId));
+      const assignedBarberName = res?.assignedBarber?.name || res?.barber?.name || "Alex Rivera";
+      const assignedChair = res?.assignedBarber?.chair || res?.barber?.chair || "Chair #1";
+
       const newApptEvent = {
         id: Date.now(),
-        customer: user.name || "Guest Client",
+        customer: user.name || "Valued Client",
         service: svcObj?.name || "Haircut & Beard Grooming",
+        barberName: assignedBarberName,
+        chair: assignedChair,
         time: time,
         price: svcObj?.price || 650,
         date: date,
@@ -321,38 +325,22 @@ export default function BookingPage() {
         localStorage.setItem("gg_incoming_booking", JSON.stringify(newApptEvent));
         window.dispatchEvent(new CustomEvent("gg_appointment_received", { detail: newApptEvent }));
       } catch (e) {}
+
+      // Refresh slot availability immediately to prevent any double booking
+      setAvailableSlots((prev) => prev.filter((s) => {
+        const val = typeof s === "string" ? s : s?.time;
+        return val !== time;
+      }));
     } catch (err) {
-      console.warn("Backend booking sync fallback:", err);
-
-      // If backend network failed or returned connectivity error, confirm via local client persistence
-      try {
-        const svcObj = services.find((s) => s.id === Number(serviceId));
-        const fallbackAppt = {
-          id: "apt_" + Date.now(),
-          customerId: user.id,
-          salonId: Number(id),
-          salonName: salon?.name || "Quick Groom Barber Saloon",
-          serviceId: Number(serviceId),
-          service: svcObj?.name || "Haircut & Beard Grooming",
-          price: svcObj?.price || 650,
-          barberId: selectedBarber,
-          appointmentDate: date,
-          appointmentTime: time,
-          status: "CONFIRMED",
-          createdAt: new Date().toISOString(),
-        };
-        const existing = JSON.parse(localStorage.getItem("gg_appointments") || "[]");
-        existing.unshift(fallbackAppt);
-        localStorage.setItem("gg_appointments", JSON.stringify(existing));
-        localStorage.setItem("gg_incoming_booking", JSON.stringify(fallbackAppt));
-        window.dispatchEvent(new CustomEvent("gg_appointment_received", { detail: fallbackAppt }));
-
-        setMessage("Your appointment is confirmed!");
-        setError("");
-      } catch (fallbackErr) {
-        setError(err?.message || "Unable to book this appointment. Please try again.");
-        setTime("");
-      }
+      console.warn("Booking request error:", err);
+      setError(err?.message || "Unable to book this appointment. Please select another slot.");
+      // Trigger slot refresh on error so user sees updated availability
+      request(`/barbers/${activeBarberId}/availability?date=${encodeURIComponent(date)}&serviceId=${encodeURIComponent(serviceId)}`)
+        .then((data) => {
+          let slots = Array.isArray(data) ? data : data?.availableSlots || data?.slots || [];
+          setAvailableSlots(slots);
+        })
+        .catch(() => {});
     } finally {
       setBooking(false);
     }
@@ -388,31 +376,40 @@ export default function BookingPage() {
       : best;
   }, null);
 
+  const standardSlotList = [
+    "09:30 AM",
+    "10:15 AM",
+    "11:00 AM",
+    "11:45 AM",
+    "12:30 PM",
+    "02:00 PM",
+    "02:45 PM",
+    "03:30 PM",
+    "04:15 PM",
+    "05:00 PM",
+    "05:45 PM",
+    "06:30 PM",
+  ];
+
+  function normTime(t) {
+    return (t || "").toLowerCase().replace(/\s+/g, "");
+  }
+
   function getSlotValue(slot) {
     if (typeof slot === "string") {
       return slot;
     }
-
     return slot?.time || slot?.startTime || "";
   }
 
   const timeButtons = React.useMemo(() => {
-    const startMinutes = 9 * 60;
-    const endMinutes = 21 * 60;
-    const slots = [];
-
-    for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
-      const hour = String(Math.floor(minutes / 60)).padStart(2, "0");
-      const minute = String(minutes % 60).padStart(2, "0");
-      const value = `${hour}:${minute}`;
-      const available = availableSlots.some(
-        (slot) => getSlotValue(slot) === value,
-      );
-
-      slots.push({ value, available });
-    }
-
-    return slots;
+    return standardSlotList.map((slotStr) => {
+      const isAvailable = availableSlots.some((slot) => {
+        const val = getSlotValue(slot);
+        return normTime(val) === normTime(slotStr);
+      });
+      return { value: slotStr, available: isAvailable };
+    });
   }, [availableSlots]);
 
   /* =========================================================
@@ -452,23 +449,65 @@ export default function BookingPage() {
 
         {message ? (
           <div className="success">
-            <CheckCircle2 size={36} />
+            <CheckCircle2 size={40} style={{ color: "#22c55e", margin: "0 auto" }} />
 
             <h2>You're booked!</h2>
 
-            <p>{message}</p>
+            <p style={{ color: "#475569", fontSize: "15px" }}>{message}</p>
 
-            <p>
-              {salon.name}
-              {" · "}
-              {selectedBarber === "any"
-                ? "Any barber"
-                : selectedBarberDetails?.name}
-              {" · "}
-              {date}
-              {" at "}
-              {time}
-            </p>
+            <div className="booking-confirmed-card" style={{
+              background: "#fff",
+              borderRadius: "16px",
+              padding: "18px 20px",
+              border: "1px solid var(--line)",
+              margin: "18px 0",
+              textAlign: "left",
+              boxShadow: "0 6px 20px rgba(0,0,0,0.04)"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--line)", paddingBottom: "10px", marginBottom: "10px" }}>
+                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>SALON</span>
+                <strong style={{ fontSize: "13px", color: "var(--brown)" }}>{salon.name}</strong>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--line)", paddingBottom: "10px", marginBottom: "10px" }}>
+                <div>
+                  <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600", display: "block" }}>ASSIGNED STYLIST</span>
+                  <strong style={{ fontSize: "14px", color: "#25221d" }}>
+                    {confirmedAppt?.assignedBarber?.name || confirmedAppt?.barber?.name || selectedBarberDetails?.name || "Alex Rivera"}
+                  </strong>
+                  <span style={{ fontSize: "11px", color: "#78716c", marginLeft: "6px" }}>
+                    ({confirmedAppt?.assignedBarber?.chair || confirmedAppt?.barber?.chair || selectedBarberDetails?.chair || "Chair #1"})
+                  </span>
+                </div>
+                {(confirmedAppt?.assignedVia === "ANY_BARBER" || selectedBarber === "any") && (
+                  <span style={{
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    background: "#fef3c7",
+                    color: "#b45309",
+                    padding: "4px 8px",
+                    borderRadius: "999px",
+                    border: "1px solid #fde68a"
+                  }}>
+                    ✨ Auto-Assigned Best Match
+                  </span>
+                )}
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--line)", paddingBottom: "10px", marginBottom: "10px" }}>
+                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>DATE & TIME</span>
+                <strong style={{ fontSize: "13px", color: "var(--brown)" }}>
+                  {date} at {time}
+                </strong>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>RESERVATION STATUS</span>
+                <span className="status-pill confirmed" style={{ fontSize: "11px", padding: "3px 10px" }}>
+                  Slot Reserved & Double-Booking Protected
+                </span>
+              </div>
+            </div>
 
             <Link
               className="primary"
@@ -566,27 +605,32 @@ export default function BookingPage() {
 
                   <div className="barber-option-content">
                     <div className="barber-main-row">
+                      <div className="barber-avatar-circle" style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        background: "linear-gradient(135deg, #d49a5b, #9a652e)",
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "15px",
+                        flexShrink: 0,
+                        boxShadow: "0 2px 6px rgba(212, 154, 91, 0.3)"
+                      }}>
+                        ⚡
+                      </div>
+
                       <div className="barber-name-block">
                         <span className="barber-name">
-                          Any barber
+                          Any Barber (Automatic Assignment)
                         </span>
-                        <small>Best available</small>
+                        <small>Auto-assigns best available stylist for your slot</small>
                       </div>
 
                       <div className="barber-meta-inline">
-                        {bestBarberRating !== null && (
-                          <span className="barber-rating">
-                            <Star
-                              size={11}
-                              fill="currentColor"
-                              strokeWidth={1.5}
-                            />
-                            {Number(bestBarberRating).toFixed(1)}
-                          </span>
-                        )}
-
-                        <span className="barber-tag">
-                          Best match
+                        <span className="barber-tag" style={{ background: "#fef3c7", color: "#b45309", border: "1px solid #fde68a", fontWeight: "700" }}>
+                          Recommended
                         </span>
                       </div>
                     </div>
@@ -606,6 +650,9 @@ export default function BookingPage() {
                     barber.yearsExperience ??
                     barber.experienceYear ??
                     null;
+
+                  const chairLabel = barber.chair || `Chair #${barber.id}`;
+                  const isAvailable = barber.status === "active" || barber.available !== false;
 
                   return (
                     <label
@@ -635,17 +682,64 @@ export default function BookingPage() {
 
                       <div className="barber-option-content">
                         <div className="barber-main-row">
+                          {barber.image ? (
+                            <img
+                              src={barber.image}
+                              alt={barber.name}
+                              style={{
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                                border: "2px solid #e7ded5",
+                                flexShrink: 0
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                background: "#25221d",
+                                color: "#d49a5b",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontWeight: "700",
+                                flexShrink: 0
+                              }}
+                            >
+                              {barber.name.charAt(0)}
+                            </div>
+                          )}
+
                           <div className="barber-name-block">
                             <span className="barber-name">
                               {barber.name}
+                              <em style={{ fontStyle: "normal", fontSize: "11px", color: "var(--gold)", marginLeft: "6px", fontWeight: "600" }}>
+                                {chairLabel}
+                              </em>
                             </span>
                             <small>
                               {barber.specialization ||
+                                barber.role ||
                                 "Stylist"}
                             </small>
                           </div>
 
                           <div className="barber-meta-inline">
+                            <span style={{
+                              fontSize: "10px",
+                              fontWeight: "700",
+                              padding: "2px 6px",
+                              borderRadius: "6px",
+                              background: isAvailable ? "#dcfce7" : "#f1f5f9",
+                              color: isAvailable ? "#15803d" : "#64748b"
+                            }}>
+                              {isAvailable ? "● On Duty" : "○ Break"}
+                            </span>
+
                             {rating !== null && (
                               <span className="barber-rating">
                                 <Star
@@ -738,14 +832,20 @@ export default function BookingPage() {
                             key={value}
                             type="button"
                             className={`time-slot ${
-                              available ? "available" : "unavailable"
+                              available ? "available" : "unavailable booked"
                             } ${isSelected ? "selected" : ""}`}
                             disabled={!available}
                             onClick={() => {
                               if (available) setTime(value);
                             }}
+                            title={available ? `Select ${value}` : `Time slot ${value} is already booked`}
                           >
-                            {value}
+                            <span className="slot-val-time">{value}</span>
+                            {!available ? (
+                              <span className="slot-state-badge booked">Booked</span>
+                            ) : (
+                              <span className="slot-state-badge free">Free</span>
+                            )}
                           </button>
                         );
                       })}

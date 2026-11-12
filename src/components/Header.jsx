@@ -70,7 +70,9 @@ export default function Header() {
     }
   }
 
-  const isBarber = (user?.role || "").toUpperCase() === "BARBER";
+  const userRole = (user?.role || "").toUpperCase();
+  const isStaff = userRole === "BARBER" || userRole === "ADMIN";
+  const isAdmin = userRole === "ADMIN";
 
   const handleHomeClick = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
@@ -80,7 +82,7 @@ export default function Header() {
     <header className="header">
       <div className="header-top-row">
         <Link
-          to={isBarber ? "/dashboard" : "/"}
+          to={isStaff ? "/dashboard" : "/"}
           className="brand brand-logo"
           aria-label="Quick Groom home"
           onClick={handleHomeClick}
@@ -88,7 +90,7 @@ export default function Header() {
           <img src={quickGroomLogo} alt="Quick Groom" className="brand-image" />
         </Link>
 
-        {!isBarber && (
+        {!isStaff && (
           <div className="mobile-header-location">
             <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
             <strong>{isLocating ? "Locating..." : location}</strong>
@@ -105,10 +107,10 @@ export default function Header() {
         )}
 
         <nav className="desktop-nav">
-          {isBarber ? (
+          {isStaff ? (
             <Link to="/dashboard" className="nav-barber-dashboard-link" onClick={handleHomeClick}>
               <Sparkles size={14} />
-              <span>Barber Dashboard</span>
+              <span>{isAdmin ? "Salon Admin Command" : "Barber Dashboard"}</span>
             </Link>
           ) : (
             <>
@@ -142,7 +144,11 @@ export default function Header() {
         <div className="header-actions">
           {token ? (
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              {isBarber && <span className="barber-staff-badge">Staff</span>}
+              {isStaff && (
+                <span className="barber-staff-badge">
+                  {isAdmin ? "Admin" : "Staff"}
+                </span>
+              )}
               <button className="outline small" onClick={logout}>
                 <LogOut size={15} /> Sign out
               </button>
@@ -155,7 +161,7 @@ export default function Header() {
         </div>
       </div>
 
-      {!isBarber && (
+      {!isStaff && (
         <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
           <NavLink
             to="/my-appointments"

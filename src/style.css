@@ -10145,6 +10145,720 @@ th {
   }
 }
 
+/* ==========================================================================
+   BARBER MODULE 2.0: MULTI-BARBER, ADMIN COMMAND & REAL-TIME BOOKING STYLES
+   ========================================================================== */
+
+/* Top View Switcher Bar */
+.barber-view-switcher-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 16px;
+  position: sticky;
+  top: 70px;
+  z-index: 40;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.switcher-scroll-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2px 0;
+}
+
+.switcher-scroll-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.switcher-scroll-track::-webkit-scrollbar-thumb {
+  background: rgba(212, 154, 91, 0.3);
+  border-radius: 4px;
+}
+
+.switcher-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #78716c;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.switcher-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fffdfa;
+  color: #44403c;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  min-height: 38px;
+}
+
+.switcher-pill:hover {
+  background: #fbf5ee;
+  border-color: #d49a5b;
+  color: #25221d;
+}
+
+.switcher-pill.active {
+  background: #25221d;
+  color: #ffffff;
+  border-color: #25221d;
+  box-shadow: 0 3px 10px rgba(37, 34, 29, 0.2);
+}
+
+.switcher-pill.admin-pill {
+  border-color: rgba(212, 154, 91, 0.5);
+  background: #fffcf7;
+}
+
+.switcher-pill.admin-pill.active {
+  background: linear-gradient(135deg, #25221d 0%, #3e3830 100%);
+  color: #f7d8a9;
+  border-color: #d49a5b;
+}
+
+.pill-name {
+  font-weight: 700;
+}
+
+.pill-chair {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.pill-in-chair-tag {
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  animation: pulse 1.8s infinite;
+}
+
+.status-micro-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-micro-dot.active {
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+}
+
+.status-micro-dot.break {
+  background: #f59e0b;
+}
+
+.status-micro-dot.offline {
+  background: #94a3b8;
+}
+
+/* Sidebar Profile Image & Shift Card */
+.barber-sidebar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  flex-shrink: 0;
+}
+
+.sidebar-shift-card {
+  margin-top: 20px;
+  padding: 14px;
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.shift-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #78716c;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.shift-status-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shift-btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: #44403c;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 36px;
+}
+
+.shift-btn.selected {
+  font-weight: 700;
+}
+
+.shift-btn.active.selected {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+}
+
+.shift-btn.break.selected {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.shift-btn.offline.selected {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+/* Admin Stations Section & Cards Grid */
+.admin-stations-section {
+  margin-top: 24px;
+}
+
+.stations-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.station-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.station-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.station-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.station-barber-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.station-barber-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e7ded5;
+  flex-shrink: 0;
+}
+
+.station-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.station-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #25221d;
+}
+
+.chair-badge {
+  font-size: 10px;
+  font-weight: 800;
+  background: #fbf3e8;
+  color: #b47535;
+  border: 1px solid #f3dcba;
+  padding: 2px 6px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.station-role {
+  font-size: 12px;
+  color: #78716c;
+}
+
+.status-dropdown {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+}
+
+.status-dropdown.active {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.status-dropdown.break {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.status-dropdown.offline {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+/* Chair Box Inside Station Card */
+.station-chair-box {
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.chair-occupied {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.occupied-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #ef4444;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.occupied-client {
+  font-size: 14px;
+  color: #25221d;
+}
+
+.occupied-service {
+  font-size: 12px;
+  color: #78716c;
+}
+
+.occupied-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+}
+
+.occupied-time {
+  font-size: 11px;
+  color: #a8a29e;
+}
+
+.finish-cut-pill {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  min-height: 28px;
+}
+
+.chair-vacant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vacant-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #15803d;
+}
+
+.vacant-seat-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 8px;
+  min-height: 28px;
+}
+
+/* Station Metrics */
+.station-metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  background: #fbf9f6;
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.station-metric small {
+  display: block;
+  font-size: 10px;
+  color: #78716c;
+  text-transform: uppercase;
+}
+
+.station-metric strong {
+  font-size: 13px;
+  color: #25221d;
+}
+
+.station-metric strong.gold {
+  color: #b47535;
+}
+
+.full-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+}
+
+/* Master Schedule Filter & Table */
+.schedule-filters-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-select-filter {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: #25221d;
+  min-height: 36px;
+  cursor: pointer;
+  outline: none;
+}
+
+.table-barber-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-barber-name {
+  font-weight: 700;
+  color: #25221d;
+}
+
+.table-barber-chair {
+  font-size: 11px;
+  color: #b47535;
+}
+
+.table-datetime {
+  font-size: 12px;
+  color: #57534e;
+}
+
+.table-action-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.action-seat-btn {
+  min-height: 30px;
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.reassign-btn {
+  min-height: 30px;
+  padding: 4px 10px;
+  font-size: 11px;
+  border-color: rgba(212, 154, 91, 0.4);
+  color: #b47535;
+}
+
+.reassign-btn:hover {
+  background: #fbf5ee;
+  border-color: #d49a5b;
+}
+
+.completed-stamp {
+  font-size: 11px;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Stylist Revenue Breakdown Cards */
+.barber-revenue-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.stylist-rev-card {
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.rev-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rev-card-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+
+.rev-card-header strong {
+  display: block;
+  font-size: 13px;
+}
+
+.rev-card-header small {
+  color: #b47535;
+  font-weight: 600;
+}
+
+.rev-card-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.rev-amount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #25221d;
+}
+
+.rev-count {
+  font-size: 11px;
+  color: #78716c;
+}
+
+/* Roster Tab Grid */
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.roster-card {
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+}
+
+.roster-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  flex-shrink: 0;
+}
+
+.roster-info h4 {
+  margin: 0 0 2px;
+  font-size: 15px;
+}
+
+.roster-chair {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b47535;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.roster-spec {
+  font-size: 12px;
+  color: #57534e;
+  margin: 0 0 8px;
+}
+
+.roster-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 11px;
+  color: #78716c;
+  margin-bottom: 10px;
+}
+
+.roster-status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.roster-status-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #78716c;
+}
+
+/* Booking Page Time Slot Badges */
+.time-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 6px 10px;
+  position: relative;
+}
+
+.slot-val-time {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.slot-state-badge {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.slot-state-badge.free {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.slot-state-badge.booked {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.time-slot.unavailable.booked {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Responsiveness for Mobile Devices */
+@media (max-width: 768px) {
+  .barber-view-switcher-bar {
+    top: 60px;
+    padding: 8px 12px;
+  }
+
+  .switcher-pill {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-height: 36px;
+  }
+
+  .stations-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .barber-revenue-cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .roster-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-filters-group {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .admin-select-filter {
+    flex: 1;
+  }
+
+  .barber-layout {
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 480px) {
+  .barber-revenue-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .station-metrics-row {
+    font-size: 11px;
+  }
+}
+
+
 
 
 
