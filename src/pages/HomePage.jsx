@@ -448,11 +448,11 @@ export default function HomePage() {
                     .map((n) => n[0])
                     .join("")}
                 </div>
-                <div>
-                  <b>{t.name}</b>
-                  <small className="muted">
+                <div className="testimonial-author-info">
+                  <strong className="testimonial-author-name">{t.name}</strong>
+                  <span className="testimonial-author-detail muted">
                     {t.service} · {t.date}
-                  </small>
+                  </span>
                 </div>
               </div>
             </article>
