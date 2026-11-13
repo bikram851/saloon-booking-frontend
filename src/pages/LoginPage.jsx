@@ -247,7 +247,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="auth-footer">
+        <p className="auth-footer auth-switch">
           {mode === "login" ? "First time here?" : "Already have an account?"}{" "}
           <button
             type="button"
