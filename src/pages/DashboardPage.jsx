@@ -1109,6 +1109,92 @@ export default function DashboardPage() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Mobile Admin Appointments Card View */}
+                  <div className="mobile-admin-appt-list">
+                    {appointments
+                      .filter((a) => {
+                        if (a.status === "CANCELLED") return false;
+                        if (adminBarberFilter !== "all" && Number(a.barberId || a.barber?.id) !== Number(adminBarberFilter)) {
+                          return false;
+                        }
+                        if (apptStatusFilter !== "all" && a.status !== apptStatusFilter) {
+                          return false;
+                        }
+                        return true;
+                      })
+                      .map((entry) => {
+                        const bObj = barbers.find((b) => Number(b.id) === Number(entry.barberId || entry.barber?.id)) || barbers[0];
+
+                        return (
+                          <div className="mobile-admin-appt-card" key={entry.id}>
+                            <div className="mobile-admin-appt-header">
+                              <div className="mobile-admin-appt-title-col">
+                                <strong className="mobile-admin-customer">{entry.customerName || entry.customer}</strong>
+                                <span className="mobile-admin-datetime">
+                                  <Clock size={12} /> {entry.appointmentDate || "Today"} · {entry.appointmentTime || entry.time}
+                                </span>
+                              </div>
+                              <span className={`status-pill ${entry.status.toLowerCase()}`}>
+                                {entry.status}
+                              </span>
+                            </div>
+
+                            <div className="mobile-admin-appt-body">
+                              <div className="mobile-admin-service-row">
+                                <span className="mobile-admin-service-text">
+                                  <Scissors size={13} style={{ color: "var(--gold)" }} /> {entry.service}
+                                </span>
+                                <strong className="mobile-admin-price">₹{entry.price}</strong>
+                              </div>
+
+                              <div className="mobile-admin-stylist-row">
+                                <span className="mobile-admin-stylist-label">Assigned Stylist:</span>
+                                <div className="mobile-admin-stylist-pill">
+                                  <User size={12} />
+                                  <span>{bObj.name}</span>
+                                  <span className="chair-badge">{bObj.chair}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="mobile-admin-appt-actions">
+                              {entry.status === "CONFIRMED" && (
+                                <button
+                                  type="button"
+                                  className="outline small mobile-admin-action-btn"
+                                  onClick={() => handleSeatInChair(entry, bObj.id)}
+                                >
+                                  <Scissors size={12} /> Seat Client
+                                </button>
+                              )}
+                              {entry.status === "PENDING" && (
+                                <button
+                                  type="button"
+                                  className="primary small mobile-admin-action-btn"
+                                  onClick={() => handleConfirmAppt(entry.id)}
+                                >
+                                  <Check size={12} /> Confirm Booking
+                                </button>
+                              )}
+                              {entry.status !== "COMPLETED" && (
+                                <button
+                                  type="button"
+                                  className="outline small mobile-admin-action-btn reassign"
+                                  onClick={() => setReassignModal({ appt: entry, newBarberId: bObj.id })}
+                                  title="Transfer this appointment to another barber"
+                                >
+                                  <ArrowLeftRight size={12} /> Reassign
+                                </button>
+                              )}
+                              {entry.status === "COMPLETED" && (
+                                <span className="completed-stamp">✓ Verified Completed</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
               )}
 
@@ -1865,7 +1951,8 @@ export default function DashboardPage() {
                   <div className="itemized-ledger-wrap" style={{ marginTop: "24px" }}>
                     <h4 style={{ marginBottom: "14px", fontSize: "16px" }}>Itemized Completed Services</h4>
                     {barberCompletedCount > 0 ? (
-                      <div className="desktop-table-wrap">
+                      <>
+                        <div className="desktop-table-wrap">
                         <table>
                           <thead>
                             <tr>
@@ -1897,6 +1984,34 @@ export default function DashboardPage() {
                           </tbody>
                         </table>
                       </div>
+
+                      {/* Mobile Ledger Card View */}
+                      <div className="mobile-ledger-list">
+                        {barberAppointments
+                          .filter((a) => a.status === "COMPLETED")
+                          .map((entry) => (
+                            <div className="mobile-ledger-card" key={entry.id}>
+                              <div className="mobile-ledger-header">
+                                <strong className="mobile-ledger-client">{entry.customerName || entry.customer}</strong>
+                                <span className="status-pill confirmed">Verified</span>
+                              </div>
+                              <div className="mobile-ledger-service">
+                                <Scissors size={13} style={{ color: "var(--gold)" }} />
+                                <span>{entry.service}</span>
+                              </div>
+                              <div className="mobile-ledger-footer">
+                                <span className="mobile-ledger-time">
+                                  <Clock size={12} />{" "}
+                                  {entry.completedAt
+                                    ? new Date(entry.completedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                                    : entry.appointmentTime || "Earlier today"}
+                                </span>
+                                <strong className="mobile-ledger-price">₹{entry.price}</strong>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </>
                     ) : (
                       <div className="queue-empty-box">
                         <Coins size={32} style={{ color: "var(--gold)", margin: "0 auto 8px" }} />
