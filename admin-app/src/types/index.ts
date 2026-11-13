@@ -62,6 +62,14 @@ export interface SalonBarber {
   rating?: number;
 }
 
+export type BarberDocument = SalonBarber & {
+  id: string;
+  salonId: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export interface SalonDocument {
   id: string;
   name: string;

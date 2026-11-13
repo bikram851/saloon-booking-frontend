@@ -32,13 +32,25 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
 
-      - name: Build
+      - name: Install admin-app dependencies
+        run: |
+          cd admin-app
+          npm install
+          cd ..
+
+      - name: Build applications
         run: |
           npm run build
           cp dist/index.html dist/404.html
+          cd admin-app
+          npm run build
+          cd ..
+          mkdir -p dist/admin-app
+          cp -r admin-app/dist/* dist/admin-app/
+          cp admin-app/dist/index.html dist/admin-app/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
