@@ -216,8 +216,9 @@ export default function ProLayout() {
                 title="Click to toggle salon open / closed status"
               >
                 <span className={`pro-status-dot ${salon.status === 'OPEN' ? '' : 'closed'}`} />
-                <span>Salon Status: {salon.status === 'OPEN' ? 'OPEN TODAY' : 'CLOSED'}</span>
-                <span style={{ fontSize: '0.72rem', opacity: 0.7, textDecoration: 'underline' }}>Change</span>
+                <span className="pro-status-label-desktop">Salon Status: </span>
+                <strong className="pro-status-label-val">{salon.status === 'OPEN' ? 'OPEN TODAY' : 'CLOSED'}</strong>
+                <span className="pro-status-change-link">Change</span>
               </div>
             </div>
 
@@ -233,9 +234,10 @@ export default function ProLayout() {
                 <ExternalLink size={14} />
               </a>
 
-              <NavLink to="/pro/appointments" className="pro-header-btn primary">
+              <NavLink to="/pro/appointments" className="pro-header-btn primary" title="Manage Bookings">
                 <CalendarCheck size={16} />
-                <span>Manage Bookings</span>
+                <span className="pro-btn-text-desktop">Manage Bookings</span>
+                <span className="pro-btn-text-mobile">Bookings</span>
                 {pendingCount > 0 && <span className="pro-nav-pill-count">{pendingCount}</span>}
               </NavLink>
             </div>

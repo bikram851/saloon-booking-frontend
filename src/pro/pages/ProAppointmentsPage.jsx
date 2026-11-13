@@ -58,26 +58,26 @@ export default function ProAppointmentsPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="pro-card" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ position: 'relative', flex: '1', minWidth: '240px', maxWidth: '400px' }}>
-            <Search size={16} color="var(--pro-text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+      <div className="pro-card pro-filter-card" style={{ padding: '1rem', marginBottom: '1.25rem' }}>
+        <div className="pro-filter-row">
+          <div className="pro-search-box">
+            <Search size={16} color="var(--pro-text-muted)" className="pro-search-icon" />
             <input
               type="text"
-              placeholder="Search by client, ID, stylist or phone..."
+              placeholder="Search client, ID, stylist or phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pro-form-input"
-              style={{ width: '100%', paddingLeft: '36px' }}
+              className="pro-form-input pro-search-input"
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div className="pro-filter-pills-scroll">
             {['ALL', 'PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'].map(status => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
                 className={`pro-btn pro-btn-sm ${statusFilter === status ? 'pro-btn-primary' : 'pro-btn-secondary'}`}
+                style={{ flexShrink: 0 }}
               >
                 {status}
               </button>
@@ -86,10 +86,10 @@ export default function ProAppointmentsPage() {
         </div>
       </div>
 
-      {/* Appointments Table */}
-      <div className="pro-card" style={{ padding: 0, overflow: 'hidden' }}>
+      {/* Desktop/Tablet Table View */}
+      <div className="pro-card pro-desktop-table-card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="pro-table-wrapper" style={{ border: 'none' }}>
-          <table className="pro-table">
+          <table className="pro-table" style={{ minWidth: '780px' }}>
             <thead>
               <tr>
                 <th>Appt ID</th>
@@ -105,7 +105,7 @@ export default function ProAppointmentsPage() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '3rem', color: 'var(--pro-text-muted)' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: 'var(--pro-text-muted)' }}>
                     No appointments matching your criteria found.
                   </td>
                 </tr>
@@ -119,7 +119,9 @@ export default function ProAppointmentsPage() {
                     </td>
                     <td>
                       <div style={{ fontWeight: 600, color: 'var(--pro-navy)' }}>{apt.customerName}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--pro-text-muted)' }}>{apt.customerPhone}</div>
+                      <a href={`tel:${apt.customerPhone}`} style={{ fontSize: '0.78rem', color: 'var(--pro-blue)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <Phone size={11} /> {apt.customerPhone}
+                      </a>
                     </td>
                     <td>
                       <div style={{ fontWeight: 500 }}>{apt.serviceName}</div>
@@ -176,6 +178,88 @@ export default function ProAppointmentsPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Touch-Friendly Card List View (Visible on <= 768px) */}
+      <div className="pro-mobile-card-list">
+        {filtered.length === 0 ? (
+          <div className="pro-card" style={{ textAlign: 'center', padding: '2.5rem', color: 'var(--pro-text-muted)' }}>
+            No appointments matching your criteria found.
+          </div>
+        ) : (
+          filtered.map(apt => (
+            <div key={apt.id} className="pro-card pro-mobile-appt-card">
+              <div className="pro-mobile-card-top">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span
+                    className="pro-mobile-appt-id"
+                    onClick={() => setSelectedAppt(apt)}
+                  >
+                    {apt.id}
+                  </span>
+                  <span className={`pro-badge ${apt.status.toLowerCase()}`}>
+                    {apt.status}
+                  </span>
+                </div>
+                <strong className="pro-mobile-card-price">₹{apt.price}</strong>
+              </div>
+
+              <div className="pro-mobile-card-body">
+                <div className="pro-mobile-card-row">
+                  <div>
+                    <strong className="pro-mobile-client-name">{apt.customerName}</strong>
+                    <a href={`tel:${apt.customerPhone}`} className="pro-mobile-phone-link">
+                      <Phone size={12} /> {apt.customerPhone}
+                    </a>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--pro-navy)' }}>{apt.time}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--pro-text-muted)' }}>{apt.date}</div>
+                  </div>
+                </div>
+
+                <div className="pro-mobile-card-details">
+                  <div className="pro-mobile-detail-pill">
+                    <Scissors size={12} />
+                    <span>{apt.serviceName} ({apt.duration})</span>
+                  </div>
+                  <div className="pro-mobile-detail-pill">
+                    <User size={12} />
+                    <span>Stylist: <strong>{apt.barberName}</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pro-mobile-card-actions">
+                <button
+                  onClick={() => setSelectedAppt(apt)}
+                  className="pro-btn pro-btn-secondary pro-btn-sm"
+                  style={{ flex: 1 }}
+                >
+                  View Details
+                </button>
+                {apt.status === 'PENDING' && (
+                  <button
+                    onClick={() => handleUpdateStatus(apt.id, 'CONFIRMED')}
+                    className="pro-btn pro-btn-primary pro-btn-sm"
+                    style={{ flex: 1 }}
+                  >
+                    Accept
+                  </button>
+                )}
+                {apt.status === 'CONFIRMED' && (
+                  <button
+                    onClick={() => handleUpdateStatus(apt.id, 'COMPLETED')}
+                    className="pro-btn pro-btn-sm"
+                    style={{ flex: 1, background: '#D1FAE5', color: '#065F46', border: 'none', fontWeight: 600 }}
+                  >
+                    Complete
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Appointment Detail Modal */}

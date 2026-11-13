@@ -287,6 +287,9 @@
   background: #ECFDF5;
   color: #065F46;
   border: 1px solid #A7F3D0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
 }
 
 .pro-header-status-pill.closed {
@@ -315,6 +318,12 @@
   cursor: pointer;
   text-decoration: none;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pro-btn-text-mobile {
+  display: none;
 }
 
 .pro-header-btn:hover {
@@ -330,6 +339,134 @@
 
 .pro-header-btn.primary:hover {
   background: #0762bd;
+}
+
+/* Appointment Search & Filter Component */
+.pro-filter-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pro-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+  max-width: 420px;
+}
+
+.pro-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.pro-search-input {
+  width: 100%;
+  padding-left: 36px !important;
+}
+
+.pro-filter-pills-scroll {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Mobile Appointment Card List */
+.pro-mobile-card-list {
+  display: none;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.pro-mobile-appt-card {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid var(--pro-border);
+  box-shadow: var(--pro-shadow-sm);
+  background: #FFFFFF;
+  border-radius: var(--pro-radius);
+}
+
+.pro-mobile-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pro-mobile-appt-id {
+  font-weight: 700;
+  color: var(--pro-blue);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.pro-mobile-card-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--pro-navy);
+}
+
+.pro-mobile-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--pro-border-subtle);
+  border-bottom: 1px solid var(--pro-border-subtle);
+  padding: 0.65rem 0;
+}
+
+.pro-mobile-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pro-mobile-client-name {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--pro-navy);
+}
+
+.pro-mobile-phone-link {
+  font-size: 0.82rem;
+  color: var(--pro-blue);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.pro-mobile-card-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.pro-mobile-detail-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #F1F5F9;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--pro-text);
+}
+
+.pro-mobile-card-actions {
+  display: flex;
+  gap: 8px;
 }
 
 /* Page Layout */
@@ -670,10 +807,53 @@
   }
 }
 
+@media (max-width: 768px) {
+  .pro-desktop-table-card {
+    display: none;
+  }
+
+  .pro-mobile-card-list {
+    display: flex;
+  }
+
+  .pro-search-box {
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .pro-filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .pro-filter-pills-scroll {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .pro-filter-pills-scroll::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .pro-page-header {
     flex-direction: column;
     align-items: stretch;
+    margin-bottom: 1.25rem;
+  }
+
+  .pro-page-title {
+    font-size: 1.4rem;
+  }
+
+  .pro-page-subtitle {
+    font-size: 0.85rem;
   }
 
   .pro-kpi-grid {
@@ -682,5 +862,75 @@
 
   .pro-header-btn.hide-mobile {
     display: none;
+  }
+
+  .pro-header {
+    height: 60px;
+    padding: 0 0.85rem;
+    gap: 8px;
+  }
+
+  .pro-header-left {
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .pro-header-status-pill {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.78rem;
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  .pro-status-label-desktop {
+    display: none;
+  }
+
+  .pro-status-change-link {
+    display: none;
+  }
+
+  .pro-header-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .pro-header-btn.primary {
+    padding: 0.38rem 0.75rem;
+    font-size: 0.8rem;
+    gap: 5px;
+  }
+
+  .pro-btn-text-desktop {
+    display: none;
+  }
+
+  .pro-btn-text-mobile {
+    display: inline;
+  }
+
+  .pro-content {
+    padding: 1rem 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .pro-header {
+    padding: 0 0.5rem;
+  }
+
+  .pro-header-status-pill {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .pro-header-btn.primary {
+    padding: 0.32rem 0.55rem;
+  }
+
+  .pro-btn-text-mobile {
+    display: none; /* Just show calendar icon and orange badge count on narrow phones */
   }
 }
