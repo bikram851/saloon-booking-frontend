@@ -1,0 +1,41 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'SUPER_ADMIN' ||
+        request.auth.token.email in ['admin@glowgrace.com', 'superadmin@glowgrace.com']
+      );
+    }
+
+    // Salon photography uploads: Public read, Super Admin and authenticated professionals can upload
+    match /salons/{salonId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || (isAuthenticated() && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*'));
+    }
+
+    // Offers & Promotion Banners: Public read, Super Admin write
+    match /offers/{offerId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // Professional & Barber Avatars: Public read, Authenticated write
+    match /avatars/{userId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isSuperAdmin());
+    }
+
+    // Verification Documents: Strictly Super Admin only
+    match /verification_documents/{salonId}/{allPaths=**} {
+      allow read: if isSuperAdmin();
+      allow write: if isAuthenticated();
+    }
+  }
+}

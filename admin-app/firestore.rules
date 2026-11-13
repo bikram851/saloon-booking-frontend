@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'SUPER_ADMIN' ||
+        getUserData().role == 'SUPER_ADMIN' ||
+        request.auth.token.email in ['admin@glowgrace.com', 'superadmin@glowgrace.com']
+      );
+    }
+
+    function isProfessional(salonId) {
+      return isAuthenticated() && (
+        getUserData().role == 'PROFESSIONAL' &&
+        getUserData().salonId == salonId
+      );
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // 1. Users collection: Only Super Admin can view all users, users can only update their own non-role fields
+    match /users/{userId} {
+      allow read: if isSuperAdmin() || isOwner(userId);
+      allow create: if isAuthenticated() && !('role' in request.resource.data && request.resource.data.role == 'SUPER_ADMIN');
+      allow update: if isSuperAdmin() || (
+        isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isSuperAdmin', 'permissions'])
+      );
+      allow delete: if isSuperAdmin();
+    }
+
+    // 2. Salons collection: Public read, Super Admin write/approve, Professional update their own salon
+    match /salons/{salonId} {
+      allow read: if true;
+      allow create, delete: if isSuperAdmin();
+      allow update: if isSuperAdmin() || isProfessional(salonId);
+
+      match /services/{serviceId} {
+        allow read: if true;
+        allow write: if isSuperAdmin() || isProfessional(salonId);
+      }
+
+      match /barbers/{barberId} {
+        allow read: if true;
+        allow write: if isSuperAdmin() || isProfessional(salonId);
+      }
+    }
+
+    // 3. Professionals collection: Super Admin managed or owner view
+    match /professionals/{professionalId} {
+      allow read: if isSuperAdmin() || (isAuthenticated() && request.auth.uid == professionalId);
+      allow write: if isSuperAdmin();
+    }
+
+    // 4. Barbers collection
+    match /barbers/{barberId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || isAuthenticated();
+    }
+
+    // 5. Appointments: Customer views own, Professional views salon's, Super Admin views all
+    match /appointments/{appointmentId} {
+      allow read: if isSuperAdmin() ||
+                     (isAuthenticated() && (resource.data.customerId == request.auth.uid || resource.data.customerEmail == request.auth.token.email)) ||
+                     (isAuthenticated() && isProfessional(resource.data.salonId));
+      allow create: if isAuthenticated();
+      allow update: if isSuperAdmin() ||
+                       (isAuthenticated() && (resource.data.customerId == request.auth.uid || isProfessional(resource.data.salonId)));
+      allow delete: if isSuperAdmin();
+    }
+
+    // 6. Offers & Promotions: Public read for active, Super Admin full write
+    match /offers/{offerId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // 7. Services catalog
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // 8. Verification Requests: Super Admin full control
+    match /verificationRequests/{requestId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    // 9. Live User Sessions & Heartbeat
+    match /userSessions/{sessionId} {
+      allow read: if isSuperAdmin() || isOwner(resource.data.userId);
+      allow create, update: if isAuthenticated();
+      allow delete: if isSuperAdmin();
+    }
+
+    // 10. Performance Metrics: Super Admin read, system write
+    match /performanceMetrics/{metricId} {
+      allow read: if isSuperAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // 11. System Notifications
+    match /notifications/{notificationId} {
+      allow read: if isSuperAdmin() || (isAuthenticated() && resource.data.targetUserId == request.auth.uid);
+      allow write: if isSuperAdmin();
+    }
+
+    // 12. Audit Logs: Super Admin read-only, Cloud Functions write
+    match /adminAuditLogs/{logId} {
+      allow read: if isSuperAdmin();
+      allow create: if isSuperAdmin();
+      allow update, delete: if false; // Append-only immutable log
+    }
+  }
+}
