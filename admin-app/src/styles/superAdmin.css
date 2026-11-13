@@ -20,6 +20,15 @@
   --admin-shadow-lg: 0 10px 30px rgba(9, 43, 82, 0.10);
   --admin-font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --admin-font-heading: 'Playfair Display', Georgia, serif;
+
+  /* Aliases for semantic sa tokens */
+  --sa-navy: var(--admin-navy);
+  --sa-blue: var(--admin-blue);
+  --sa-orange: var(--admin-orange);
+  --sa-secondary: var(--admin-secondary);
+  --sa-border: var(--admin-border);
+  --sa-bg: var(--admin-bg);
+  --sa-card: var(--admin-card);
 }
 
 * {
@@ -331,6 +340,16 @@ body {
   background: #FCA5A5;
 }
 
+.sa-btn-outline {
+  background: #FFFFFF;
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+.sa-btn-outline:hover {
+  background: var(--admin-bg);
+}
+
 .sa-btn-sm {
   padding: 0.35rem 0.75rem;
   font-size: 0.8rem;
@@ -483,8 +502,13 @@ body {
 .sa-badge-info { background: #E0F2FE; color: #0369A1; }
 .sa-badge-orange { background: #FFEDD5; color: #9A3412; }
 
+.sa-badge-success { background: #D1FAE5; color: #065F46; }
+.sa-badge-warning { background: #FEF3C7; color: #92400E; }
+.sa-badge-danger { background: #FEE2E2; color: #991B1B; }
+.sa-badge-neutral { background: #F1F5F9; color: #475569; }
+
 /* Tables */
-.sa-table-wrapper {
+.sa-table-wrapper, .sa-table-container {
   overflow-x: auto;
   border-radius: var(--admin-radius);
   border: 1px solid var(--admin-border);
