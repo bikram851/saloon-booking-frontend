@@ -4,6 +4,7 @@ import {
   useNavigate,
   useParams,
   useSearchParams,
+  useLocation,
 } from "react-router-dom";
 import {
   ArrowRight,
@@ -22,7 +23,20 @@ import { fallback, photos } from "../data/mockData";
 export default function BookingPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const nav = useNavigate();
+
+  // Check preserved booking state from authentication redirect
+  const preservedBooking = location.state?.bookingState || (() => {
+    try {
+      const raw = localStorage.getItem("gg_pending_booking");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (String(parsed.salonId) === String(id)) return parsed;
+      }
+    } catch {}
+    return null;
+  })();
 
   /* =========================
      SALON
@@ -61,6 +75,7 @@ export default function BookingPage() {
   ========================= */
 
   const [date, setDate] = useState(
+    preservedBooking?.date ||
     new Date(
       Date.now() -
         new Date().getTimezoneOffset() * 60000 +
@@ -70,8 +85,8 @@ export default function BookingPage() {
       .slice(0, 10),
   );
 
-  const [time, setTime] = useState("");
-  const [notes, setNotes] = useState("");
+  const [time, setTime] = useState(preservedBooking?.time || "");
+  const [notes, setNotes] = useState(preservedBooking?.notes || "");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -115,7 +130,9 @@ export default function BookingPage() {
 
         const requestedService = searchParams.get("service");
 
-        if (
+        if (preservedBooking?.serviceId && serviceList.some((s) => String(s.id) === String(preservedBooking.serviceId))) {
+          setServiceId(String(preservedBooking.serviceId));
+        } else if (
           requestedService &&
           serviceList.some(
             (service) =>
@@ -149,7 +166,9 @@ export default function BookingPage() {
         setBarbers(barberList);
         setBarberLoadError("");
 
-        if (barberList.length > 0) {
+        if (preservedBooking?.selectedBarber) {
+          setSelectedBarber(String(preservedBooking.selectedBarber));
+        } else if (barberList.length > 0) {
           setSelectedBarber("any");
         } else {
           setSelectedBarber("");
@@ -266,7 +285,22 @@ export default function BookingPage() {
     const token = localStorage.getItem("gg_token");
 
     if (!user || !token) {
-      nav("/login");
+      const pendingData = {
+        salonId: id,
+        serviceId,
+        selectedBarber,
+        date,
+        time,
+        notes,
+      };
+      localStorage.setItem("gg_pending_booking", JSON.stringify(pendingData));
+      nav("/login", {
+        state: {
+          from: `/book/${id}`,
+          authMessage: "Please sign in to continue booking.",
+          bookingState: pendingData,
+        },
+      });
       return;
     }
 
@@ -308,6 +342,7 @@ export default function BookingPage() {
       });
 
       setConfirmedAppt(res);
+      localStorage.removeItem("gg_pending_booking");
       setMessage("Your appointment is confirmed!");
 
       const svcObj = services.find((s) => s.id === Number(serviceId));

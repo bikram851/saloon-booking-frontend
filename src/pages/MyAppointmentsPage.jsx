@@ -153,9 +153,25 @@ export default function MyAppointmentsPage() {
     }
   });
 
+  const token = localStorage.getItem("gg_token");
+
+  // Check authentication for customer appointments
+  if (!user || !token) {
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: "/my-appointments",
+          authMessage: "Please sign in to view your appointments.",
+        }}
+        replace
+      />
+    );
+  }
+
   const isBarber = (user?.role || "").toUpperCase() === "BARBER";
   if (isBarber) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/pro/dashboard" replace />;
   }
 
   // Initial tab set to "completed" to match uploaded screenshot

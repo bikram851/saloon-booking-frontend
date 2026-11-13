@@ -151,9 +151,26 @@ export default function SalonDetailPage() {
     }
   };
 
+  const handleBookingClick = (e, path) => {
+    const token = localStorage.getItem("gg_token");
+    if (!token) {
+      if (e?.preventDefault) e.preventDefault();
+      navigate("/login", {
+        state: {
+          from: path || `/book/${salon.id}`,
+          authMessage: "Please sign in to continue booking.",
+        },
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleMenuCardClick = (category) => {
     if (category.id === "book") {
-      navigate(`/book/${salon.id}`);
+      if (handleBookingClick(null, `/book/${salon.id}`)) {
+        navigate(`/book/${salon.id}`);
+      }
       return;
     }
     handleTabChange(category.id);
@@ -302,6 +319,7 @@ export default function SalonDetailPage() {
           <div className="explore-hero-actions">
             <Link
               to={`/book/${salon.id}`}
+              onClick={(e) => handleBookingClick(e, `/book/${salon.id}`)}
               className="primary explore-primary-cta"
               aria-label={`Book appointment at ${salon.name}`}
             >
@@ -782,7 +800,11 @@ export default function SalonDetailPage() {
             <Star size={13} fill="currentColor" /> {salon.rating} · {openStatus.statusText}
           </span>
         </div>
-        <Link to={`/book/${salon.id}`} className="primary small sticky-book-btn">
+        <Link
+          to={`/book/${salon.id}`}
+          onClick={(e) => handleBookingClick(e, `/book/${salon.id}`)}
+          className="primary small sticky-book-btn"
+        >
           Book Slot <ArrowRight size={14} />
         </Link>
       </aside>

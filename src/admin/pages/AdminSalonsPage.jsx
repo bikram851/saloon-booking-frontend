@@ -34,6 +34,9 @@ export default function AdminSalonsPage() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [showOnboardModal, setShowOnboardModal] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null); // { action: 'APPROVE'|'REJECT'|'INFO', salon: {...} }
+  const [provisionedModal, setProvisionedModal] = useState(null); // Professional account creation modal
+  const [copiedCreds, setCopiedCreds] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   // New salon form
   const [newSalonForm, setNewSalonForm] = useState({
@@ -96,14 +99,39 @@ export default function AdminSalonsPage() {
     setConfirmDialog(null);
     setSelectedSalon(null);
     setReviewNotes("");
+
+    // Create Professional Account upon approval
+    if (action === "APPROVE") {
+      const target = salons.find(s => s.id === salonId);
+      const tempPass = "GG-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "!";
+      const proAcc = {
+        id: `pro_${salonId}`,
+        email: target?.email || `owner_${salonId}@glowgrace.com`,
+        tempPassword: tempPass,
+        salonId: salonId,
+        salonName: target?.name || "Approved Salon",
+        ownerName: target?.ownerName || "Salon Partner",
+        role: "PROFESSIONAL",
+        status: "ACTIVE",
+        mustResetPassword: true,
+        createdAt: new Date().toISOString()
+      };
+      try {
+        const stored = JSON.parse(localStorage.getItem("gg_pro_accounts") || "[]");
+        const filtered = stored.filter(a => a.email !== proAcc.email);
+        localStorage.setItem("gg_pro_accounts", JSON.stringify([...filtered, proAcc]));
+      } catch {}
+      setProvisionedModal(proAcc);
+    }
   }
 
   function handleCreateSalon(e) {
     e.preventDefault();
     if (!newSalonForm.name.trim() || !newSalonForm.ownerName.trim()) return;
 
+    const newId = salons.length + 1;
     const newSalon = {
-      id: salons.length + 1,
+      id: newId,
       name: newSalonForm.name,
       brand: newSalonForm.brand || newSalonForm.name,
       ownerName: newSalonForm.ownerName,
@@ -132,6 +160,27 @@ export default function AdminSalonsPage() {
     setSalons(updated);
     saveStoredAdminSalons(updated);
     setShowOnboardModal(false);
+
+    // Provision Professional Account
+    const tempPass = "GG-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "!";
+    const proAcc = {
+      id: `pro_${newId}`,
+      email: newSalon.email,
+      tempPassword: tempPass,
+      salonId: newId,
+      salonName: newSalon.name,
+      ownerName: newSalon.ownerName,
+      role: "PROFESSIONAL",
+      status: "ACTIVE",
+      mustResetPassword: true,
+      createdAt: new Date().toISOString()
+    };
+    try {
+      const stored = JSON.parse(localStorage.getItem("gg_pro_accounts") || "[]");
+      const filtered = stored.filter(a => a.email !== proAcc.email);
+      localStorage.setItem("gg_pro_accounts", JSON.stringify([...filtered, proAcc]));
+    } catch {}
+    setProvisionedModal(proAcc);
     setNewSalonForm({
       name: "",
       brand: "",
@@ -666,6 +715,100 @@ export default function AdminSalonsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Professional Account Provisioned Modal */}
+      {provisionedModal && (
+        <div className="admin-modal-overlay" style={{ zIndex: 1200 }} onClick={() => setProvisionedModal(null)}>
+          <div className="admin-modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "520px" }}>
+            <div className="admin-modal-header" style={{ borderBottom: "1px solid var(--admin-border)", paddingBottom: "12px" }}>
+              <div>
+                <span className="admin-brand-badge" style={{ background: "#D1FAE5", color: "#065F46", border: "1px solid #A7F3D0" }}>
+                  ACCOUNT PROVISIONED
+                </span>
+                <h3 style={{ margin: "4px 0 0", fontSize: "17px", color: "var(--admin-navy)" }}>
+                  Professional Account Created
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setProvisionedModal(null)}
+                style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "var(--admin-text-muted)" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="admin-modal-body" style={{ padding: "18px 0" }}>
+              <p style={{ margin: "0 0 16px", fontSize: "14px", color: "var(--admin-text-muted)", lineHeight: 1.5 }}>
+                A dedicated salon professional portal account has been created for <strong>{provisionedModal.salonName}</strong>.
+              </p>
+
+              <div style={{ background: "var(--admin-bg)", border: "1px solid var(--admin-border)", borderRadius: "10px", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                  <span style={{ color: "var(--admin-text-muted)" }}>User ID (Login Email):</span>
+                  <strong style={{ color: "var(--admin-navy)" }}>{provisionedModal.email}</strong>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                  <span style={{ color: "var(--admin-text-muted)" }}>Temporary Password:</span>
+                  <code style={{ background: "#FFFFFF", padding: "3px 8px", borderRadius: "4px", border: "1px solid var(--admin-border)", fontWeight: 700, color: "var(--admin-orange)" }}>
+                    {provisionedModal.tempPassword}
+                  </code>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                  <span style={{ color: "var(--admin-text-muted)" }}>Assigned Role:</span>
+                  <span className="admin-badge admin-badge-info">{provisionedModal.role}</span>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                  <span style={{ color: "var(--admin-text-muted)" }}>Associated Salon ID:</span>
+                  <strong>#{provisionedModal.salonId} ({provisionedModal.salonName})</strong>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                  <span style={{ color: "var(--admin-text-muted)" }}>Account Status:</span>
+                  <span className="admin-badge admin-badge-active">{provisionedModal.status}</span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "14px", fontSize: "12px", color: "var(--admin-text-muted)", background: "#FFFBEB", border: "1px solid #FDE68A", padding: "10px", borderRadius: "8px" }}>
+                🔒 <strong>Security Policy:</strong> The partner will be prompted to reset their password upon initial login to the Professional Portal. Admin privileges are strictly segregated.
+              </div>
+            </div>
+
+            <div className="admin-modal-footer" style={{ borderTop: "1px solid var(--admin-border)", paddingTop: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <button
+                type="button"
+                className="admin-btn outline"
+                onClick={() => {
+                  navigator.clipboard?.writeText(
+                    `Glow & Grace Professional Portal Invitation:\nLogin URL: ${window.location.origin}/login\nEmail: ${provisionedModal.email}\nTemporary Password: ${provisionedModal.tempPassword}\nSalon: ${provisionedModal.salonName} (#${provisionedModal.salonId})`
+                  );
+                  setCopiedCreds(true);
+                  setTimeout(() => setCopiedCreds(false), 2500);
+                }}
+              >
+                {copiedCreds ? "✓ Credentials Copied!" : "Copy Credentials"}
+              </button>
+
+              <button
+                type="button"
+                className="admin-btn primary"
+                onClick={() => {
+                  setEmailSent(true);
+                  setTimeout(() => {
+                    setEmailSent(false);
+                    setProvisionedModal(null);
+                  }, 1200);
+                }}
+              >
+                {emailSent ? "✓ Email Dispatched!" : "Send Invitation Email"}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -26,6 +26,20 @@ import AdminPerformancePage from "./admin/pages/AdminPerformancePage";
 import AdminNotificationsPage from "./admin/pages/AdminNotificationsPage";
 import AdminSettingsPage from "./admin/pages/AdminSettingsPage";
 
+// Professional Salon Management Portal Imports
+import ProLayout from "./pro/layouts/ProLayout";
+import ProDashboardPage from "./pro/pages/ProDashboardPage";
+import ProAppointmentsPage from "./pro/pages/ProAppointmentsPage";
+import ProCalendarPage from "./pro/pages/ProCalendarPage";
+import ProWorkingHoursPage from "./pro/pages/ProWorkingHoursPage";
+import ProBarbersPage from "./pro/pages/ProBarbersPage";
+import ProBarberAvailabilityPage from "./pro/pages/ProBarberAvailabilityPage";
+import ProServicesPage from "./pro/pages/ProServicesPage";
+import ProReviewsPage from "./pro/pages/ProReviewsPage";
+import ProSalonProfilePage from "./pro/pages/ProSalonProfilePage";
+import ProNotificationsPage from "./pro/pages/ProNotificationsPage";
+import ProSettingsPage from "./pro/pages/ProSettingsPage";
+
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
@@ -57,6 +71,22 @@ export default function App() {
           <Route path="/my-appointments" element={<MyAppointmentsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+        </Route>
+
+        {/* Professional Salon Management Application (Independent Shell & Navigation) */}
+        <Route path="/pro" element={<ProLayout />}>
+          <Route index element={<Navigate to="/pro/dashboard" replace />} />
+          <Route path="dashboard" element={<ProDashboardPage />} />
+          <Route path="appointments" element={<ProAppointmentsPage />} />
+          <Route path="calendar" element={<ProCalendarPage />} />
+          <Route path="hours" element={<ProWorkingHoursPage />} />
+          <Route path="barbers" element={<ProBarbersPage />} />
+          <Route path="barber-availability" element={<ProBarberAvailabilityPage />} />
+          <Route path="services" element={<ProServicesPage />} />
+          <Route path="reviews" element={<ProReviewsPage />} />
+          <Route path="salon-profile" element={<ProSalonProfilePage />} />
+          <Route path="notifications" element={<ProNotificationsPage />} />
+          <Route path="settings" element={<ProSettingsPage />} />
         </Route>
 
         {/* Admin Portal Authentication (Independent Full-Screen Login) */}
