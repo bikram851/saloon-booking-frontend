@@ -12,6 +12,37 @@ import {
 import quickGroomLogo from "../assets/quick_groom.jpg";
 import { getCurrentLocationFromGoogleMaps } from "../utils/googleMaps";
 
+// Helper to extract only the city name from any location string
+export function getCityName(fullLoc) {
+  if (!fullLoc) return "Bengaluru";
+  const cleaned = fullLoc.trim();
+  const parts = cleaned.split(",").map((p) => p.trim()).filter(Boolean);
+  if (parts.length === 0) return "Bengaluru";
+  if (parts.length === 1) return parts[0];
+
+  const knownCities = [
+    "Bengaluru", "Bangalore", "Mumbai", "Delhi", "New Delhi",
+    "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad",
+    "Jaipur", "Chandigarh", "Kochi", "Goa", "Noida", "Gurugram",
+    "Indore", "Bhopal", "Lucknow", "Surat", "Vadodara"
+  ];
+  for (const p of parts) {
+    const match = knownCities.find((c) => c.toLowerCase() === p.toLowerCase());
+    if (match) return match;
+  }
+
+  // Filter out known states or country names
+  const ignored = [
+    "karnataka", "maharashtra", "delhi", "tamil nadu", "telangana",
+    "west bengal", "gujarat", "rajasthan", "kerala", "india"
+  ];
+  const candidates = parts.filter((p) => !ignored.includes(p.toLowerCase()));
+  if (candidates.length > 0) {
+    return candidates[candidates.length - 1];
+  }
+  return parts[0];
+}
+
 export default function Header() {
   const [token, setToken] = useState(() => localStorage.getItem("gg_token"));
   const [user, setUser] = useState(() => {
@@ -24,10 +55,10 @@ export default function Header() {
 
   const [location, setLocation] = useState(() => {
     const saved = localStorage.getItem("gg_location");
-    if (!saved || saved.includes("Belandur") || saved.includes("Marathahalli")) {
-      return "Bengaluru, Karnataka";
+    if (!saved || saved.includes("Belandur") || saved.includes("Marathahalli") || saved.includes("Karnataka")) {
+      return "Bengaluru";
     }
-    return saved;
+    return getCityName(saved);
   });
   const [isLocating, setIsLocating] = useState(false);
   const navigate = useNavigate();
@@ -65,14 +96,15 @@ export default function Header() {
     setIsLocating(true);
     try {
       const loc = await getCurrentLocationFromGoogleMaps();
-      setLocation(loc);
+      const city = getCityName(loc);
+      setLocation(city);
     } catch (err) {
       const fallbackLoc = window.prompt(
-        `${err.message || "Could not detect location from Google Maps."}\n\nPlease enter your location (Locality, Area, City):`,
-        location === "Bengaluru, Karnataka" ? "" : location
+        `${err.message || "Could not detect location from Google Maps."}\n\nPlease enter your city name:`,
+        getCityName(location)
       );
       if (fallbackLoc) {
-        const trimmed = fallbackLoc.trim();
+        const trimmed = getCityName(fallbackLoc.trim());
         if (trimmed) setLocation(trimmed);
       }
     } finally {
@@ -103,13 +135,13 @@ export default function Header() {
         {!isStaff && (
           <div className="mobile-header-location">
             <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
-            <strong>{isLocating ? "Locating..." : location}</strong>
+            <strong>{isLocating ? "Locating..." : getCityName(location)}</strong>
             <button
               type="button"
               className="mobile-header-location-change"
               onClick={pickFromGoogleMaps}
               disabled={isLocating}
-              title="Pick current location from Google Maps"
+              title="Pick current city from Google Maps"
             >
               {isLocating ? "Locating..." : "Change"}
             </button>
@@ -135,14 +167,14 @@ export default function Header() {
               <div className="desktop-location-pill">
                 <MapPin size={13} className={isLocating ? "locating-spin" : ""} />
                 <strong className="desktop-location-value">
-                  {isLocating ? "Locating via Maps..." : location}
+                  {isLocating ? "Locating..." : getCityName(location)}
                 </strong>
                 <button
                   type="button"
                   className="desktop-location-inline-change"
                   onClick={pickFromGoogleMaps}
                   disabled={isLocating}
-                  title="Pick current location"
+                  title="Change city"
                 >
                   {isLocating ? "..." : "Change"}
                 </button>

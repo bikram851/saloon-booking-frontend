@@ -65,8 +65,8 @@ export async function reverseGeocodeGoogle(latitude, longitude) {
         addr.town ||
         addr.state_district ||
         addr.state ||
-        "City";
-      return `${locality}, ${area}, ${city}`;
+        "Bengaluru";
+      return city;
     }
   } catch (e) {
     console.warn("Nominatim reverse geocode failed:", e);
@@ -79,10 +79,8 @@ export async function reverseGeocodeGoogle(latitude, longitude) {
     );
     if (res.ok) {
       const data = await res.json();
-      const locality = data.locality || data.subLocality || "Locality";
-      const area = data.city || data.principalSubdivision || "Area";
-      const city = data.countryName || "City";
-      return `${locality}, ${area}, ${city}`;
+      const city = data.city || data.locality || data.principalSubdivision || "Bengaluru";
+      return city;
     }
   } catch (e) {
     console.warn("BigDataCloud reverse geocode failed:", e);
@@ -92,37 +90,29 @@ export async function reverseGeocodeGoogle(latitude, longitude) {
 }
 
 function formatGoogleComponents(components = []) {
-  let locality = "";
-  let area = "";
   let city = "";
 
   for (const c of components) {
     const types = c.types || [];
-    if (
-      types.includes("sublocality_level_1") ||
-      types.includes("sublocality") ||
-      types.includes("neighborhood") ||
-      types.includes("point_of_interest")
-    ) {
-      if (!locality) locality = c.long_name;
-    } else if (
-      types.includes("sublocality_level_2") ||
-      types.includes("administrative_area_level_2")
-    ) {
-      if (!area) area = c.long_name;
-    } else if (types.includes("locality")) {
-      if (!city) city = c.long_name;
-      else if (!area) area = c.long_name;
-    } else if (types.includes("administrative_area_level_1")) {
-      if (!city) city = c.long_name;
+    if (types.includes("locality")) {
+      city = c.long_name;
+      break;
+    } else if (types.includes("administrative_area_level_2") && !city) {
+      city = c.long_name;
     }
   }
 
-  if (!locality && components.length > 0) locality = components[0].long_name;
-  if (!area && components.length > 1) area = components[1].long_name;
-  if (!city && components.length > 2) city = components[2].long_name;
+  if (!city && components.length > 0) {
+    for (const c of components) {
+      const types = c.types || [];
+      if (types.includes("administrative_area_level_1")) {
+        city = c.long_name;
+        break;
+      }
+    }
+  }
 
-  return `${locality || "Locality"}, ${area || "Area"}, ${city || "City"}`;
+  return city || "Bengaluru";
 }
 
 export async function getCurrentLocationFromGoogleMaps() {

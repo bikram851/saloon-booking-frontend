@@ -497,7 +497,7 @@ export default function HomePage() {
             <br />
             might be <em>closer than you think.</em>
           </h2>
-          <p>Explore top salons in Whitefield, Indiranagar, Koramangala and more.</p>
+          <p>Explore top salons in Bengaluru.</p>
         </div>
         <a
           className="primary"
