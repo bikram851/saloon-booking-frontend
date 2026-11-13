@@ -471,9 +471,16 @@ export default function HomePage() {
           </h2>
           <p>Explore top salons in Whitefield, Indiranagar, Koramangala and more.</p>
         </div>
-        <Link className="primary" to="/#salons">
+        <a
+          className="primary"
+          href="#salons"
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById("salons")?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
           Explore salons <ArrowRight size={16} />
-        </Link>
+        </a>
       </section>
     </div>
   );

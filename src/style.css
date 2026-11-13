@@ -12628,7 +12628,7 @@ h1, h2, h3, h4,
 
 .hero-highlight, h1 em, h2 em {
   font-family: var(--font-heading);
-  font-style: italic;
+  font-style: normal;
   color: var(--color-gold);
 }
 
@@ -13398,8 +13398,33 @@ input:focus, select:focus, textarea:focus {
   background: linear-gradient(135deg, var(--color-soft) 0%, #FFF3EC 100%) !important;
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-card) !important;
-  margin: 0 6.2% 60px !important;
+  margin: 50px 6.2% 64px !important;
   padding: 44px !important;
+  box-shadow: 0 8px 30px rgba(182, 138, 74, 0.08);
+}
+
+.warm-location-cta .primary,
+.warm-location-cta a.primary {
+  background: var(--color-gold) !important;
+  color: #FFFFFF !important;
+  border: 1px solid var(--color-gold) !important;
+  font-weight: 600;
+  padding: 12px 24px !important;
+  border-radius: var(--radius-button) !important;
+  box-shadow: 0 4px 14px rgba(182, 138, 74, 0.28);
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.warm-location-cta .primary:hover,
+.warm-location-cta a.primary:hover {
+  background: #A07436 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(182, 138, 74, 0.38);
 }
 
 /* 10. Barber Cards & Booking Page Theme Overrides */
@@ -13501,8 +13526,17 @@ input:focus, select:focus, textarea:focus {
   }
 
   .warm-location-cta {
-    margin: 0 14px 40px !important;
-    padding: 24px 16px !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    margin: 32px 14px 44px !important;
+    padding: 28px 18px !important;
+  }
+
+  .warm-location-cta .primary,
+  .warm-location-cta a.primary {
+    width: 100%;
+    justify-content: center;
   }
 
   .hero-main-photo {
