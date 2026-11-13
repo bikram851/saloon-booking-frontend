@@ -153,7 +153,7 @@ export default function Header() {
 
         <div className="header-actions">
           {!isStaff && (
-            <Link className="primary small mmt-btn-orange desktop-book-cta" to="/#salons">
+            <Link className="primary small desktop-book-cta" to="/#salons">
               <CalendarDays size={14} />
               <span>Book Appointment</span>
             </Link>
