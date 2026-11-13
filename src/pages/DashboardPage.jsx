@@ -2035,46 +2035,199 @@ export default function DashboardPage() {
                       Set your real-time shift status so customers booking online know when you are available.
                     </p>
 
-                    <div className="shift-selection-grid">
-                      <label className={`shift-option-card ${currentBarber.status === "active" ? "selected" : ""}`}>
+                    <div className="shift-selection-grid" style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "8px" }}>
+                      <label
+                        className={`shift-option-card ${currentBarber.status === "active" ? "selected" : ""}`}
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: "16px",
+                          padding: "16px 20px",
+                          borderRadius: "14px",
+                          background: currentBarber.status === "active" ? "#fbf8f3" : "#ffffff",
+                          border: currentBarber.status === "active" ? "1.5px solid #a8794c" : "1.5px solid #ede7de",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         <input
                           type="radio"
                           name="shiftStatus"
                           value="active"
                           checked={currentBarber.status === "active"}
                           onChange={() => handleBarberStatusChange(currentBarber.id, "active")}
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            margin: 0,
+                            accentColor: "#a8794c",
+                            cursor: "pointer",
+                            flexShrink: 0,
+                          }}
                         />
-                        <div className="shift-card-content">
-                          <strong className="shift-title">🟢 On Duty & Active</strong>
-                          <small>Chair ready to accept online bookings and walk-ins.</small>
+                        <div
+                          className="shift-card-content"
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            flex: 1,
+                            minWidth: 0,
+                          }}
+                        >
+                          <strong
+                            className="shift-title"
+                            style={{
+                              display: "block",
+                              fontSize: "15px",
+                              fontWeight: 700,
+                              color: "#1f1d1a",
+                              lineHeight: 1.3,
+                            }}
+                          >
+                            🟢 On Duty & Active
+                          </strong>
+                          <small
+                            style={{
+                              display: "block",
+                              fontSize: "13px",
+                              color: "#64748b",
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            Chair ready to accept online bookings and walk-ins.
+                          </small>
                         </div>
                       </label>
 
-                      <label className={`shift-option-card ${currentBarber.status === "break" ? "selected" : ""}`}>
+                      <label
+                        className={`shift-option-card ${currentBarber.status === "break" ? "selected" : ""}`}
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: "16px",
+                          padding: "16px 20px",
+                          borderRadius: "14px",
+                          background: currentBarber.status === "break" ? "#fbf8f3" : "#ffffff",
+                          border: currentBarber.status === "break" ? "1.5px solid #a8794c" : "1.5px solid #ede7de",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         <input
                           type="radio"
                           name="shiftStatus"
                           value="break"
                           checked={currentBarber.status === "break"}
                           onChange={() => handleBarberStatusChange(currentBarber.id, "break")}
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            margin: 0,
+                            accentColor: "#a8794c",
+                            cursor: "pointer",
+                            flexShrink: 0,
+                          }}
                         />
-                        <div className="shift-card-content">
-                          <strong className="shift-title">☕ Quick Break</strong>
-                          <small>Temporarily paused. Customers cannot book immediate slots.</small>
+                        <div
+                          className="shift-card-content"
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            flex: 1,
+                            minWidth: 0,
+                          }}
+                        >
+                          <strong
+                            className="shift-title"
+                            style={{
+                              display: "block",
+                              fontSize: "15px",
+                              fontWeight: 700,
+                              color: "#1f1d1a",
+                              lineHeight: 1.3,
+                            }}
+                          >
+                            ☕ Quick Break
+                          </strong>
+                          <small
+                            style={{
+                              display: "block",
+                              fontSize: "13px",
+                              color: "#64748b",
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            Temporarily paused. Customers cannot book immediate slots.
+                          </small>
                         </div>
                       </label>
 
-                      <label className={`shift-option-card ${currentBarber.status === "offline" ? "selected" : ""}`}>
+                      <label
+                        className={`shift-option-card ${currentBarber.status === "offline" ? "selected" : ""}`}
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: "16px",
+                          padding: "16px 20px",
+                          borderRadius: "14px",
+                          background: currentBarber.status === "offline" ? "#fbf8f3" : "#ffffff",
+                          border: currentBarber.status === "offline" ? "1.5px solid #a8794c" : "1.5px solid #ede7de",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         <input
                           type="radio"
                           name="shiftStatus"
                           value="offline"
                           checked={currentBarber.status === "offline"}
                           onChange={() => handleBarberStatusChange(currentBarber.id, "offline")}
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            margin: 0,
+                            accentColor: "#a8794c",
+                            cursor: "pointer",
+                            flexShrink: 0,
+                          }}
                         />
-                        <div className="shift-card-content">
-                          <strong className="shift-title">🔴 Off Duty</strong>
-                          <small>Station closed for the rest of today.</small>
+                        <div
+                          className="shift-card-content"
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            flex: 1,
+                            minWidth: 0,
+                          }}
+                        >
+                          <strong
+                            className="shift-title"
+                            style={{
+                              display: "block",
+                              fontSize: "15px",
+                              fontWeight: 700,
+                              color: "#1f1d1a",
+                              lineHeight: 1.3,
+                            }}
+                          >
+                            🔴 Off Duty
+                          </strong>
+                          <small
+                            style={{
+                              display: "block",
+                              fontSize: "13px",
+                              color: "#64748b",
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            Station closed for the rest of today.
+                          </small>
                         </div>
                       </label>
                     </div>

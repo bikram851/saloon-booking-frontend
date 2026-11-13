@@ -5653,7 +5653,7 @@ footer .brand {
   }
 
   body:has(.auth-wrap) .auth-card .primary,
-  body:has(.auth-wrap) .auth-card button:not(.text-btn) {
+  body:has(.auth-wrap) .auth-card button:not(.text-btn):not(.inline-link-btn) {
     min-height: 44px;
   }
 }
@@ -8141,6 +8141,10 @@ th {
 
 .auth-footer .text-btn,
 .auth-switch button,
+.auth-card-footer button,
+.auth-card-footer .inline-link-btn,
+.auth-card-footer .text-btn,
+.inline-link-btn,
 .text-btn {
   background: transparent !important;
   border: none !important;
@@ -8150,19 +8154,24 @@ th {
   margin: 0 !important;
   min-height: auto !important;
   height: auto !important;
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 700;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
   color: var(--color-primary, #a8794c) !important;
-  cursor: pointer;
+  cursor: pointer !important;
   text-decoration: underline !important;
-  text-underline-offset: 3px;
-  display: inline;
-  transition: color 0.15s ease;
+  text-underline-offset: 3px !important;
+  display: inline !important;
+  transition: color 0.15s ease !important;
+  vertical-align: baseline !important;
 }
 
 .auth-footer .text-btn:hover,
 .auth-switch button:hover,
+.auth-card-footer button:hover,
+.auth-card-footer .inline-link-btn:hover,
+.auth-card-footer .text-btn:hover,
+.inline-link-btn:hover,
 .text-btn:hover {
   color: var(--color-primary-dark, #805631) !important;
 }
@@ -14042,29 +14051,29 @@ input:focus, select:focus, textarea:focus {
 
 .testimonial-author-info,
 .testimonial-footer > div:last-child {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  min-width: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 3px !important;
+  min-width: 0 !important;
 }
 
 .testimonial-author-name,
 .testimonial-footer b {
-  display: block;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1.3;
+  display: block !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--color-text, #1f1d1a) !important;
+  line-height: 1.3 !important;
 }
 
 .testimonial-author-detail,
 .testimonial-footer small {
-  display: block;
-  font-size: 11.5px;
-  color: var(--color-muted);
-  line-height: 1.35;
-  margin-top: 1px;
+  display: block !important;
+  font-size: 11.5px !important;
+  color: var(--color-muted, #817873) !important;
+  line-height: 1.35 !important;
+  margin-top: 1px !important;
 }
 
 .testimonial-avatar {
@@ -14089,6 +14098,13 @@ input:focus, select:focus, textarea:focus {
   margin: 50px 6.2% 64px !important;
   padding: 44px !important;
   box-shadow: 0 8px 30px rgba(168, 121, 76, 0.08);
+}
+
+.warm-location-cta h2 em,
+.location-cta h2 em {
+  font-style: normal !important;
+  color: var(--color-gold, #a8794c) !important;
+  font-family: inherit !important;
 }
 
 .warm-location-cta .primary,
@@ -14756,20 +14772,32 @@ input:focus, select:focus, textarea:focus {
   margin: 8px 0 0;
 }
 
-.inline-link-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--color-primary, #a8794c);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.inline-link-btn,
+.auth-card-footer button.inline-link-btn,
+.auth-card-footer button.text-btn {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: var(--color-primary, #a8794c) !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  display: inline !important;
+  vertical-align: baseline !important;
+  min-height: auto !important;
+  height: auto !important;
 }
 
-.inline-link-btn:hover {
-  color: var(--color-primary-dark, #805631);
+.inline-link-btn:hover,
+.auth-card-footer button.inline-link-btn:hover,
+.auth-card-footer button.text-btn:hover {
+  color: var(--color-primary-dark, #805631) !important;
 }
 
 /* Forgot Password View */

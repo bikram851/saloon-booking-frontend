@@ -448,9 +448,37 @@ export default function HomePage() {
                     .map((n) => n[0])
                     .join("")}
                 </div>
-                <div className="testimonial-author-info">
-                  <strong className="testimonial-author-name">{t.name}</strong>
-                  <span className="testimonial-author-detail muted">
+                <div
+                  className="testimonial-author-info"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    gap: "3px",
+                    minWidth: 0,
+                  }}
+                >
+                  <strong
+                    className="testimonial-author-name"
+                    style={{
+                      display: "block",
+                      fontSize: "13.5px",
+                      fontWeight: 700,
+                      color: "var(--color-text, #1f1d1a)",
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {t.name}
+                  </strong>
+                  <span
+                    className="testimonial-author-detail muted"
+                    style={{
+                      display: "block",
+                      fontSize: "11.5px",
+                      color: "var(--color-muted, #817873)",
+                      lineHeight: 1.35,
+                    }}
+                  >
                     {t.service} · {t.date}
                   </span>
                 </div>

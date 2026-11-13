@@ -651,13 +651,32 @@ export default function LoginPage() {
                       First time here?{" "}
                       <button
                         type="button"
-                        className="inline-link-btn"
+                        className="inline-link-btn text-btn"
                         onClick={() => {
                           setMode("register");
                           setError("");
                         }}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          outline: "none",
+                          boxShadow: "none",
+                          padding: 0,
+                          margin: 0,
+                          font: "inherit",
+                          fontSize: "13.5px",
+                          fontWeight: 700,
+                          color: "var(--color-primary, #a8794c)",
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                          textUnderlineOffset: "3px",
+                          display: "inline",
+                          minHeight: "auto",
+                          height: "auto",
+                          verticalAlign: "baseline",
+                        }}
                       >
-                        Create a free account
+                        Create an account
                       </button>
                     </p>
                   </form>
@@ -794,10 +813,29 @@ export default function LoginPage() {
                       Already have an account?{" "}
                       <button
                         type="button"
-                        className="inline-link-btn"
+                        className="inline-link-btn text-btn"
                         onClick={() => {
                           setMode("login");
                           setError("");
+                        }}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          outline: "none",
+                          boxShadow: "none",
+                          padding: 0,
+                          margin: 0,
+                          font: "inherit",
+                          fontSize: "13.5px",
+                          fontWeight: 700,
+                          color: "var(--color-primary, #a8794c)",
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                          textUnderlineOffset: "3px",
+                          display: "inline",
+                          minHeight: "auto",
+                          height: "auto",
+                          verticalAlign: "baseline",
                         }}
                       >
                         Sign In
@@ -869,10 +907,29 @@ export default function LoginPage() {
                           Remembered your password?{" "}
                           <button
                             type="button"
-                            className="inline-link-btn"
+                            className="inline-link-btn text-btn"
                             onClick={() => {
                               setMode("login");
                               setError("");
+                            }}
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              outline: "none",
+                              boxShadow: "none",
+                              padding: 0,
+                              margin: 0,
+                              font: "inherit",
+                              fontSize: "13.5px",
+                              fontWeight: 700,
+                              color: "var(--color-primary, #a8794c)",
+                              cursor: "pointer",
+                              textDecoration: "underline",
+                              textUnderlineOffset: "3px",
+                              display: "inline",
+                              minHeight: "auto",
+                              height: "auto",
+                              verticalAlign: "baseline",
                             }}
                           >
                             Back to Sign In
