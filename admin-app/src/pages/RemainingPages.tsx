@@ -157,17 +157,28 @@ export const VerificationPage: React.FC = () => {
     saveRequests(updated);
     await logAdminAction('APPROVE_VERIFICATION', 'verificationRequests', req.id, `Approved salon verification for ${req.salonName}`);
 
-    // Update salon status in sa_salons if present
+    // Update salon status in central store and publish to Customer App
     try {
-      const storedSalons = localStorage.getItem('sa_salons');
+      const storedSalons = localStorage.getItem('gg_central_salons') || localStorage.getItem('sa_salons');
       if (storedSalons) {
         const salons: SalonDocument[] = JSON.parse(storedSalons);
-        const updatedSalons = salons.map(s => (s.id === req.salonId || s.name.toLowerCase() === req.salonName.toLowerCase()) ? { ...s, status: 'APPROVED' as const } : s);
+        const updatedSalons = salons.map(s => (s.id === req.salonId || s.name.toLowerCase() === req.salonName.toLowerCase()) ? {
+          ...s,
+          status: 'PUBLISHED' as const,
+          publicationStatus: 'PUBLISHED' as const,
+          isPublished: true,
+          approvedAt: new Date().toISOString()
+        } : s);
+        localStorage.setItem('gg_central_salons', JSON.stringify(updatedSalons));
         localStorage.setItem('sa_salons', JSON.stringify(updatedSalons));
+        localStorage.setItem('gg_admin_salons', JSON.stringify(updatedSalons));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('gg_salons_published_sync', { detail: { salonId: req.salonId, all: updatedSalons } }));
+        }
       }
     } catch {}
 
-    showToast(`✓ "${req.salonName}" verification has been approved and partner account activated.`);
+    showToast(`✓ "${req.salonName}" verification has been approved and published to Customer Application.`);
   };
 
   const handleRejectConfirm = async () => {
@@ -177,11 +188,22 @@ export const VerificationPage: React.FC = () => {
     await logAdminAction('REJECT_VERIFICATION', 'verificationRequests', rejectModal.id, `Rejected verification for ${rejectModal.salonName}: ${rejectionReason}`);
 
     try {
-      const storedSalons = localStorage.getItem('sa_salons');
+      const storedSalons = localStorage.getItem('gg_central_salons') || localStorage.getItem('sa_salons');
       if (storedSalons) {
         const salons: SalonDocument[] = JSON.parse(storedSalons);
-        const updatedSalons = salons.map(s => (s.id === rejectModal.salonId || s.name.toLowerCase() === rejectModal.salonName.toLowerCase()) ? { ...s, status: 'REJECTED' as const } : s);
+        const updatedSalons = salons.map(s => (s.id === rejectModal.salonId || s.name.toLowerCase() === rejectModal.salonName.toLowerCase()) ? {
+          ...s,
+          status: 'REJECTED' as const,
+          publicationStatus: 'UNPUBLISHED' as const,
+          isPublished: false,
+          auditorNotes: rejectionReason
+        } : s);
+        localStorage.setItem('gg_central_salons', JSON.stringify(updatedSalons));
         localStorage.setItem('sa_salons', JSON.stringify(updatedSalons));
+        localStorage.setItem('gg_admin_salons', JSON.stringify(updatedSalons));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('gg_salons_published_sync', { detail: { salonId: rejectModal.salonId, all: updatedSalons } }));
+        }
       }
     } catch {}
 

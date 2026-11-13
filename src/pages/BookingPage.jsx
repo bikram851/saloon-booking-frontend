@@ -272,6 +272,11 @@ export default function BookingPage() {
     setError("");
     setMessage("");
 
+    if (salon?.isSuspended || salon?.isAvailableForBooking === false) {
+      setError("This salon is currently suspended or inactive. New reservations cannot be placed.");
+      return;
+    }
+
     let user = null;
 
     try {
@@ -564,6 +569,13 @@ export default function BookingPage() {
             className="booking-form"
             onSubmit={book}
           >
+            {salon?.isSuspended && (
+              <div style={{ background: '#FEE2E2', border: '1px solid #FECACA', color: '#991B1B', padding: '14px 18px', borderRadius: '10px', marginBottom: '1.25rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <AlertCircle size={20} />
+                <span>This salon venue is currently suspended or inactive. Reservations cannot be placed.</span>
+              </div>
+            )}
+
             {/* =============================================
                 SERVICE
             ============================================= */}
@@ -930,6 +942,7 @@ export default function BookingPage() {
               type="submit"
               disabled={
                 booking ||
+                salon?.isSuspended ||
                 !services.length ||
                 !selectedBarber ||
                 !date ||

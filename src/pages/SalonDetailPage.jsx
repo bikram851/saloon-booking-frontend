@@ -315,18 +315,36 @@ export default function SalonDetailPage() {
             <address className="explore-address">{salon.address}</address>
           </div>
 
+          {/* Suspension / Booking Availability Banner */}
+          {salon.isSuspended && (
+            <div style={{ background: '#FEE2E2', border: '1px solid #FECACA', color: '#991B1B', padding: '12px 16px', borderRadius: '8px', margin: '1rem 0', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <AlertCircle size={18} />
+              <span>This salon venue is currently suspended or inactive. New bookings are temporarily disabled.</span>
+            </div>
+          )}
+
           {/* Primary CTA and Quick Actions */}
           <div className="explore-hero-actions">
-            <Link
-              to={`/book/${salon.id}`}
-              onClick={(e) => handleBookingClick(e, `/book/${salon.id}`)}
-              className="primary explore-primary-cta"
-              aria-label={`Book appointment at ${salon.name}`}
-            >
-              <CalendarDays size={18} />
-              <span>Book Appointment</span>
-              <ArrowRight size={17} />
-            </Link>
+            {!salon.isSuspended ? (
+              <Link
+                to={`/book/${salon.id}`}
+                onClick={(e) => handleBookingClick(e, `/book/${salon.id}`)}
+                className="primary explore-primary-cta"
+                aria-label={`Book appointment at ${salon.name}`}
+              >
+                <CalendarDays size={18} />
+                <span>Book Appointment</span>
+                <ArrowRight size={17} />
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="outline"
+                style={{ opacity: 0.6, cursor: 'not-allowed', background: '#F1F5F9', color: '#94A3B8' }}
+              >
+                Booking Unavailable
+              </button>
+            )}
 
             <a
               href={mapUrl}

@@ -17,7 +17,7 @@ export interface UserProfile {
   lastLoginAt: string;
 }
 
-export type SalonStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
+export type SalonStatus = 'DRAFT' | 'PENDING' | 'PENDING_APPROVAL' | 'APPROVED' | 'PUBLISHED' | 'REJECTED' | 'SUSPENDED' | 'INACTIVE';
 
 export interface SalonLocation {
   fullAddress: string;
@@ -94,6 +94,8 @@ export interface SalonDocument {
   workingHours: SalonWorkingHoursDay[];
   barbers: SalonBarber[];
   status: SalonStatus;
+  publicationStatus?: 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'PUBLISHED' | 'UNPUBLISHED';
+  isPublished?: boolean;
   rating: number;
   reviewsCount: number;
   chairsCount: number;
@@ -102,6 +104,7 @@ export interface SalonDocument {
   totalRevenue: number;
   submittedAt: string;
   approvedAt?: string;
+  publishedAt?: string;
   auditorNotes?: string;
 }
 

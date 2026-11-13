@@ -111,7 +111,7 @@ export const AddSalonWizardPage: React.FC = () => {
   const handleNext = () => setStep(prev => Math.min(prev + 1, 8));
   const handlePrev = () => setStep(prev => Math.max(prev - 1, 1));
 
-  const handleFinalSubmit = async (statusChoice: 'APPROVED' | 'PENDING' | 'DRAFT') => {
+  const handleFinalSubmit = async (statusChoice: 'APPROVED' | 'PENDING' | 'DRAFT' | 'PUBLISHED') => {
     setSubmitting(true);
     const newId = `salon_${Date.now()}`;
 
@@ -147,7 +147,9 @@ export const AddSalonWizardPage: React.FC = () => {
       services: salonData.services,
       workingHours: salonData.workingHours,
       barbers: salonData.barbers,
-      status: statusChoice,
+      status: (statusChoice === 'PUBLISHED' || statusChoice === 'APPROVED') ? 'PUBLISHED' : statusChoice,
+      publicationStatus: (statusChoice === 'PUBLISHED' || statusChoice === 'APPROVED') ? 'PUBLISHED' : 'PENDING_APPROVAL',
+      isPublished: statusChoice === 'PUBLISHED' || statusChoice === 'APPROVED',
       rating: 4.9,
       reviewsCount: 1,
       chairsCount: 6,
@@ -155,7 +157,7 @@ export const AddSalonWizardPage: React.FC = () => {
       totalAppointmentsCount: 0,
       totalRevenue: 0,
       submittedAt: new Date().toISOString(),
-      approvedAt: statusChoice === 'APPROVED' ? new Date().toISOString() : undefined
+      approvedAt: (statusChoice === 'PUBLISHED' || statusChoice === 'APPROVED') ? new Date().toISOString() : undefined
     };
 
     try {
@@ -168,7 +170,7 @@ export const AddSalonWizardPage: React.FC = () => {
       );
 
       // Create Professional Account via Cloud Function
-      if (statusChoice === 'APPROVED') {
+      if (statusChoice === 'APPROVED' || statusChoice === 'PUBLISHED') {
         const proRes = await createProfessionalAccount({
           salonId: newId,
           salonName: newDoc.name,
@@ -725,10 +727,10 @@ export const AddSalonWizardPage: React.FC = () => {
               <button
                 type="button"
                 disabled={submitting}
-                onClick={() => handleFinalSubmit('APPROVED')}
+                onClick={() => handleFinalSubmit('PUBLISHED')}
                 className="sa-btn sa-btn-primary"
               >
-                {submitting ? 'Provisioning Account...' : 'Approve & Provision Account'}
+                {submitting ? 'Publishing & Provisioning...' : 'Approve & Publish to Customer App'}
               </button>
             </div>
           </div>

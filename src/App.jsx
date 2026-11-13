@@ -66,6 +66,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/salon/:id" element={<SalonDetailPage />} />
+          <Route path="/salons/:id" element={<SalonDetailPage />} />
           <Route path="/book/:id" element={<BookingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/my-appointments" element={<MyAppointmentsPage />} />

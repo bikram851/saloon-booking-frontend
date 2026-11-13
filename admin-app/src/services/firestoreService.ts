@@ -233,8 +233,24 @@ export async function fetchSalons(): Promise<SalonDocument[]> {
     console.warn("Firestore fetchSalons notice, using persistent store:", err);
   }
 
+  // Unified central salon database with fallback
+  const centralStored = localStorage.getItem("gg_central_salons");
+  if (centralStored) {
+    try {
+      const parsed = JSON.parse(centralStored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch {}
+  }
+
   const stored = localStorage.getItem("sa_salons");
-  if (stored) return JSON.parse(stored);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch {}
+  }
+
+  localStorage.setItem("gg_central_salons", JSON.stringify(INITIAL_SALONS));
   localStorage.setItem("sa_salons", JSON.stringify(INITIAL_SALONS));
   return INITIAL_SALONS;
 }
@@ -246,19 +262,33 @@ export async function saveSalon(salon: SalonDocument): Promise<void> {
     console.warn("Firestore saveSalon notice:", err);
   }
 
-  // Update local cache
+  // Update local central cache and sync across applications
   const salons = await fetchSalons();
   const exists = salons.some(s => s.id === salon.id);
   const updated = exists ? salons.map(s => s.id === salon.id ? salon : s) : [salon, ...salons];
+  
+  localStorage.setItem("gg_central_salons", JSON.stringify(updated));
   localStorage.setItem("sa_salons", JSON.stringify(updated));
+  localStorage.setItem("gg_admin_salons", JSON.stringify(updated));
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("gg_salons_published_sync", { detail: { salon, all: updated } }));
+    window.dispatchEvent(new CustomEvent("gg_admin_salons_updated", { detail: updated }));
+  }
 }
 
 export async function updateSalonStatus(salonId: string, status: SalonDocument['status'], auditorNotes?: string): Promise<void> {
+  const isPublished = status === 'PUBLISHED' || status === 'APPROVED';
+  const publicationStatus = status === 'PUBLISHED' || status === 'APPROVED' ? 'PUBLISHED' : status === 'SUSPENDED' ? 'UNPUBLISHED' : 'PENDING_APPROVAL';
+
   try {
     await updateDoc(doc(db, "salons", salonId), {
       status,
+      isPublished,
+      publicationStatus,
       auditorNotes: auditorNotes || "",
-      approvedAt: status === "APPROVED" ? new Date().toISOString() : undefined
+      approvedAt: (status === "APPROVED" || status === "PUBLISHED") ? new Date().toISOString() : undefined,
+      publishedAt: (status === "PUBLISHED") ? new Date().toISOString() : undefined
     });
   } catch (err) {
     console.warn("Firestore updateSalonStatus notice:", err);
@@ -268,10 +298,31 @@ export async function updateSalonStatus(salonId: string, status: SalonDocument['
   const updated = salons.map(s => s.id === salonId ? {
     ...s,
     status,
+    isPublished,
+    publicationStatus,
     auditorNotes: auditorNotes || s.auditorNotes,
-    approvedAt: status === "APPROVED" ? new Date().toISOString() : s.approvedAt
+    approvedAt: (status === "APPROVED" || status === "PUBLISHED") ? (s.approvedAt || new Date().toISOString()) : s.approvedAt,
+    publishedAt: (status === "PUBLISHED") ? new Date().toISOString() : s.publishedAt
   } : s);
+
+  localStorage.setItem("gg_central_salons", JSON.stringify(updated));
   localStorage.setItem("sa_salons", JSON.stringify(updated));
+  localStorage.setItem("gg_admin_salons", JSON.stringify(updated));
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("gg_salons_published_sync", { detail: { salonId, status, all: updated } }));
+    window.dispatchEvent(new CustomEvent("gg_admin_salons_updated", { detail: updated }));
+  }
+}
+
+export async function approveAndPublishSalon(salonId: string, auditorNotes?: string): Promise<void> {
+  await updateSalonStatus(salonId, 'PUBLISHED', auditorNotes);
+  await logAdminAction('APPROVE_AND_PUBLISH', 'salons', salonId, `Approved & Published salon to Customer Discovery: ${auditorNotes || 'Marketplace live'}`);
+}
+
+export async function suspendOrUnpublishSalon(salonId: string, reason?: string): Promise<void> {
+  await updateSalonStatus(salonId, 'SUSPENDED', reason);
+  await logAdminAction('SUSPEND_SALON', 'salons', salonId, `Suspended and unpublished salon from Customer Discovery: ${reason || 'Administrative hold'}`);
 }
 
 export async function fetchCustomers(): Promise<CustomerDocument[]> {

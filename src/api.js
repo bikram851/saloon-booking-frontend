@@ -1,5 +1,6 @@
 import { getFirebaseApiUrl, testFirebaseHandshake } from "./firebase";
 import { fallback, demoServices } from "./data/mockData";
+import { getPublishedCentralSalons, getCentralSalonById, getAllCentralSalons } from "./services/centralSalonService";
 
 export const API = getFirebaseApiUrl();
 export const checkFirebaseHealth = testFirebaseHandshake;
@@ -462,26 +463,111 @@ function handleMockFallback(path, opts = {}) {
     };
   }
 
-  // 3. Salons List
+  // 3. Salons List (Only Approved & Published Central Salons)
   if (cleanPath === "/salons" || cleanPath === "") {
+    const published = getPublishedCentralSalons();
+    if (published && published.length > 0) {
+      return published.map((s) => ({
+        id: s.id,
+        salonId: s.salonId || s.id,
+        name: s.name,
+        area: s.area || (s.location?.city ? `${s.location.city}` : "Bengaluru"),
+        address: s.address || s.location?.fullAddress || "ITPL Main Road, Bengaluru",
+        landmark: s.landmark || "Near Metro",
+        phone: s.phone,
+        latitude: s.location?.latitude || s.latitude || 12.9698,
+        longitude: s.location?.longitude || s.longitude || 77.75,
+        rating: s.rating || 4.8,
+        reviewsCount: s.reviewsCount || 40,
+        description: s.description,
+        openingHours: s.openingHours || "9:00 AM – 9:00 PM",
+        coverImage: s.coverImage,
+        galleryImages: s.galleryImages || [],
+        images: (Array.isArray(s.galleryImages) && s.galleryImages.length)
+          ? s.galleryImages
+          : ((Array.isArray(s.images) && s.images.length)
+            ? s.images
+            : [s.coverImage || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=900&q=85"]),
+        services: s.services || [],
+        servicesSample: (Array.isArray(s.servicesSample) && s.servicesSample.length)
+          ? s.servicesSample
+          : ((Array.isArray(s.services) && s.services.length)
+            ? s.services.slice(0, 4).map((x) => x.name)
+            : ["Haircut", "Hair Spa", "Facial", "Grooming"]),
+        startingPrice: s.startingPrice || (Array.isArray(s.services) && s.services.length
+          ? Math.min(...s.services.map((x) => Number(x.price) || 9999))
+          : 650),
+        status: s.status,
+        publicationStatus: s.publicationStatus || "PUBLISHED",
+        isPublished: s.isPublished !== false
+      }));
+    }
     return fallback;
   }
 
   // 4. Salon Details
-  const salonMatch = cleanPath.match(/^\/salons\/([^/]+)$/);
+  const salonMatch = cleanPath.match(/^\/salons\/([^/]+)$/) || cleanPath.match(/^\/salon\/([^/]+)$/);
   if (salonMatch) {
     const id = salonMatch[1];
-    const s = fallback.find((x) => String(x.id) === String(id)) || fallback[0];
-    return s;
+    const s = getCentralSalonById(id) || fallback.find((x) => String(x.id) === String(id)) || fallback[0];
+    const isPublished = s.status === "PUBLISHED" || s.publicationStatus === "PUBLISHED" || (s.status === "APPROVED" && s.isPublished !== false);
+    const isSuspended = s.status === "SUSPENDED" || s.status === "REJECTED" || s.status === "DRAFT" || s.status === "PENDING" || s.status === "PENDING_APPROVAL";
+
+    return {
+      ...s,
+      area: s.area || (s.location?.city ? `${s.location.city}` : "Bengaluru"),
+      address: s.address || s.location?.fullAddress || "ITPL Main Road, Bengaluru",
+      openingHours: s.openingHours || "9:00 AM – 9:00 PM",
+      coverImage: s.coverImage || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80",
+      images: (Array.isArray(s.galleryImages) && s.galleryImages.length)
+        ? s.galleryImages
+        : ((Array.isArray(s.images) && s.images.length)
+          ? s.images
+          : [s.coverImage || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=900&q=85"]),
+      isAvailableForBooking: isPublished && !isSuspended,
+      isSuspended,
+      suspensionNotice: isSuspended ? "This salon venue is currently suspended or not accepting appointments." : null
+    };
   }
 
   // 5. Salon Services
   if (cleanPath.endsWith("/services") || cleanPath.includes("/services")) {
+    const idMatch = cleanPath.match(/\/salons\/([^/]+)\/services/);
+    if (idMatch) {
+      const salon = getCentralSalonById(idMatch[1]);
+      if (salon && Array.isArray(salon.services) && salon.services.length > 0) {
+        return salon.services.map((srv, idx) => ({
+          id: srv.id || idx + 1,
+          name: srv.name,
+          category: srv.category || "General",
+          price: Number(srv.price) || 1000,
+          durationMinutes: Number(srv.durationMinutes) || 45,
+          description: srv.description || srv.name
+        }));
+      }
+    }
     return defaultMockServices;
   }
 
   // 6. Salon Barbers
   if (cleanPath.endsWith("/barbers") || (cleanPath.includes("/barbers") && !cleanPath.includes("/availability"))) {
+    const idMatch = cleanPath.match(/\/salons\/([^/]+)\/barbers/);
+    if (idMatch) {
+      const salon = getCentralSalonById(idMatch[1]);
+      if (salon && Array.isArray(salon.barbers) && salon.barbers.length > 0) {
+        return salon.barbers.map((b, idx) => ({
+          id: b.id || idx + 1,
+          name: b.name,
+          experience: b.experienceYears ? `${b.experienceYears} Years` : "5 Years",
+          experienceYears: b.experienceYears || 5,
+          specialization: b.specialization || "Senior Stylist",
+          rating: b.rating || 4.85,
+          phone: b.phone || "+91 98765 00000",
+          availability: b.availability || "ON_DUTY",
+          chair: `Chair ${idx + 1}`
+        }));
+      }
+    }
     return getStoredBarbers();
   }
 
@@ -497,6 +583,20 @@ function handleMockFallback(path, opts = {}) {
 
   // 6d. Salon Gallery
   if (cleanPath.endsWith("/gallery") || cleanPath.includes("/gallery")) {
+    const idMatch = cleanPath.match(/\/salons\/([^/]+)\/gallery/);
+    if (idMatch) {
+      const salon = getCentralSalonById(idMatch[1]);
+      const galleryImgs = salon?.galleryImages || salon?.images;
+      if (Array.isArray(galleryImgs) && galleryImgs.length > 0) {
+        return galleryImgs.map((url, idx) => ({
+          id: idx + 1,
+          title: `Salon Interior & Styling Station ${idx + 1}`,
+          category: idx === 0 ? "Styling Stations" : idx === 1 ? "Premises" : "Lounge",
+          url,
+          alt: `${salon.name} view ${idx + 1}`
+        }));
+      }
+    }
     return defaultMockGallery;
   }
 

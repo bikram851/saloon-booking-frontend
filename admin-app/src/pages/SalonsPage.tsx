@@ -17,7 +17,7 @@ import {
   Scissors,
   X
 } from 'lucide-react';
-import { fetchSalons, updateSalonStatus, saveSalon } from '../services/firestoreService';
+import { fetchSalons, updateSalonStatus, saveSalon, approveAndPublishSalon, suspendOrUnpublishSalon } from '../services/firestoreService';
 import { SalonDocument } from '../types';
 
 export const SalonsPage: React.FC = () => {
@@ -94,7 +94,7 @@ export const SalonsPage: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {['ALL', 'APPROVED', 'PENDING', 'REJECTED', 'SUSPENDED'].map(st => (
+            {['ALL', 'PUBLISHED', 'APPROVED', 'PENDING', 'DRAFT', 'SUSPENDED'].map(st => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
@@ -118,7 +118,7 @@ export const SalonsPage: React.FC = () => {
                 <th>Location & City</th>
                 <th>Registration No.</th>
                 <th>Rating</th>
-                <th>Status</th>
+                <th>Status & Visibility</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -158,9 +158,14 @@ export const SalonsPage: React.FC = () => {
                       <strong>{s.rating || 4.8}★</strong> ({s.reviewsCount || 40})
                     </td>
                     <td>
-                      <span className={`sa-badge sa-badge-${s.status === 'APPROVED' ? 'active' : s.status === 'PENDING' ? 'pending' : 'rejected'}`}>
-                        {s.status}
-                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                        <span className={`sa-badge sa-badge-${s.status === 'PUBLISHED' || s.status === 'APPROVED' ? 'active' : s.status === 'PENDING' || s.status === 'PENDING_APPROVAL' ? 'pending' : 'rejected'}`}>
+                          {s.status}
+                        </span>
+                        <span style={{ fontSize: '0.68rem', fontWeight: 600, color: s.status === 'PUBLISHED' || (s.status === 'APPROVED' && s.isPublished) ? '#059669' : '#DC2626' }}>
+                          {s.status === 'PUBLISHED' || (s.status === 'APPROVED' && s.isPublished) ? '● Live on Customer App' : '○ Hidden from Customers'}
+                        </span>
+                      </div>
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: '6px' }}>
@@ -170,21 +175,28 @@ export const SalonsPage: React.FC = () => {
                         >
                           Details
                         </button>
-                        {s.status === 'PENDING' && (
+                        {(s.status !== 'PUBLISHED' && s.status !== 'APPROVED') ? (
                           <button
-                            onClick={() => handleStatusChange(s.id, 'APPROVED')}
+                            onClick={async () => {
+                              await approveAndPublishSalon(s.id);
+                              await loadData();
+                            }}
                             className="sa-btn sa-btn-primary sa-btn-sm"
+                            title="Approve and publish to Customer App"
                           >
-                            Approve
+                            Approve & Publish
                           </button>
-                        )}
-                        {s.status === 'APPROVED' && (
+                        ) : (
                           <button
-                            onClick={() => handleStatusChange(s.id, 'SUSPENDED')}
+                            onClick={async () => {
+                              await suspendOrUnpublishSalon(s.id, 'Administrative hold');
+                              await loadData();
+                            }}
                             className="sa-btn sa-btn-sm"
                             style={{ background: '#FEE2E2', color: '#991B1B', border: 'none' }}
+                            title="Suspend from Customer App & block bookings"
                           >
-                            Pause
+                            Suspend
                           </button>
                         )}
                       </div>
@@ -281,26 +293,53 @@ export const SalonsPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--admin-border)', paddingTop: '1rem' }}>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {selectedSalon.status === 'PENDING' && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--admin-border)', paddingTop: '1rem', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {(selectedSalon.status !== 'PUBLISHED' && selectedSalon.status !== 'APPROVED') ? (
                   <>
-                    <button onClick={() => handleStatusChange(selectedSalon.id, 'APPROVED')} className="sa-btn sa-btn-primary">
-                      Approve & Onboard Salon
+                    <button
+                      onClick={async () => {
+                        await approveAndPublishSalon(selectedSalon.id);
+                        await loadData();
+                        setSelectedSalon({ ...selectedSalon, status: 'PUBLISHED', isPublished: true, publicationStatus: 'PUBLISHED' });
+                      }}
+                      className="sa-btn sa-btn-primary"
+                    >
+                      Approve & Publish to Customer App
                     </button>
-                    <button onClick={() => handleStatusChange(selectedSalon.id, 'REJECTED')} className="sa-btn sa-btn-danger">
+                    <button
+                      onClick={async () => {
+                        await updateSalonStatus(selectedSalon.id, 'REJECTED');
+                        await loadData();
+                        setSelectedSalon({ ...selectedSalon, status: 'REJECTED', isPublished: false, publicationStatus: 'UNPUBLISHED' });
+                      }}
+                      className="sa-btn sa-btn-danger"
+                    >
                       Reject Application
                     </button>
                   </>
-                )}
-                {selectedSalon.status === 'APPROVED' && (
-                  <button onClick={() => handleStatusChange(selectedSalon.id, 'SUSPENDED')} className="sa-btn sa-btn-danger">
-                    Suspend Listing
+                ) : (
+                  <button
+                    onClick={async () => {
+                      await suspendOrUnpublishSalon(selectedSalon.id, 'Administrative hold');
+                      await loadData();
+                      setSelectedSalon({ ...selectedSalon, status: 'SUSPENDED', isPublished: false, publicationStatus: 'UNPUBLISHED' });
+                    }}
+                    className="sa-btn sa-btn-danger"
+                  >
+                    Suspend & Remove from Customer App
                   </button>
                 )}
                 {selectedSalon.status === 'SUSPENDED' && (
-                  <button onClick={() => handleStatusChange(selectedSalon.id, 'APPROVED')} className="sa-btn sa-btn-primary">
-                    Re-activate Salon
+                  <button
+                    onClick={async () => {
+                      await approveAndPublishSalon(selectedSalon.id);
+                      await loadData();
+                      setSelectedSalon({ ...selectedSalon, status: 'PUBLISHED', isPublished: true, publicationStatus: 'PUBLISHED' });
+                    }}
+                    className="sa-btn sa-btn-primary"
+                  >
+                    Re-activate & Publish
                   </button>
                 )}
               </div>

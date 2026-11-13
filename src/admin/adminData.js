@@ -359,6 +359,11 @@ export const initialOffers = [
 // Helper functions for persistent storage
 export function getStoredAdminSalons() {
   try {
+    const centralRaw = localStorage.getItem("gg_central_salons");
+    if (centralRaw) {
+      const parsed = JSON.parse(centralRaw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
     const raw = localStorage.getItem("gg_admin_salons");
     if (raw) {
       const parsed = JSON.parse(raw);
@@ -367,6 +372,7 @@ export function getStoredAdminSalons() {
   } catch {}
   try {
     localStorage.setItem("gg_admin_salons", JSON.stringify(initialSalons));
+    localStorage.setItem("gg_central_salons", JSON.stringify(initialSalons));
   } catch {}
   return initialSalons;
 }
@@ -374,8 +380,11 @@ export function getStoredAdminSalons() {
 export function saveStoredAdminSalons(salons) {
   try {
     localStorage.setItem("gg_admin_salons", JSON.stringify(salons));
+    localStorage.setItem("gg_central_salons", JSON.stringify(salons));
+    localStorage.setItem("sa_salons", JSON.stringify(salons));
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("gg_admin_salons_updated", { detail: salons }));
+      window.dispatchEvent(new CustomEvent("gg_salons_published_sync", { detail: { all: salons } }));
     }
   } catch {}
 }

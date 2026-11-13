@@ -23,6 +23,9 @@ import SalonCard from "../components/SalonCard";
 export default function HomePage() {
   const [salons, setSalons] = useState(fallback);
   const [q, setQ] = useState("");
+  const [locationFilter, setLocationFilter] = useState("ALL");
+  const [serviceFilter, setServiceFilter] = useState("ALL");
+  const [sortBy, setSortBy] = useState("RATING_DESC");
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("gg_user") || "{}");
@@ -51,10 +54,27 @@ export default function HomePage() {
 
   const greeting = getGreeting();
 
-  useEffect(() => {
+  const loadSalons = () => {
     request("/salons")
-      .then(setSalons)
+      .then((data) => {
+        if (Array.isArray(data) && data.length) {
+          setSalons(data);
+        }
+      })
       .catch(() => {});
+  };
+
+  useEffect(() => {
+    loadSalons();
+
+    // Real-time synchronization listener for Super Admin publications
+    const handleSync = () => {
+      loadSalons();
+    };
+
+    window.addEventListener("gg_salons_published_sync", handleSync);
+    window.addEventListener("storage", handleSync);
+
     if (window.location.hash) {
       window.setTimeout(
         () => document.querySelector(window.location.hash)?.scrollIntoView({ behavior: "smooth" }),
@@ -63,11 +83,45 @@ export default function HomePage() {
     } else {
       window.scrollTo(0, 0);
     }
+
+    return () => {
+      window.removeEventListener("gg_salons_published_sync", handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
   }, []);
 
-  const filtered = salons.filter((s) =>
-    (s.name + " " + s.area + " " + s.address).toLowerCase().includes(q.toLowerCase()),
-  );
+  const filtered = salons
+    .filter((s) => {
+      if (q.trim()) {
+        const query = q.toLowerCase();
+        const text = (s.name + " " + (s.area || "") + " " + (s.address || "") + " " + (s.description || "")).toLowerCase();
+        if (!text.includes(query)) return false;
+      }
+      if (locationFilter !== "ALL") {
+        const areaStr = (s.area || s.address || "").toLowerCase();
+        if (!areaStr.includes(locationFilter.toLowerCase())) return false;
+      }
+      if (serviceFilter !== "ALL") {
+        const hasService = Array.isArray(s.services) && s.services.some(srv =>
+          (srv.category || "").toLowerCase().includes(serviceFilter.toLowerCase()) ||
+          (srv.name || "").toLowerCase().includes(serviceFilter.toLowerCase())
+        );
+        const hasSample = Array.isArray(s.servicesSample) && s.servicesSample.some(sm =>
+          sm.toLowerCase().includes(serviceFilter.toLowerCase())
+        );
+        if (!hasService && !hasSample) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === "RATING_DESC") {
+        return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+      }
+      if (sortBy === "PRICE_ASC") {
+        return (Number(a.startingPrice) || 0) - (Number(b.startingPrice) || 0);
+      }
+      return 0;
+    });
 
   const testimonials = [
     {
@@ -368,6 +422,98 @@ export default function HomePage() {
             <p className="muted">Thoughtfully selected beauty spots across Bengaluru.</p>
           </div>
           <span className="result-count">{filtered.length} curated salons</span>
+        </div>
+
+        {/* Discovery Filter Controls */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '1.75rem' }}>
+          {/* Location Filters */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-navy, #092B52)', textTransform: 'uppercase', letterSpacing: '0.04em', marginRight: '4px' }}>
+              <MapPin size={13} style={{ display: 'inline', verticalAlign: '-1px', marginRight: '3px' }} /> Location:
+            </span>
+            {[
+              { id: 'ALL', label: 'All Bengaluru' },
+              { id: 'Whitefield', label: 'Whitefield' },
+              { id: 'Indiranagar', label: 'Indiranagar' },
+              { id: 'Koramangala', label: 'Koramangala' }
+            ].map(loc => (
+              <button
+                key={loc.id}
+                type="button"
+                onClick={() => setLocationFilter(loc.id)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: locationFilter === loc.id ? '1px solid #0879E8' : '1px solid #E2E8F0',
+                  background: locationFilter === loc.id ? '#0879E8' : '#FFFFFF',
+                  color: locationFilter === loc.id ? '#FFFFFF' : '#475569',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                {loc.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Service & Sort Row */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-navy, #092B52)', textTransform: 'uppercase', letterSpacing: '0.04em', marginRight: '4px' }}>
+                <Scissors size={13} style={{ display: 'inline', verticalAlign: '-1px', marginRight: '3px' }} /> Treatment:
+              </span>
+              {[
+                { id: 'ALL', label: 'All Services' },
+                { id: 'Hair', label: 'Hair & Styling' },
+                { id: 'Skin', label: 'Skin & Facial' },
+                { id: 'Beard', label: 'Beard & Shave' },
+                { id: 'Spa', label: 'Spa & Massage' }
+              ].map(cat => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setServiceFilter(cat.id)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '16px',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: serviceFilter === cat.id ? '1px solid #FF8A35' : '1px solid #E2E8F0',
+                    background: serviceFilter === cat.id ? '#FF8A35' : '#FFFFFF',
+                    color: serviceFilter === cat.id ? '#FFFFFF' : '#475569',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <label htmlFor="salon-sort" style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>Sort:</label>
+              <select
+                id="salon-sort"
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid #CBD5E1',
+                  background: '#FFFFFF',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  color: '#1E293B',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="RATING_DESC">Top Rated (★)</option>
+                <option value="PRICE_ASC">Price: Low to High</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="salon-grid">
