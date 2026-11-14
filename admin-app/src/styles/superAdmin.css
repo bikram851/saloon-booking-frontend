@@ -19,7 +19,7 @@
   --admin-shadow: 0 4px 16px rgba(9, 43, 82, 0.06);
   --admin-shadow-lg: 0 10px 30px rgba(9, 43, 82, 0.10);
   --admin-font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --admin-font-heading: 'Playfair Display', Georgia, serif;
+  --admin-font-heading: "Century Gothic", "AppleGothic", sans-serif;
 
   /* Aliases for semantic sa tokens */
   --sa-navy: var(--admin-navy);
@@ -95,7 +95,8 @@ body {
 }
 
 .sa-brand-title {
-  font-size: 1.05rem;
+  font-family: var(--admin-font-heading);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
   font-weight: 700;
   color: #FFFFFF;
   letter-spacing: -0.01em;
@@ -372,7 +373,7 @@ body {
 }
 
 .sa-page-title {
-  font-size: 1.65rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
   font-weight: 700;
   color: var(--admin-navy);
   margin: 0 0 0.35rem 0;
@@ -384,6 +385,7 @@ body {
   font-size: 0.9rem;
   color: var(--admin-secondary);
   margin: 0;
+  font-family: var(--admin-font-sans);
 }
 
 /* Cards */
@@ -411,7 +413,8 @@ body {
 }
 
 .sa-card-title {
-  font-size: 1.05rem;
+  font-family: var(--admin-font-heading);
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
   font-weight: 700;
   color: var(--admin-navy);
   margin: 0;
@@ -473,7 +476,8 @@ body {
 .sa-kpi-icon.red { background: #FEE2E2; color: #EF4444; }
 
 .sa-kpi-value {
-  font-size: 1.85rem;
+  font-family: var(--admin-font-heading);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 700;
   color: var(--admin-navy);
   line-height: 1.1;

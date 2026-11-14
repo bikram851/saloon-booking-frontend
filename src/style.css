@@ -1,6 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
-
+@font-face {
+  font-family: 'Century Gothic';
+  src: local('Century Gothic'), local('CenturyGothic'), local('AppleGothic');
+  font-weight: 400 700;
+  font-display: swap;
+}
 
 :root {
   /* =========================================================================
@@ -20,8 +25,8 @@
   --color-border: #ede7de;
   --color-soft: #fbf3e8;
 
-  --font-heading: 'Playfair Display', Georgia, serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-heading: "Century Gothic", "AppleGothic", sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   --radius-card: 20px;
   --radius-button: 12px;
@@ -233,11 +238,15 @@ button {
 
 
 
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
 
 
 
-  font-size: 22px;
+  font-weight: 700;
+
+
+
+  font-size: clamp(19px, 2.2vw, 24px);
 
 
 
@@ -674,11 +683,7 @@ h2 {
 
 
 
-  font-family: 'Playfair Display', serif;
-
-
-
-  font-weight: 500;
+  font-family: var(--font-heading);
 
 
 
@@ -691,11 +696,19 @@ h1 {
 
 
 
-  font-size: clamp(42px, 5.2vw, 69px);
+  font-family: var(--font-heading);
 
 
 
-  line-height: 1.1;
+  font-weight: 700;
+
+
+
+  font-size: clamp(2rem, 5vw, 3.8rem);
+
+
+
+  line-height: 1.12;
 
 
 
@@ -716,7 +729,7 @@ h2 em {
 
 
 
-  font-weight: 500;
+  font-weight: inherit;
 
 
 
@@ -729,7 +742,15 @@ h2 {
 
 
 
-  font-size: 37px;
+  font-family: var(--font-heading);
+
+
+
+  font-weight: 700;
+
+
+
+  font-size: clamp(1.5rem, 3.2vw, 2.3rem);
 
 
 
@@ -1063,7 +1084,15 @@ p {
 
 
 
-  font: 15px 'Playfair Display', serif
+  font-family: var(--font-heading);
+
+
+
+  font-size: clamp(13px, 1.2vw, 15px);
+
+
+
+  font-weight: 700;
 }
 
 
@@ -1660,7 +1689,15 @@ p {
 
 
 
-  font: 20px 'Playfair Display', serif;
+  font-family: var(--font-heading);
+
+
+
+  font-size: clamp(1.1rem, 1.4vw, 1.35rem);
+
+
+
+  font-weight: 700;
 
 
 
@@ -1887,7 +1924,15 @@ p {
 
 
 
-  font: 17px 'Playfair Display', serif
+  font-family: var(--font-heading);
+
+
+
+  font-size: clamp(14px, 1.2vw, 17px);
+
+
+
+  font-weight: 700;
 }
 
 
@@ -3335,11 +3380,13 @@ footer .brand {
 
 .mini-date-box b {
 
-  font-size: 26px;
+  font-size: clamp(22px, 2.5vw, 26px);
 
   line-height: 1;
 
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
+
+  font-weight: 700;
 }
 
 
@@ -3355,9 +3402,11 @@ footer .brand {
 
   margin: 0 0 4px;
 
-  font-size: 23px;
+  font-size: clamp(18px, 2.2vw, 23px);
 
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
+
+  font-weight: 700;
 }
 
 
@@ -7151,8 +7200,8 @@ th {
 }
 
 .my-appointment-header h1 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.35rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
   font-weight: 700;
   font-style: normal;
   color: #a8794c;
@@ -7693,8 +7742,8 @@ th {
   }
 
   .appt-desktop-title {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 2.4rem;
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 3.2vw, 2.4rem);
     font-weight: 700;
     font-style: normal;
     color: #a8794c;
@@ -12016,8 +12065,8 @@ th {
 }
 
 .explore-hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 34px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
   font-weight: 700;
   color: #1a1714;
   margin: 6px 0 10px;
@@ -12143,8 +12192,8 @@ th {
 }
 
 .explore-menu-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
   font-weight: 700;
   color: #1a1714;
   margin: 4px 0 6px;
@@ -12392,8 +12441,8 @@ th {
 }
 
 .explore-panel-header h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
   font-weight: 700;
   color: #1a1714;
   margin: 4px 0;
@@ -13282,17 +13331,79 @@ body, #root, .homepage-wrapper, .booking-layout, .detail-page, .page-shell {
   font-family: var(--font-body);
 }
 
-h1, h2, h3, h4,
+/* Headings in Century Gothic font stack */
+h1, h2, h3, h4, h5, h6,
 .hero-title,
 .section-top h2,
 .package-title,
 .salon-heading h3,
+.salon-card h3,
 .explore-hero-title,
 .explore-menu-title,
-.panel h2 {
+.explore-card-title,
+.panel h2,
+.panel-title-bar h3,
+.barber-banner-title,
+.brand-showcase-title,
+.my-appointment-header h1,
+.appt-desktop-title {
   font-family: var(--font-heading);
   color: var(--color-text);
   letter-spacing: -0.015em;
+}
+
+/* Strong Headings in Century Gothic Bold */
+h1,
+.hero-title,
+.section-top h2,
+.explore-hero-title,
+.brand-showcase-title,
+.my-appointment-header h1,
+.appt-desktop-title,
+.barber-banner-title,
+.panel h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+/* Salon Names in Century Gothic Bold */
+.salon-heading h3,
+.salon-card h3,
+.salon-title-link,
+.detail-hero-title,
+.salon-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+}
+
+/* Lighter Headings in Century Gothic Regular */
+h3,
+h4,
+h5,
+h6,
+.package-title,
+.explore-card-title,
+.offer-title,
+.subheading,
+.section-subtitle {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+
+/* Prominent Numbers in Century Gothic Bold */
+.price-value,
+.stat-card strong,
+.earnings-stat-card strong,
+.kpi-value,
+.stat-val,
+.stat-number,
+.highlight-stat,
+.counter-num,
+.metric-value,
+.mini-date-box b {
+  font-family: var(--font-heading);
+  font-weight: 700;
 }
 
 .hero-highlight, h1 em, h2 em {
@@ -13902,7 +14013,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .price-value {
-  font-size: 16px;
+  font-family: var(--font-heading);
+  font-size: clamp(15px, 1.3vw, 17px);
   font-weight: 700;
   color: var(--color-text);
 }
@@ -14330,7 +14442,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .brand-showcase-title {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-heading);
   font-size: clamp(2rem, 3.2vw, 2.7rem);
   font-weight: 700;
   line-height: 1.2;

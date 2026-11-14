@@ -19,7 +19,7 @@
   --pro-shadow: 0 4px 16px rgba(9, 43, 82, 0.06);
   --pro-shadow-lg: 0 10px 30px rgba(9, 43, 82, 0.10);
   --pro-font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --pro-font-heading: 'Playfair Display', Georgia, serif;
+  --pro-font-heading: "Century Gothic", "AppleGothic", sans-serif;
 }
 
 /* Base resets for pro portal */
@@ -74,7 +74,8 @@
 }
 
 .pro-brand-title {
-  font-size: 1.05rem;
+  font-family: var(--pro-font-heading);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
   font-weight: 700;
   letter-spacing: -0.01em;
   color: #FFFFFF;
@@ -104,8 +105,9 @@
 }
 
 .pro-sidebar-salon-name {
-  font-size: 0.84rem;
-  font-weight: 600;
+  font-family: var(--pro-font-heading);
+  font-size: clamp(0.82rem, 1.1vw, 0.92rem);
+  font-weight: 700;
   color: #FFFFFF;
   white-space: nowrap;
   overflow: hidden;
@@ -402,15 +404,17 @@
 }
 
 .pro-mobile-appt-id {
+  font-family: var(--pro-font-heading);
   font-weight: 700;
   color: var(--pro-blue);
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
 .pro-mobile-card-price {
-  font-size: 1.05rem;
-  font-weight: 800;
+  font-family: var(--pro-font-heading);
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  font-weight: 700;
   color: var(--pro-navy);
 }
 
@@ -485,7 +489,7 @@
 }
 
 .pro-page-title {
-  font-size: 1.65rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
   font-weight: 700;
   color: var(--pro-navy);
   margin: 0 0 0.35rem 0;
@@ -497,6 +501,7 @@
   font-size: 0.92rem;
   color: var(--pro-text-muted);
   margin: 0;
+  font-family: var(--pro-font-sans);
 }
 
 /* Cards & Surfaces */
@@ -524,7 +529,8 @@
 }
 
 .pro-card-title {
-  font-size: 1.05rem;
+  font-family: var(--pro-font-heading);
+  font-size: clamp(0.95rem, 1.2vw, 1.15rem);
   font-weight: 700;
   color: var(--pro-navy);
   margin: 0;
@@ -586,7 +592,8 @@
 .pro-kpi-icon.red { background: #FEE2E2; color: #EF4444; }
 
 .pro-kpi-value {
-  font-size: 1.85rem;
+  font-family: var(--pro-font-heading);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 700;
   color: var(--pro-navy);
   line-height: 1.1;
@@ -849,7 +856,7 @@
   }
 
   .pro-page-title {
-    font-size: 1.4rem;
+    font-size: clamp(1.25rem, 4vw, 1.45rem);
   }
 
   .pro-page-subtitle {
