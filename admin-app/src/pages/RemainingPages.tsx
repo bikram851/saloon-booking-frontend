@@ -2280,3 +2280,224 @@ export const AuditLogsPage: React.FC = () => {
     </div>
   );
 };
+
+/* =========================================================================
+   15. CUSTOMER INQUIRIES & CONTACT SUBMISSIONS (ADM-109 to ADM-113)
+========================================================================= */
+
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  date: string;
+  status: 'PENDING' | 'RESOLVED';
+  response?: string;
+}
+
+const INITIAL_CONTACT_SUBMISSIONS: ContactSubmission[] = [
+  {
+    id: 'sub_001',
+    name: 'Ananya Deshmukh',
+    email: 'ananya.d@gmail.com',
+    phone: '+91 98765 43219',
+    subject: 'Bridal package customization inquiry',
+    message: 'Hello, I want to book a bridal package for 5 people in Koramangala next month. Can we customize the hair styling and facial services?',
+    date: 'Today | 11:30 AM',
+    status: 'PENDING'
+  },
+  {
+    id: 'sub_002',
+    name: 'Rohan Mehra',
+    email: 'rohan.m@outlook.com',
+    phone: '+91 98765 11223',
+    subject: 'Corporate membership query',
+    message: 'Do you offer corporate memberships or discounts for IT companies in Whitefield?',
+    date: 'Yesterday | 03:15 PM',
+    status: 'RESOLVED',
+    response: 'Thank you Rohan! We have shared our corporate tie-up brochure with your email.'
+  }
+];
+
+export const CustomerInquiriesPage: React.FC = () => {
+  const [inquiries, setInquiries] = useState<ContactSubmission[]>(() => {
+    const saved = localStorage.getItem('sa_contact_submissions');
+    return saved ? JSON.parse(saved) : INITIAL_CONTACT_SUBMISSIONS;
+  });
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'RESOLVED'>('ALL');
+  const [search, setSearch] = useState('');
+  const [replyModal, setReplyModal] = useState<ContactSubmission | null>(null);
+  const [replyText, setReplyText] = useState('');
+
+  const saveInquiries = (updated: ContactSubmission[]) => {
+    setInquiries(updated);
+    localStorage.setItem('sa_contact_submissions', JSON.stringify(updated));
+  };
+
+  const handleResolve = (id: string) => {
+    const updated = inquiries.map(item => item.id === id ? { ...item, status: 'RESOLVED' as const } : item);
+    saveInquiries(updated);
+  };
+
+  const handleDelete = (id: string) => {
+    const updated = inquiries.filter(item => item.id !== id);
+    saveInquiries(updated);
+  };
+
+  const handleSendReply = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyModal) return;
+    const updated = inquiries.map(item => item.id === replyModal.id ? { ...item, status: 'RESOLVED' as const, response: replyText } : item);
+    saveInquiries(updated);
+    setReplyModal(null);
+    setReplyText('');
+  };
+
+  const filtered = inquiries.filter(item => {
+    if (statusFilter !== 'ALL' && item.status !== statusFilter) return false;
+    if (search && !item.name.toLowerCase().includes(search.toLowerCase()) && !item.email.toLowerCase().includes(search.toLowerCase()) && !item.subject.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  return (
+    <div className="sa-page">
+      <div className="sa-page-header">
+        <div>
+          <h1 className="sa-page-title">Customer Contact Submissions & Support Inquiries</h1>
+          <p className="sa-page-subtitle">Track customer inquiries, respond via email, and manage resolution statuses.</p>
+        </div>
+      </div>
+
+      <div className="sa-card" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ position: 'relative', minWidth: '280px', flex: 1, maxWidth: '420px' }}>
+          <Search size={16} color="var(--admin-secondary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <input
+            type="text"
+            placeholder="Search inquiries by name, email or subject..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="sa-form-input"
+            style={{ width: '100%', paddingLeft: '38px' }}
+          />
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {(['ALL', 'PENDING', 'RESOLVED'] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setStatusFilter(tab)}
+              className={`sa-btn sa-btn-sm ${statusFilter === tab ? 'sa-btn-primary' : 'sa-btn-outline'}`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="sa-table-container">
+        <table className="sa-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Subject & Inquiry</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '3rem', color: 'var(--admin-secondary)' }}>
+                  No customer contact inquiries found.
+                </td>
+              </tr>
+            ) : (
+              filtered.map(sub => (
+                <tr key={sub.id}>
+                  <td>
+                    <div style={{ fontWeight: 700, color: 'var(--sa-navy)' }}>{sub.name}</div>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--admin-secondary)' }}>{sub.email}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--sa-blue)' }}>{sub.phone}</div>
+                  </td>
+                  <td>
+                    <strong style={{ color: 'var(--sa-navy)', display: 'block', marginBottom: '4px' }}>{sub.subject}</strong>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-text)' }}>{sub.message}</p>
+                    {sub.response && (
+                      <div style={{ marginTop: '6px', fontSize: '0.8rem', color: '#059669', background: '#ecfdf5', padding: '4px 8px', borderRadius: '4px' }}>
+                        ✓ Replied: {sub.response}
+                      </div>
+                    )}
+                  </td>
+                  <td style={{ fontSize: '0.8rem', whiteSpace: 'nowrap', color: 'var(--admin-secondary)' }}>{sub.date}</td>
+                  <td>
+                    <span className={`sa-badge ${sub.status === 'RESOLVED' ? 'sa-badge-success' : 'sa-badge-warning'}`}>
+                      {sub.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={() => { setReplyModal(sub); setReplyText(sub.response || ''); }}
+                        className="sa-btn sa-btn-outline"
+                        style={{ padding: '4px 8px', fontSize: '0.78rem' }}
+                        title="Reply to Customer"
+                      >
+                        <Mail size={13} /> Reply
+                      </button>
+                      {sub.status !== 'RESOLVED' && (
+                        <button
+                          onClick={() => handleResolve(sub.id)}
+                          className="sa-btn sa-btn-outline"
+                          style={{ padding: '4px 8px', fontSize: '0.78rem', color: '#059669', borderColor: '#10B981' }}
+                          title="Mark Resolved"
+                        >
+                          <CheckCircle2 size={13} /> Resolve
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDelete(sub.id)}
+                        className="sa-btn sa-btn-outline"
+                        style={{ padding: '4px 8px', fontSize: '0.78rem', color: '#DC2626' }}
+                        title="Archive Inquiry"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {replyModal && (
+        <div className="sa-modal-overlay" onClick={() => setReplyModal(null)}>
+          <div className="sa-modal-dialog" onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ margin: '0 0 1rem 0', color: 'var(--sa-navy)' }}>Reply to Customer: {replyModal.name}</h3>
+            <form onSubmit={handleSendReply}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>Response Message</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  className="sa-form-input"
+                  style={{ width: '100%' }}
+                  placeholder="Type your official response..."
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                <button type="button" onClick={() => setReplyModal(null)} className="sa-btn sa-btn-secondary">Cancel</button>
+                <button type="submit" className="sa-btn sa-btn-primary">Send & Resolve</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

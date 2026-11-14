@@ -21,6 +21,7 @@ export default function AdminOffersPage() {
   const [offers, setOffers] = useState(getStoredAdminOffers);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [formError, setFormError] = useState("");
 
   const [newOffer, setNewOffer] = useState({
     code: "",
@@ -55,7 +56,13 @@ export default function AdminOffersPage() {
 
   function handleCreateOffer(e) {
     e.preventDefault();
+    setFormError("");
     if (!newOffer.code.trim() || !newOffer.title.trim()) return;
+
+    if (newOffer.startDate && newOffer.endDate && newOffer.endDate < newOffer.startDate) {
+      setFormError("End date must be on or after start date.");
+      return;
+    }
 
     const created = {
       id: "off_" + (offers.length + 1),
@@ -281,6 +288,20 @@ export default function AdminOffersPage() {
 
             <form onSubmit={handleCreateOffer}>
               <div className="admin-modal-body">
+                {formError && (
+                  <div style={{
+                    padding: "10px 14px",
+                    background: "#FEF2F2",
+                    border: "1px solid #EF4444",
+                    color: "#B91C1C",
+                    borderRadius: "8px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    marginBottom: "12px"
+                  }}>
+                    {formError}
+                  </div>
+                )}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div className="admin-form-group">
                     <label>Coupon Code *</label>

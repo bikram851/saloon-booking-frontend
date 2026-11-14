@@ -13,7 +13,7 @@ import {
   UserCheck,
   Scissors
 } from 'lucide-react';
-import { getProBarbers, saveProBarbers } from '../proData';
+import { getProBarbers, saveProBarbers, getProAppointments } from '../proData';
 
 export default function ProBarbersPage() {
   const [barbers, setBarbers] = useState(getProBarbers());
@@ -71,6 +71,23 @@ export default function ProBarbersPage() {
     const updated = barbers.map(b => b.id === id ? { ...b, active: !b.active } : b);
     setBarbers(updated);
     saveProBarbers(updated);
+  };
+
+  const handleDeleteBarber = (barberId) => {
+    // BAR-042: Attempt to delete barber with active upcoming appointments is rejected
+    const upcoming = getProAppointments().filter(
+      (a) => (String(a.barberId) === String(barberId) || a.barber?.id === barberId) &&
+             (a.status === "UPCOMING" || a.status === "CONFIRMED" || a.status === "BOOKED")
+    );
+    if (upcoming.length > 0) {
+      alert(`Cannot delete this barber. There are ${upcoming.length} active bookings scheduled with this professional. Please reassign the appointments first.`);
+      return;
+    }
+    if (window.confirm("Are you sure you want to remove this barber from the roster?")) {
+      const updated = barbers.filter((b) => b.id !== barberId);
+      setBarbers(updated);
+      saveProBarbers(updated);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -183,12 +200,24 @@ export default function ProBarbersPage() {
                 {barber.active ? 'Accepting Bookings' : 'Deactivated'}
               </button>
 
-              <button
-                onClick={() => handleOpenEdit(barber)}
-                className="pro-btn pro-btn-secondary pro-btn-sm"
-              >
-                <Edit2 size={13} /> Edit
-              </button>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleOpenEdit(barber)}
+                  className="pro-btn pro-btn-secondary pro-btn-sm"
+                >
+                  <Edit2 size={13} /> Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteBarber(barber.id)}
+                  className="pro-btn pro-btn-sm"
+                  style={{ background: '#FEE2E2', color: '#991B1B', border: '1px solid #FECACA' }}
+                  title="Remove barber"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </div>
             </div>
           </div>
         ))}

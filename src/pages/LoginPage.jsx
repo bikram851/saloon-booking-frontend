@@ -82,12 +82,19 @@ export default function LoginPage() {
         setError("Please enter your full name.");
         return false;
       }
-      if (!form.emailOrPhone.trim()) {
-        setError("Please enter a valid email address.");
+      const emailVal = form.emailOrPhone.trim();
+      if (!emailVal) {
+        setError("Please enter your email address.");
         return false;
       }
-      if (!form.phone.trim()) {
-        setError("Please enter your 10-digit mobile number.");
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailVal)) {
+        setError("Please enter a valid email address (e.g. name@domain.com).");
+        return false;
+      }
+      const phoneDigits = form.phone.replace(/\D/g, "");
+      if (!form.phone.trim() || phoneDigits.length < 10) {
+        setError("Please enter a valid 10-digit mobile number.");
         return false;
       }
       if (form.password.length < 6) {
@@ -158,14 +165,23 @@ export default function LoginPage() {
 
       window.dispatchEvent(new Event("gg-auth-changed"));
 
-      setSuccessMsg(mode === "login" ? "Signed in successfully! Continuing..." : "Account created successfully! Welcome to Glow & Grace.");
-      setTimeout(() => {
-        if (redirectFrom) {
-          nav(redirectFrom, { state: { bookingState: preservedBookingState }, replace: true });
-        } else {
-          nav("/my-appointments");
-        }
-      }, 600);
+      // Role-specific routing (CUS-015)
+      if (userRole === "BARBER" || userRole === "PROFESSIONAL") {
+        setSuccessMsg("Logged in as Salon Professional. Redirecting to Professional Portal...");
+        setTimeout(() => nav("/pro/dashboard", { replace: true }), 600);
+      } else if (userRole === "ADMIN" || userRole === "SUPER_ADMIN") {
+        setSuccessMsg("Logged in as Administrator. Redirecting to Admin Dashboard...");
+        setTimeout(() => nav("/admin/dashboard", { replace: true }), 600);
+      } else {
+        setSuccessMsg(mode === "login" ? "Signed in successfully! Continuing..." : "Account created successfully! Welcome to Glow & Grace.");
+        setTimeout(() => {
+          if (redirectFrom) {
+            nav(redirectFrom, { state: { bookingState: preservedBookingState }, replace: true });
+          } else {
+            nav("/my-appointments");
+          }
+        }, 600);
+      }
     } catch (err) {
       setError(err.message || "Authentication failed. Please verify your credentials.");
     } finally {

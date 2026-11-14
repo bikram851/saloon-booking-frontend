@@ -52,6 +52,7 @@ export default function BookingPage() {
 
   const [services, setServices] = useState([]);
   const [serviceId, setServiceId] = useState("");
+  const [additionalServiceIds, setAdditionalServiceIds] = useState([]);
   const [serviceLoadError, setServiceLoadError] = useState("");
 
   /* =========================
@@ -339,10 +340,14 @@ export default function BookingPage() {
           customerName: user.name || user.fullName || "Valued Client",
           salonId: Number(id),
           serviceId: Number(serviceId),
+          serviceIds: allSelectedServiceIds.map(Number),
+          services: selectedServicesList,
           barberId: selectedBarber === "any" ? null : Number(selectedBarber),
           appointmentDate: date,
           appointmentTime: time,
           notes: notes.trim(),
+          price: totalCalculatedPrice,
+          durationMinutes: totalDurationMinutes,
         }),
       });
 
@@ -350,18 +355,17 @@ export default function BookingPage() {
       localStorage.removeItem("gg_pending_booking");
       setMessage("Your appointment is confirmed!");
 
-      const svcObj = services.find((s) => s.id === Number(serviceId));
       const assignedBarberName = res?.assignedBarber?.name || res?.barber?.name || "Alex Rivera";
       const assignedChair = res?.assignedBarber?.chair || res?.barber?.chair || "Chair #1";
 
       const newApptEvent = {
         id: Date.now(),
         customer: user.name || "Valued Client",
-        service: svcObj?.name || "Haircut & Beard Grooming",
+        service: selectedServicesList.map((s) => s.name).join(" + ") || "Haircut & Grooming",
         barberName: assignedBarberName,
         chair: assignedChair,
         time: time,
-        price: svcObj?.offerPrice && Number(svcObj.offerPrice) > 0 ? Number(svcObj.offerPrice) : (svcObj?.price || 650),
+        price: totalCalculatedPrice || 650,
         date: date,
         createdAt: new Date().toISOString(),
       };
@@ -391,10 +395,60 @@ export default function BookingPage() {
   }
 
   /* =========================================================
-     SELECTED VALUES
+     SELECTED VALUES & MULTI-SERVICE CALCULATIONS
   ========================================================= */
 
-  const selectedService = services.find(
+  const allSelectedServiceIds = useMemo(() => {
+    const list = serviceId ? [String(serviceId)] : [];
+    for (const sid of additionalServiceIds) {
+      if (!list.includes(String(sid))) list.push(String(sid));
+    }
+    return list;
+  }, [serviceId, additionalServiceIds]);
+
+  const selectedServicesList = useMemo(() => {
+    return allSelectedServiceIds
+      .map((sid) => services.find((s) => String(s.id) === String(sid)))
+      .filter(Boolean)
+      .map((s) => {
+        const effectivePrice = s.offerPrice && Number(s.offerPrice) > 0 ? Number(s.offerPrice) : Number(s.price || s.priceRupees || 650);
+        return { ...s, effectivePrice };
+      });
+  }, [allSelectedServiceIds, services]);
+
+  const totalCalculatedPrice = useMemo(() => {
+    return selectedServicesList.reduce((acc, s) => acc + s.effectivePrice, 0);
+  }, [selectedServicesList]);
+
+  const totalDurationMinutes = useMemo(() => {
+    return selectedServicesList.reduce((acc, s) => acc + (Number(s.durationMinutes) || 45), 0);
+  }, [selectedServicesList]);
+
+  function handleToggleAdditionalService(sId) {
+    const strId = String(sId);
+    if (strId === String(serviceId)) return;
+    if (additionalServiceIds.includes(strId)) {
+      setAdditionalServiceIds(additionalServiceIds.filter((id) => id !== strId));
+    } else {
+      setAdditionalServiceIds([...additionalServiceIds, strId]);
+    }
+  }
+
+  function handleRemoveService(sId) {
+    const strId = String(sId);
+    if (strId === String(serviceId)) {
+      if (additionalServiceIds.length > 0) {
+        setServiceId(additionalServiceIds[0]);
+        setAdditionalServiceIds(additionalServiceIds.slice(1));
+      } else {
+        setServiceId("");
+      }
+    } else {
+      setAdditionalServiceIds(additionalServiceIds.filter((id) => id !== strId));
+    }
+  }
+
+  const selectedService = selectedServicesList[0] || services.find(
     (service) =>
       String(service.id) === String(serviceId),
   );
@@ -497,9 +551,8 @@ export default function BookingPage() {
           <div className="success">
             <CheckCircle2 size={40} style={{ color: "#22c55e", margin: "0 auto" }} />
 
-            <h2>You're booked!</h2>
-
-            <p style={{ color: "#475569", fontSize: "15px" }}>{message}</p>
+            <h2>Appointment Confirmed!</h2>
+            <p style={{ color: "#475569", fontSize: "15px" }}>You're booked! {message}</p>
 
             <div className="booking-confirmed-card" style={{
               background: "#fff",
@@ -628,6 +681,47 @@ export default function BookingPage() {
                 })}
               </select>
             </label>
+
+            {/* Multi-Service Selection (CUS-037, CUS-038) */}
+            {services.length > 1 && (
+              <div className="add-services-section" style={{ marginTop: "12px", marginBottom: "18px" }}>
+                <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--gold-dark)", display: "block", marginBottom: "8px" }}>
+                  + Add Additional Services (Optional)
+                </span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {services
+                    .filter((s) => String(s.id) !== String(serviceId))
+                    .map((s) => {
+                      const isAdded = additionalServiceIds.includes(String(s.id));
+                      const effPrice = s.offerPrice && Number(s.offerPrice) > 0 ? Number(s.offerPrice) : Number(s.price || 650);
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => handleToggleAdditionalService(s.id)}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            padding: "6px 12px",
+                            borderRadius: "20px",
+                            border: isAdded ? "1px solid var(--gold)" : "1px solid #e2d9cd",
+                            background: isAdded ? "var(--gold-light, #faf6f0)" : "#fff",
+                            color: isAdded ? "var(--color-primary-dark, #805631)" : "#5a5047",
+                            fontSize: "12px",
+                            fontWeight: isAdded ? 700 : 500,
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                          }}
+                        >
+                          <span>{isAdded ? "✓ Added" : "+"}</span>
+                          <span>{s.name} (₹{effPrice})</span>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
 
             {/* =============================================
                 BARBER SELECTION GRID
@@ -932,6 +1026,19 @@ export default function BookingPage() {
                 ERROR
             ============================================= */}
 
+            {/* =============================================
+                PAYMENT METHOD (CUS-059)
+            ============================================= */}
+            <div style={{ margin: "1.25rem 0", padding: "14px 16px", borderRadius: "10px", background: "#FAF7F2", border: "1px solid #E6DCD2" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", display: "block", marginBottom: "8px" }}>
+                Payment Option
+              </span>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "14px", fontWeight: "600", color: "var(--brown)" }}>
+                <input type="radio" name="paymentOption" value="PAY_AT_SALON" checked readOnly style={{ accentColor: "var(--accent)" }} />
+                <span>Pay at Salon (Cash, UPI or Card upon service completion)</span>
+              </label>
+            </div>
+
             {error && (
               <p className="error">{error}</p>
             )}
@@ -1001,15 +1108,39 @@ export default function BookingPage() {
             BOOKING SUMMARY
           </span>
 
-          {/* SERVICE */}
-
-          <p>
-            {selectedService?.name ||
-              "Select a service"}
-          </p>
+          {/* MULTI-SERVICE LIST (CUS-037, CUS-038) */}
+          <div className="summary-services-list" style={{ margin: "10px 0 14px", borderBottom: "1px dashed var(--line)", paddingBottom: "10px" }}>
+            <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              Selected Services ({selectedServicesList.length})
+            </span>
+            {selectedServicesList.length === 0 ? (
+              <p className="muted" style={{ margin: "4px 0" }}>Select a service</p>
+            ) : (
+              selectedServicesList.map((svc) => (
+                <div key={svc.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "6px 0", fontSize: "13px" }}>
+                  <div>
+                    <span style={{ fontWeight: 600 }}>{svc.name}</span>
+                    <small style={{ color: "var(--muted)", marginLeft: "6px" }}>({svc.durationMinutes}m)</small>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <b>₹{svc.effectivePrice.toLocaleString("en-IN")}</b>
+                    {selectedServicesList.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveService(svc.id)}
+                        style={{ border: "none", background: "none", color: "#dc2626", cursor: "pointer", fontWeight: "bold", padding: "0 4px", fontSize: "16px", lineHeight: 1 }}
+                        title="Remove service"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
 
           {/* BARBER */}
-
           <div className="summary-line">
             <span>
               <UserRound size={14} /> Professional
@@ -1024,43 +1155,33 @@ export default function BookingPage() {
           </div>
 
           {/* DATE */}
-
           <div className="summary-line">
             <span>Date</span>
             <b>{date || "—"}</b>
           </div>
 
           {/* TIME */}
-
           <div className="summary-line">
             <span>Time</span>
             <b>{time || "—"}</b>
           </div>
 
           {/* DURATION */}
-
           <div className="summary-line">
             <span>Duration</span>
 
             <b>
-              {selectedService?.durationMinutes ||
-                "—"}{" "}
-              min
+              {totalDurationMinutes || "—"} min
             </b>
           </div>
 
           {/* TOTAL */}
-
           <div className="summary-line total">
-            <span>Estimated total</span>
+            <span>Total Payable</span>
 
             <b>
               ₹
-              {Number(
-                selectedService?.offerPrice && Number(selectedService.offerPrice) > 0
-                  ? selectedService.offerPrice
-                  : (selectedService?.price ?? selectedService?.priceRupees ?? 0),
-              ).toLocaleString("en-IN")}
+              {totalCalculatedPrice.toLocaleString("en-IN")}
             </b>
           </div>
 

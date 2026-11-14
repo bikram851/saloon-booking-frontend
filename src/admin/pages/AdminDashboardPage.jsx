@@ -37,13 +37,16 @@ export default function AdminDashboardPage() {
   const nav = useNavigate();
 
   // Metrics computation
-  const totalCustomers = customers.length * 750 + 120; // Enterprise scaled metric
+  const totalCustomers = customers.length;
   const totalSalons = salons.length;
   const approvedSalons = salons.filter((s) => s.status === "APPROVED").length;
   const pendingSalons = salons.filter((s) => s.status === "PENDING").length;
-  const totalAppointments = appointments.length * 120 + 45;
-  const todayAppointments = appointments.length;
-  const totalRevenue = salons.reduce((acc, s) => acc + (s.totalRevenue || 0), 0) + 384000;
+  const totalAppointments = appointments.length;
+  const todayAppointments = appointments.filter((a) => {
+    const today = new Date().toISOString().split("T")[0];
+    return a.appointmentDate === today || a.date === today;
+  }).length || appointments.length;
+  const totalRevenue = salons.reduce((acc, s) => acc + (s.totalRevenue || 0), 0);
   const activeOffersCount = offers.filter((o) => o.status === "ACTIVE").length;
   const pendingVerifications = salons.filter((s) => s.verificationStatus === "UNDER_REVIEW" || s.verificationStatus === "INFO_REQUIRED").length;
 

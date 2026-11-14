@@ -40,8 +40,15 @@ export default function ProLayout() {
         const u = JSON.parse(generalUser);
         if (u.role === 'PROFESSIONAL' || u.role === 'BARBER') {
           setUser(u);
+        } else if (u.role === 'CUSTOMER') {
+          // SEC-001: Access Barber Portal using customer role is blocked
+          navigate('/login', {
+            state: { authMessage: 'Access denied. Salon professional account required.' },
+            replace: true
+          });
+          return;
         } else {
-          // Fallback demo professional session for seamless direct access
+          // demo pro
           const demoPro = {
             id: 'pro_1',
             name: 'Alex Rivera',

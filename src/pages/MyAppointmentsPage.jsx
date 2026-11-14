@@ -188,6 +188,11 @@ export default function MyAppointmentsPage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
+  // Customer Profile state (CUS-069, CUS-070, CUS-071)
+  const [profileName, setProfileName] = useState(user?.name || "");
+  const [profilePhone, setProfilePhone] = useState(user?.phone || "+91 98765 43210");
+  const [profileStatus, setProfileStatus] = useState("");
+
   // Dialog state
   const [dialog, setDialog] = useState(null); // { type: 'review'|'cancel'|'reschedule', appointment }
   const [reviewRating, setReviewRating] = useState(5);
@@ -282,12 +287,30 @@ export default function MyAppointmentsPage() {
   }
 
   function openReviewDialog(appointment) {
+    const s = String(appointment.status || "").toUpperCase();
+    if (s !== "COMPLETED") {
+      showToast("Reviews can only be submitted for completed appointments.", "error");
+      return;
+    }
+    if (appointment.reviewSubmitted || appointment.rating) {
+      showToast("You have already submitted a review for this appointment.", "error");
+      return;
+    }
     setDialog({ type: "review", appointment });
     setReviewRating(5);
     setReviewComment("");
   }
 
   function openCancelDialog(appointment) {
+    const s = String(appointment.status || "").toUpperCase();
+    if (s === "COMPLETED") {
+      showToast("Completed appointments cannot be cancelled according to policy.", "error");
+      return;
+    }
+    if (s === "CANCELLED" || s === "CANCELED") {
+      showToast("This appointment is already cancelled.", "error");
+      return;
+    }
     setDialog({ type: "cancel", appointment });
   }
 
@@ -307,6 +330,21 @@ export default function MyAppointmentsPage() {
     if (!dialog?.appointment) return;
     const { appointment } = dialog;
     closeDialog();
+
+    const updated = appointments.map((item) =>
+      item.id === appointment.id
+        ? {
+            ...item,
+            rating: reviewRating,
+            review: reviewComment,
+            reviewSubmitted: true,
+            reviewedAt: new Date().toISOString(),
+          }
+        : item
+    );
+    saveAppointments(updated);
+    setAppointments(updated);
+
     showToast(
       `Thank you! Review of ${reviewRating} stars submitted for ${appointment.name}.`,
     );
@@ -368,10 +406,34 @@ export default function MyAppointmentsPage() {
     }
   }
 
+  function handleSaveProfile(e) {
+    e.preventDefault();
+    if (!profileName.trim()) {
+      showToast("Full name cannot be empty.", "error");
+      return;
+    }
+    const rawDigits = profilePhone.replace(/\D/g, "");
+    if (rawDigits.length < 10) {
+      showToast("Please enter a valid 10-digit mobile number.", "error");
+      return;
+    }
+    const updatedUser = {
+      ...user,
+      name: profileName.trim(),
+      phone: profilePhone.trim(),
+    };
+    try {
+      localStorage.setItem("gg_user", JSON.stringify(updatedUser));
+    } catch {}
+    showToast("Profile details updated successfully!");
+    setProfileStatus("saved");
+  }
+
   const tabs = [
     { id: "upcoming", label: "Upcoming", icon: <CalendarDays size={16} /> },
     { id: "completed", label: "Completed", icon: <CheckCircle2 size={16} /> },
     { id: "canceled", label: "Canceled", icon: <X size={16} /> },
+    { id: "profile", label: "My Profile", icon: <UserRound size={16} /> },
   ];
 
   const now = Date.now();
@@ -531,8 +593,66 @@ export default function MyAppointmentsPage() {
         ))}
       </nav>
 
-      {/* Appointment Cards List */}
-      <section className="appt-card-list">
+      {/* Appointment Cards List or Customer Profile */}
+      {activeTab === "profile" ? (
+        <section className="profile-container" style={{ maxWidth: 640, margin: "0 auto", padding: "1.5rem" }}>
+          <div style={{ background: "#fff", borderRadius: 16, padding: "2rem", border: "1px solid var(--border, #e5e7eb)", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)" }}>
+            <h2 style={{ fontFamily: '"Century Gothic", "AppleGothic", sans-serif', fontSize: "1.5rem", marginBottom: "0.5rem" }}>Customer Profile</h2>
+            <p style={{ marginBottom: "1.5rem", color: "#6b7280", fontSize: "0.9rem" }}>View and update your personal information.</p>
+            <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.4rem" }}>Full Name</label>
+                <input
+                  type="text"
+                  value={profileName}
+                  onChange={(e) => setProfileName(e.target.value)}
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: 8, border: "1px solid #d1d5db", fontSize: "0.95rem" }}
+                  placeholder="Your full name"
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.4rem" }}>Email Address</label>
+                <input
+                  type="email"
+                  value={user?.email || ""}
+                  disabled
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: 8, border: "1px solid #e5e7eb", background: "#f9fafb", color: "#6b7280", fontSize: "0.95rem" }}
+                />
+                <small style={{ color: "#9ca3af", marginTop: "0.25rem", display: "block" }}>Email address cannot be changed.</small>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.4rem" }}>Phone Number</label>
+                <input
+                  type="tel"
+                  value={profilePhone}
+                  onChange={(e) => setProfilePhone(e.target.value)}
+                  style={{ width: "100%", padding: "0.75rem", borderRadius: 8, border: "1px solid #d1d5db", fontSize: "0.95rem" }}
+                  placeholder="+91 98765 43210"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                style={{
+                  background: "var(--accent, #9b2c2c)",
+                  color: "#fff",
+                  padding: "0.75rem 1.5rem",
+                  borderRadius: 8,
+                  border: "none",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  marginTop: "0.5rem",
+                  alignSelf: "flex-start"
+                }}
+              >
+                Save Profile Changes
+              </button>
+            </form>
+          </div>
+        </section>
+      ) : (
+        <section className="appt-card-list">
         {visibleList.length === 0 ? (
           <div className="empty-state soft-empty">
             <h2>No {activeTab} appointments</h2>
@@ -599,14 +719,23 @@ export default function MyAppointmentsPage() {
                   <div className="appt-card-desktop-actions">
                     {isCompleted ? (
                       <>
-                        <button
-                          type="button"
-                          className="appt-btn appt-btn-primary"
-                          onClick={() => openReviewDialog(appt)}
-                        >
-                          <Star size={15} />
-                          Leave a review
-                        </button>
+                        {appt.reviewSubmitted || appt.rating ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "2px", alignItems: "flex-end" }}>
+                            <span style={{ fontSize: "0.8rem", color: "#d97706", display: "flex", alignItems: "center", gap: 3, fontWeight: 600 }}>
+                              <Star size={13} fill="#d97706" /> {appt.rating} / 5 Reviewed
+                            </span>
+                            {appt.review && <span style={{ fontSize: "0.75rem", color: "#6b7280", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>"{appt.review}"</span>}
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="appt-btn appt-btn-primary"
+                            onClick={() => openReviewDialog(appt)}
+                          >
+                            <Star size={15} />
+                            Leave a review
+                          </button>
+                        )}
                         <Link
                           to={`/book/${appt.salonId || 1}`}
                           className="appt-btn appt-btn-outline"
@@ -691,15 +820,21 @@ export default function MyAppointmentsPage() {
                         to={`/book/${appt.salonId || 1}`}
                         className="appt-btn appt-btn-outline"
                       >
-                        Booked again
+                        Book again
                       </Link>
-                      <button
-                        type="button"
-                        className="appt-btn appt-btn-primary"
-                        onClick={() => openReviewDialog(appt)}
-                      >
-                        Leave a review
-                      </button>
+                      {appt.reviewSubmitted || appt.rating ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#d97706", fontSize: "0.85rem", fontWeight: 600 }}>
+                          <Star size={14} fill="#d97706" /> {appt.rating} / 5 Reviewed
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="appt-btn appt-btn-primary"
+                          onClick={() => openReviewDialog(appt)}
+                        >
+                          Leave a review
+                        </button>
+                      )}
                     </>
                   ) : isCanceled ? (
                     <>
@@ -740,6 +875,7 @@ export default function MyAppointmentsPage() {
           })
         )}
       </section>
+      )}
 
       {/* Review Dialog */}
       {dialog?.type === "review" && (

@@ -240,6 +240,43 @@ export default function ProSalonProfilePage() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Bank Details & Payout History (BAR-071, BAR-072) */}
+        <div className="pro-card">
+          <div className="pro-card-header">
+            <h3 className="pro-card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShieldCheck size={18} color="var(--pro-blue)" />
+              Settlement Bank Account & Payout History
+            </h3>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
+            <div className="pro-form-group">
+              <label className="pro-form-label">Settlement Bank Name</label>
+              <input type="text" className="pro-form-input" value="HDFC Bank" disabled style={{ background: '#f8fafc' }} />
+            </div>
+            <div className="pro-form-group">
+              <label className="pro-form-label">Account Number</label>
+              <input type="text" className="pro-form-input" value="•••• •••• 8912" disabled style={{ background: '#f8fafc' }} />
+            </div>
+            <div className="pro-form-group">
+              <label className="pro-form-label">IFSC Code</label>
+              <input type="text" className="pro-form-input" value="HDFC0001234" disabled style={{ background: '#f8fafc' }} />
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--pro-bg)', padding: '1rem', borderRadius: '8px', marginTop: '1rem' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', color: 'var(--pro-navy)' }}>Recent Settlement Payouts</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', padding: '6px 0', borderBottom: '1px solid var(--pro-border-subtle)' }}>
+              <span>Nov 10, 2026 (Weekly Settlement)</span>
+              <strong style={{ color: '#059669' }}>₹48,500 Completed</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', padding: '6px 0' }}>
+              <span>Nov 03, 2026 (Weekly Settlement)</span>
+              <strong style={{ color: '#059669' }}>₹52,200 Completed</strong>
+            </div>
+          </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
             <button type="submit" className="pro-btn pro-btn-primary">

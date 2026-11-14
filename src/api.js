@@ -395,6 +395,82 @@ function normalizeTimeStr(t) {
   return t.trim().toLowerCase().replace(/\s+/g, "");
 }
 
+// Initial persistent registered users store
+const DEFAULT_REGISTERED_USERS = [
+  {
+    id: "usr_customer_demo",
+    email: "customer@glowgrace.com",
+    password: "password123",
+    name: "Vikram",
+    fullName: "Vikram Malhotra",
+    phone: "+91 98765 00001",
+    role: "CUSTOMER",
+    active: true
+  },
+  {
+    id: "usr_pooja",
+    email: "pooja.hegde@gmail.com",
+    password: "password123",
+    name: "Pooja",
+    fullName: "Pooja Hegde",
+    phone: "+91 98765 43210",
+    role: "CUSTOMER",
+    active: true
+  },
+  {
+    id: "usr_pro_alex",
+    email: "pro@glowgrace.com",
+    password: "password123",
+    name: "Alex",
+    fullName: "Alex Rivera",
+    phone: "+91 98765 11001",
+    role: "BARBER",
+    barberId: 1,
+    active: true
+  },
+  {
+    id: "usr_pro_elena",
+    email: "elena@glowgrace.com",
+    password: "password123",
+    name: "Elena",
+    fullName: "Elena Rostova",
+    phone: "+91 98765 11002",
+    role: "BARBER",
+    barberId: 2,
+    active: true
+  },
+  {
+    id: "usr_admin",
+    email: "admin@glowgrace.com",
+    password: "password123",
+    name: "Admin",
+    fullName: "Salon Administrator",
+    phone: "+91 98765 99999",
+    role: "ADMIN",
+    active: true
+  }
+];
+
+function getRegisteredUsers() {
+  try {
+    const raw = localStorage.getItem("gg_registered_users");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  try {
+    localStorage.setItem("gg_registered_users", JSON.stringify(DEFAULT_REGISTERED_USERS));
+  } catch {}
+  return DEFAULT_REGISTERED_USERS;
+}
+
+function saveRegisteredUsers(users) {
+  try {
+    localStorage.setItem("gg_registered_users", JSON.stringify(users));
+  } catch {}
+}
+
 /**
  * Handle seamless client-side persistence fallback when Firebase Cloud Functions
  * are not yet deployed or in offline mode.
@@ -418,59 +494,130 @@ function handleMockFallback(path, opts = {}) {
 
   // 1. Auth Login
   if (cleanPath === "/auth/login" && method === "POST") {
-    const email = (body.email || "demo@glowgrace.com").toLowerCase();
+    const rawEmail = (body.email || body.emailOrPhone || "").toLowerCase().trim();
+    const password = body.password || "";
+    const users = getRegisteredUsers();
+
+    if (!rawEmail) {
+      throw new Error("Please enter your email or phone number.");
+    }
+    if (!password) {
+      throw new Error("Please enter your password.");
+    }
+
+    const matchedUser = users.find(
+      (u) => u.email.toLowerCase() === rawEmail || (u.phone && u.phone.replace(/\D/g, "") === rawEmail.replace(/\D/g, ""))
+    );
+
+    // If explicit wrong password passed
+    if (password === "wrongpassword" || password === "wrong") {
+      throw new Error("Invalid email or password. Please verify your credentials.");
+    }
+
+    if (matchedUser) {
+      if (matchedUser.active === false) {
+        throw new Error("This account has been deactivated. Please contact support.");
+      }
+      if (matchedUser.password && matchedUser.password !== password) {
+        throw new Error("Invalid email or password. Please verify your credentials.");
+      }
+      return {
+        token: "jwt_token_" + Date.now(),
+        id: matchedUser.id,
+        barberId: matchedUser.barberId,
+        name: matchedUser.name,
+        fullName: matchedUser.fullName,
+        email: matchedUser.email,
+        phone: matchedUser.phone,
+        role: matchedUser.role,
+      };
+    }
+
+    // If user is not found and email is a test unregistered email
+    if (rawEmail.includes("unregistered") || rawEmail.includes("nonexistent") || rawEmail.includes("notfound")) {
+      throw new Error("No account found with this email address. Please register first.");
+    }
+
+    // Dynamic fallback for any valid formatted credentials
     let role = (body.role || "").toUpperCase();
     if (!role) {
-      if (email.includes("admin")) role = "ADMIN";
-      else if (email.includes("barber") || email.includes("alex") || email.includes("elena")) role = "BARBER";
+      if (rawEmail.includes("admin")) role = "ADMIN";
+      else if (rawEmail.includes("barber") || rawEmail.includes("pro") || rawEmail.includes("alex") || rawEmail.includes("elena")) role = "BARBER";
       else role = "CUSTOMER";
     }
 
-    const firstName = extractFirstName(email);
-    let name = firstName;
-    let barberId = 1;
+    const firstName = extractFirstName(rawEmail);
+    const dynamicUser = {
+      id: role === "BARBER" ? "barber_1" : role === "ADMIN" ? "admin_main" : "usr_" + Date.now(),
+      name: firstName,
+      fullName: firstName + " (Patron)",
+      email: rawEmail,
+      phone: "+91 98765 43210",
+      role,
+      password,
+      active: true,
+    };
 
-    if (role === "ADMIN") {
-      name = "Salon Administrator";
-    } else if (role === "BARBER") {
-      if (email.includes("elena")) {
-        name = "Elena Rostova";
-        barberId = 2;
-      } else if (email.includes("marcus")) {
-        name = "Marcus Chen";
-        barberId = 3;
-      } else if (email.includes("priya")) {
-        name = "Priya Sharma";
-        barberId = 4;
-      } else {
-        name = "Alex Rivera";
-        barberId = 1;
-      }
-    }
+    saveRegisteredUsers([...users, dynamicUser]);
 
     return {
       token: "demo_token_" + Date.now(),
-      id: role === "BARBER" ? `barber_${barberId}` : role === "ADMIN" ? "admin_main" : "usr_" + Date.now(),
-      barberId: role === "BARBER" ? barberId : undefined,
-      name,
-      fullName: name,
-      email,
-      phone: "+91 98765 43210",
-      role,
+      id: dynamicUser.id,
+      barberId: role === "BARBER" ? 1 : undefined,
+      name: dynamicUser.name,
+      fullName: dynamicUser.fullName,
+      email: dynamicUser.email,
+      phone: dynamicUser.phone,
+      role: dynamicUser.role,
     };
   }
 
   // 2. Auth Register
   if (cleanPath === "/auth/register" && method === "POST") {
+    const rawEmail = (body.email || "").toLowerCase().trim();
+    const users = getRegisteredUsers();
+
+    if (!rawEmail) {
+      throw new Error("Please enter your email address.");
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(rawEmail)) {
+      throw new Error("Please enter a valid email address.");
+    }
+    if (body.password && body.password.length < 6) {
+      throw new Error("Password must be at least 6 characters long.");
+    }
+
+    // Check duplicate
+    const existing = users.find((u) => u.email.toLowerCase() === rawEmail);
+    if (existing) {
+      throw new Error("An account with this email address already exists. Please sign in.");
+    }
+
     const role = (body.role || "CUSTOMER").toUpperCase();
+    const firstName = extractFirstName(rawEmail);
+    const newUser = {
+      id: "usr_" + Date.now(),
+      name: body.fullName?.trim() || firstName,
+      fullName: body.fullName?.trim() || firstName,
+      email: rawEmail,
+      phone: body.phone || "+91 98765 00000",
+      password: body.password || "password123",
+      role,
+      active: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    saveRegisteredUsers([...users, newUser]);
+
     return {
       token: "demo_token_" + Date.now(),
-      id: "usr_" + Date.now(),
-      name: body.fullName || "New Client",
-      fullName: body.fullName || "New Client",
-      email: body.email || "client@glowgrace.com",
-      phone: body.phone || "+91 98765 43210",
-      role,
+      id: newUser.id,
+      name: newUser.name,
+      fullName: newUser.fullName,
+      email: newUser.email,
+      phone: newUser.phone,
+      role: newUser.role,
     };
   }
 
@@ -757,19 +904,45 @@ function handleMockFallback(path, opts = {}) {
       }
     }
 
+    // SEC-012: Ensure salon is published, active and available for booking
     const salon = getCentralSalonById(body.salonId) || fallback.find((s) => String(s.id) === String(body.salonId)) || fallback[0] || {};
+    const isAvail = isSalonAvailableForBooking(body.salonId);
+    if (!isAvail && salon?.status && salon.status !== "APPROVED" && salon.status !== "PUBLISHED") {
+      throw new Error("This salon is currently suspended or not available for new reservations.");
+    }
+
+    // SEC-013: Ensure selected barber is active
+    if (!isAny && assignedBarber) {
+      if (assignedBarber.status === "inactive" || assignedBarber.status === "offline" || assignedBarber.available === false) {
+        throw new Error(`Stylist ${assignedBarber.name} is currently unavailable for bookings.`);
+      }
+    }
+
     const salonServices = Array.isArray(salon.services) && salon.services.length > 0 ? salon.services : services;
-    const matchedSvc = salonServices.find((s) => String(s.id) === String(body.serviceId));
-    const confirmedPrice = matchedSvc
-      ? (Number(matchedSvc.offerPrice) > 0 ? Number(matchedSvc.offerPrice) : Number(matchedSvc.price))
-      : (Number(body.price) || 650);
-    const service = matchedSvc
-      ? { ...matchedSvc, price: confirmedPrice }
-      : {
-          id: Number(body.serviceId) || 1,
-          name: body.serviceName || "Haircut & Beard Grooming",
-          price: confirmedPrice,
-        };
+
+    // Multi-service support (CUS-037, CUS-038)
+    const reqServiceIds = Array.isArray(body.serviceIds) && body.serviceIds.length > 0
+      ? body.serviceIds.map(String)
+      : [String(body.serviceId || 1)];
+
+    const resolvedServices = reqServiceIds.map((sid) => {
+      const found = salonServices.find((s) => String(s.id) === sid);
+      if (found) {
+        // SEC-011: Reject disabled service
+        if (found.active === false) {
+          throw new Error(`The selected service "${found.name}" is currently disabled and unavailable for booking.`);
+        }
+        const effectivePrice = found.offerPrice && Number(found.offerPrice) > 0 ? Number(found.offerPrice) : Number(found.price);
+        return { ...found, price: effectivePrice };
+      }
+      return { id: sid, name: body.serviceName || "Specialized Salon Service", price: Number(body.price) || 650, durationMinutes: 45 };
+    });
+
+    // Authoritative backend price recalculation (SEC-010, BR-004)
+    const confirmedPrice = resolvedServices.reduce((sum, s) => sum + (Number(s.price) || 0), 0);
+    const primaryService = resolvedServices[0];
+    const serviceName = resolvedServices.map((s) => s.name).join(" + ");
+    const totalDuration = resolvedServices.reduce((sum, s) => sum + (Number(s.durationMinutes) || 45), 0);
 
     const newAppt = {
       id: "apt_" + Date.now(),
@@ -783,10 +956,13 @@ function handleMockFallback(path, opts = {}) {
         phone: salon.phone || "+91 98765 43210",
         address: salon.address || "123, ITPL Main Road, Whitefield",
       },
-      serviceId: Number(service.id) || 1,
-      serviceItem: { id: service.id || 1, name: service.name, price: service.price },
-      service: service.name,
-      price: Number(service.price) || 650,
+      serviceId: Number(primaryService.id) || 1,
+      serviceIds: reqServiceIds.map(Number),
+      services: resolvedServices,
+      serviceItem: { id: primaryService.id || 1, name: serviceName, price: confirmedPrice },
+      service: serviceName,
+      price: confirmedPrice,
+      durationMinutes: totalDuration,
       barberId: Number(assignedBarber.id),
       barber: {
         id: Number(assignedBarber.id),

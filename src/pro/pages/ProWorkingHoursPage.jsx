@@ -24,6 +24,7 @@ export default function ProWorkingHoursPage() {
   const [closureReason, setClosureReason] = useState(salon.temporaryClosureReason || '');
   const [holidayNotice, setHolidayNotice] = useState(salon.exceptionalNotice || '');
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleTimeChange = (index, field, value) => {
     const updated = [...hours];
@@ -39,6 +40,22 @@ export default function ProWorkingHoursPage() {
 
   const handleSave = (e) => {
     e.preventDefault();
+    setErrorMessage('');
+
+    // BAR-028: Validate opening time earlier than closing time
+    for (const d of hours) {
+      if (!d.isClosed) {
+        if (!d.open || !d.close) {
+          setErrorMessage(`Please provide valid open and close times for ${d.day}.`);
+          return;
+        }
+        if (d.open >= d.close) {
+          setErrorMessage(`Opening time must be earlier than closing time for ${d.day}.`);
+          return;
+        }
+      }
+    }
+
     saveProWorkingHours(hours);
 
     const updatedSalon = {
@@ -67,6 +84,25 @@ export default function ProWorkingHoursPage() {
           <Save size={16} /> Save Hours
         </button>
       </div>
+
+      {errorMessage && (
+        <div style={{
+          background: '#FEF2F2',
+          border: '1px solid #EF4444',
+          color: '#B91C1C',
+          borderRadius: '10px',
+          padding: '1rem 1.25rem',
+          marginBottom: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          fontSize: '0.9rem',
+          fontWeight: 600
+        }}>
+          <AlertTriangle size={20} color="#DC2626" />
+          {errorMessage}
+        </div>
+      )}
 
       {savedSuccess && (
         <div style={{
