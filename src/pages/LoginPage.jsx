@@ -22,6 +22,7 @@ import {
   KeyRound
 } from "lucide-react";
 import { request } from "../api";
+import { extractFirstName } from "../utils/greeting";
 import quickGroomLogo from "../assets/quick_groom.jpg";
 
 export default function LoginPage() {
@@ -117,10 +118,11 @@ export default function LoginPage() {
 
     try {
       const isEmail = form.emailOrPhone.includes("@");
+      const derivedName = extractFirstName(form.emailOrPhone);
       const payload = {
         email: isEmail ? form.emailOrPhone.trim().toLowerCase() : `${form.phone || form.emailOrPhone}@glowgrace.com`,
         password: form.password,
-        fullName: form.fullName || form.emailOrPhone.split("@")[0],
+        fullName: form.fullName?.trim() || derivedName,
         phone: form.phone || (isEmail ? "+91 98765 00000" : form.emailOrPhone),
         role: "CUSTOMER",
       };
@@ -133,14 +135,15 @@ export default function LoginPage() {
 
       const userRole = (data.role || "CUSTOMER").toUpperCase();
       const token = data.token || "jwt_demo_" + Date.now();
+      const resolvedName = extractFirstName(data.name || data.fullName || form.fullName || payload.email);
 
       localStorage.setItem("gg_token", token);
       localStorage.setItem(
         "gg_user",
         JSON.stringify({
           id: data.id || "usr_" + Date.now(),
-          name: data.name || data.fullName || form.fullName || "Valued Guest",
-          fullName: data.fullName || data.name || form.fullName || "Valued Guest",
+          name: resolvedName,
+          fullName: data.fullName || form.fullName || resolvedName,
           email: data.email || payload.email,
           role: userRole,
           phone: data.phone || payload.phone,

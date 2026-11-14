@@ -1,6 +1,7 @@
 import { getFirebaseApiUrl, testFirebaseHandshake } from "./firebase";
 import { fallback, demoServices } from "./data/mockData";
 import { getPublishedCentralSalons, getCentralSalonById, getAllCentralSalons } from "./services/centralSalonService";
+import { extractFirstName } from "./utils/greeting";
 
 export const API = getFirebaseApiUrl();
 export const checkFirebaseHealth = testFirebaseHandshake;
@@ -415,8 +416,8 @@ function handleMockFallback(path, opts = {}) {
       else role = "CUSTOMER";
     }
 
-    const rawName = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    let name = rawName;
+    const firstName = extractFirstName(email);
+    let name = firstName;
     let barberId = 1;
 
     if (role === "ADMIN") {

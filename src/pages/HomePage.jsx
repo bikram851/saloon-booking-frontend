@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { getGreeting } from "../utils/greeting";
+import { getGreeting, extractFirstName } from "../utils/greeting";
 import {
   ArrowRight,
   CalendarDays,
@@ -165,7 +165,7 @@ export default function HomePage() {
             <div className="hero-greeting-pill">
               <Sparkles size={14} className="gold-sparkle" />
               <span>
-                {greeting}, {user.name?.trim() || "there"}!
+                {greeting}, {extractFirstName(user?.email || user?.name || user?.fullName)}!
               </span>
             </div>
 
