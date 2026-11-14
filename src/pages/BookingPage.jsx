@@ -361,7 +361,7 @@ export default function BookingPage() {
         barberName: assignedBarberName,
         chair: assignedChair,
         time: time,
-        price: svcObj?.price || 650,
+        price: svcObj?.offerPrice && Number(svcObj.offerPrice) > 0 ? Number(svcObj.offerPrice) : (svcObj?.price || 650),
         date: date,
         createdAt: new Date().toISOString(),
       };
@@ -606,23 +606,24 @@ export default function BookingPage() {
                   setTime("");
                 }}
               >
-                {services.map((service) => (
-                  <option
-                    key={service.id}
-                    value={service.id}
-                  >
-                    {service.name}
-                    {" — ₹"}
-                    {Number(
-                      service.price ??
-                        service.priceRupees ??
-                        0,
-                    ).toLocaleString("en-IN")}
-                    {" ("}
-                    {service.durationMinutes}
-                    {" min)"}
-                  </option>
-                ))}
+                {services.map((service) => {
+                  const effectivePrice = service.offerPrice && Number(service.offerPrice) > 0 ? service.offerPrice : (service.price ?? service.priceRupees ?? 0);
+                  const hasDiscount = service.offerPrice && Number(service.offerPrice) > 0 && Number(service.offerPrice) < Number(service.price);
+                  return (
+                    <option
+                      key={service.id}
+                      value={service.id}
+                    >
+                      {service.name}
+                      {" — ₹"}
+                      {Number(effectivePrice).toLocaleString("en-IN")}
+                      {hasDiscount ? ` (${service.discountPercent || Math.round(((service.price - service.offerPrice) / service.price) * 100)}% OFF)` : ""}
+                      {" ("}
+                      {service.durationMinutes}
+                      {" min)"}
+                    </option>
+                  );
+                })}
               </select>
             </label>
 
@@ -1054,9 +1055,9 @@ export default function BookingPage() {
             <b>
               ₹
               {Number(
-                selectedService?.price ??
-                  selectedService?.priceRupees ??
-                  0,
+                selectedService?.offerPrice && Number(selectedService.offerPrice) > 0
+                  ? selectedService.offerPrice
+                  : (selectedService?.price ?? selectedService?.priceRupees ?? 0),
               ).toLocaleString("en-IN")}
             </b>
           </div>

@@ -217,7 +217,10 @@ export default function ProLayout() {
               >
                 <span className={`pro-status-dot ${salon.status === 'OPEN' ? '' : 'closed'}`} />
                 <span className="pro-status-label-desktop">Salon Status: </span>
-                <strong className="pro-status-label-val">{salon.status === 'OPEN' ? 'OPEN TODAY' : 'CLOSED'}</strong>
+                <strong className="pro-status-label-val">
+                  <span className="hide-mobile">{salon.status === 'OPEN' ? 'OPEN TODAY' : 'CLOSED'}</span>
+                  <span className="show-mobile-only">{salon.status === 'OPEN' ? 'OPEN' : 'CLOSED'}</span>
+                </strong>
                 <span className="pro-status-change-link">Change</span>
               </div>
             </div>

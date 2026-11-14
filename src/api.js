@@ -1,6 +1,16 @@
 import { getFirebaseApiUrl, testFirebaseHandshake } from "./firebase";
 import { fallback, demoServices } from "./data/mockData";
-import { getPublishedCentralSalons, getCentralSalonById, getAllCentralSalons } from "./services/centralSalonService";
+import {
+  getPublishedCentralSalons,
+  getCentralSalonById,
+  getAllCentralSalons,
+  getSalonServices,
+  getPublishedSalonServices,
+  addSalonService,
+  updateSalonService,
+  toggleSalonServiceStatus,
+  deleteSalonService
+} from "./services/centralSalonService";
 import { extractFirstName } from "./utils/greeting";
 
 export const API = getFirebaseApiUrl();
@@ -531,23 +541,41 @@ function handleMockFallback(path, opts = {}) {
     };
   }
 
-  // 5. Salon Services
-  if (cleanPath.endsWith("/services") || cleanPath.includes("/services")) {
-    const idMatch = cleanPath.match(/\/salons\/([^/]+)\/services/);
-    if (idMatch) {
-      const salon = getCentralSalonById(idMatch[1]);
-      if (salon && Array.isArray(salon.services) && salon.services.length > 0) {
-        return salon.services.map((srv, idx) => ({
-          id: srv.id || idx + 1,
-          name: srv.name,
-          category: srv.category || "General",
-          price: Number(srv.price) || 1000,
-          durationMinutes: Number(srv.durationMinutes) || 45,
-          description: srv.description || srv.name
-        }));
-      }
+  // 5. Salon Services CRUD endpoints
+  const srvPathMatch = cleanPath.match(/\/salons\/([^/]+)\/services(?:\/([^/]+))?(?:\/toggle)?/);
+  if (srvPathMatch) {
+    const salonId = srvPathMatch[1];
+    const serviceId = srvPathMatch[2];
+    const isToggle = cleanPath.endsWith("/toggle");
+
+    // Toggle active status
+    if (isToggle && method === "PATCH") {
+      return toggleSalonServiceStatus(salonId, serviceId);
     }
-    return defaultMockServices;
+
+    // Update service
+    if (serviceId && (method === "PUT" || method === "PATCH")) {
+      return updateSalonService(salonId, serviceId, body);
+    }
+
+    // Delete service
+    if (serviceId && method === "DELETE") {
+      return { success: deleteSalonService(salonId, serviceId) };
+    }
+
+    // Add service
+    if (method === "POST") {
+      return addSalonService(salonId, body);
+    }
+
+    // GET Services: only active services for customers, or all if specified
+    if (method === "GET") {
+      const includeInactive = path.includes("all=true") || path.includes("includeInactive=true") || cleanPath.includes("/pro/");
+      if (includeInactive) {
+        return getSalonServices(salonId);
+      }
+      return getPublishedSalonServices(salonId);
+    }
   }
 
   // 6. Salon Barbers
@@ -729,12 +757,19 @@ function handleMockFallback(path, opts = {}) {
       }
     }
 
-    const salon = fallback.find((s) => String(s.id) === String(body.salonId)) || fallback[0] || {};
-    const service = services.find((s) => String(s.id) === String(body.serviceId)) || {
-      id: Number(body.serviceId) || 1,
-      name: body.serviceName || "Haircut & Beard Grooming",
-      price: body.price || 650,
-    };
+    const salon = getCentralSalonById(body.salonId) || fallback.find((s) => String(s.id) === String(body.salonId)) || fallback[0] || {};
+    const salonServices = Array.isArray(salon.services) && salon.services.length > 0 ? salon.services : services;
+    const matchedSvc = salonServices.find((s) => String(s.id) === String(body.serviceId));
+    const confirmedPrice = matchedSvc
+      ? (Number(matchedSvc.offerPrice) > 0 ? Number(matchedSvc.offerPrice) : Number(matchedSvc.price))
+      : (Number(body.price) || 650);
+    const service = matchedSvc
+      ? { ...matchedSvc, price: confirmedPrice }
+      : {
+          id: Number(body.serviceId) || 1,
+          name: body.serviceName || "Haircut & Beard Grooming",
+          price: confirmedPrice,
+        };
 
     const newAppt = {
       id: "apt_" + Date.now(),

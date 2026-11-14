@@ -165,7 +165,7 @@ export default function HomePage() {
             <div className="hero-greeting-pill">
               <Sparkles size={14} className="gold-sparkle" />
               <span>
-                {greeting}, {extractFirstName(user?.email || user?.name || user?.fullName)}!
+                {greeting}, {extractFirstName(user)}!
               </span>
             </div>
 

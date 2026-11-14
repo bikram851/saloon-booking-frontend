@@ -492,9 +492,27 @@ export default function SalonDetailPage() {
                   </div>
 
                   <div className="service-action-col">
-                    <strong className="service-price">
-                      ₹{Number(s.price ?? s.priceRupees ?? 0).toLocaleString("en-IN")}
-                    </strong>
+                    <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                      {s.offerPrice && Number(s.offerPrice) > 0 && Number(s.offerPrice) < Number(s.price) ? (
+                        <div>
+                          <span style={{ textDecoration: "line-through", color: "#8c827a", fontSize: "0.82rem", marginRight: "6px" }}>
+                            ₹{Number(s.price).toLocaleString("en-IN")}
+                          </span>
+                          <strong className="service-price" style={{ color: "#065f46" }}>
+                            ₹{Number(s.offerPrice).toLocaleString("en-IN")}
+                          </strong>
+                          {s.discountPercent ? (
+                            <span style={{ display: "block", fontSize: "0.72rem", color: "#b45309", fontWeight: 700 }}>
+                              {s.discountPercent}% OFF
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <strong className="service-price">
+                          ₹{Number(s.price ?? s.priceRupees ?? 0).toLocaleString("en-IN")}
+                        </strong>
+                      )}
+                    </div>
                     <Link
                       to={`/book/${salon.id}?service=${s.id}`}
                       className="primary small service-book-btn"

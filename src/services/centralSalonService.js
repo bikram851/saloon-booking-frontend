@@ -73,11 +73,15 @@ export const INITIAL_CENTRAL_SALONS = [
       { day: "Sunday", openTime: "08:30", closeTime: "22:00", isClosed: false }
     ],
     services: [
-      { id: 1, name: "Haircut & Style", price: 1200, durationMinutes: 45, category: "Hair", description: "Precision scissor cut, styling consultation and signature finish", active: true },
-      { id: 2, name: "Hair Colour & Balayage", price: 3500, durationMinutes: 90, category: "Hair", description: "Custom shade blending, gloss treatment and colour lock therapy", active: true },
-      { id: 3, name: "Glow Radiance Facial", price: 2200, durationMinutes: 60, category: "Skin", description: "Cleansing exfoliation, antioxidant serum and revitalizing gold mask", active: true },
-      { id: 4, name: "Beard Trim & Sculpt", price: 650, durationMinutes: 30, category: "Beard", description: "Hot towel prep, precision razor edge and nourishing beard oil massage", active: true },
-      { id: 5, name: "Deep Conditioning Hair Spa", price: 1800, durationMinutes: 50, category: "Spa", description: "Keratin scalp nourish, warm steam infusion and relaxing head therapy", active: true }
+      { id: 1, name: "Signature Haircut & Styling", defaultPrice: 1000, price: 1200, offerPrice: 1050, discountPercent: 12, durationMinutes: 45, category: "Haircut", description: "Precision scissor cut, styling consultation and signature hot towel finish.", active: true, image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80" },
+      { id: 2, name: "Beard Trim & Sculpt", defaultPrice: 550, price: 650, offerPrice: null, discountPercent: null, durationMinutes: 30, category: "Beard Styling", description: "Hot towel prep, precision razor edge and nourishing beard oil massage.", active: true, image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80" },
+      { id: 3, name: "Glow Radiance Facial", defaultPrice: 2000, price: 2200, offerPrice: 1999, discountPercent: 9, durationMinutes: 60, category: "Facial", description: "Cleansing exfoliation, antioxidant serum and revitalizing gold mask.", active: true, image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80" },
+      { id: 4, name: "Detan Instant Glow Therapy", defaultPrice: 950, price: 1100, offerPrice: 950, discountPercent: 14, durationMinutes: 35, category: "Detan", description: "Herbal tan removal pack, cooling mist and gentle skin polish.", active: true, image: "https://images.unsplash.com/photo-1512290900672-1f486a4ff596?auto=format&fit=crop&w=600&q=80" },
+      { id: 5, name: "Deep Exfoliating Face Scrub", defaultPrice: 750, price: 900, offerPrice: null, discountPercent: null, durationMinutes: 30, category: "Face Scrub", description: "Apricot & walnut micro-granule scrub removing deep impurities.", active: true, image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=600&q=80" },
+      { id: 6, name: "Deep Conditioning Hair Spa", defaultPrice: 1600, price: 1800, offerPrice: 1599, discountPercent: 11, durationMinutes: 50, category: "Hair Spa", description: "Keratin scalp nourish, warm steam infusion and relaxing head therapy.", active: true, image: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=600&q=80" },
+      { id: 7, name: "Aromatherapy Stress Relief Massage", defaultPrice: 2200, price: 2500, offerPrice: 2199, discountPercent: 12, durationMinutes: 60, category: "Massage", description: "Swedish warm therapeutic essential oil massage targeting muscular tension.", active: true, image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=600&q=80" },
+      { id: 8, name: "Hair Colour & Balayage", defaultPrice: 3200, price: 3500, offerPrice: null, discountPercent: null, durationMinutes: 90, category: "Hair Colour", description: "Custom shade blending, gloss treatment and colour lock therapy.", active: true, image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80" },
+      { id: 9, name: "Full Executive Grooming Package", defaultPrice: 2400, price: 2800, offerPrice: 2399, discountPercent: 14, durationMinutes: 80, category: "Grooming", description: "Complete package: Precision haircut, beard architecture, face scrub & head massage.", active: false, image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=600&q=80" }
     ],
     servicesSample: ["Haircut & Style", "Balayage", "Glow Facial", "Beard Sculpt"],
     startingPrice: 650,
@@ -443,4 +447,248 @@ export function suspendOrUnpublishSalon(salonId, reason = "") {
 
   saveCentralSalon(suspended);
   return suspended;
+}
+
+/**
+ * Standard salon service categories supported across Glow & Grace
+ */
+export const SERVICE_CATEGORIES = [
+  "Haircut",
+  "Beard Styling",
+  "Facial",
+  "Detan",
+  "Face Scrub",
+  "Hair Spa",
+  "Massage",
+  "Hair Colour",
+  "Grooming"
+];
+
+/**
+ * Returns all services for a specific salon, ensuring defaultPrice and pricing fields are properly initialized.
+ */
+export function getSalonServices(salonId) {
+  const salon = getCentralSalonById(salonId);
+  if (!salon) return [];
+
+  const rawServices = Array.isArray(salon.services) ? salon.services : [];
+  return rawServices.map((srv, idx) => ({
+    id: srv.id || idx + 1,
+    name: srv.name || "Specialized Salon Service",
+    category: srv.category || "Grooming",
+    description: srv.description || "",
+    durationMinutes: Number(srv.durationMinutes) || 45,
+    defaultPrice: Number(srv.defaultPrice) || Number(srv.price) || 1000,
+    price: Number(srv.price) || Number(srv.defaultPrice) || 1000,
+    offerPrice: srv.offerPrice != null && Number(srv.offerPrice) > 0 ? Number(srv.offerPrice) : null,
+    discountPercent: srv.discountPercent != null ? Number(srv.discountPercent) : (srv.offerPrice ? Math.round(((srv.price - srv.offerPrice) / srv.price) * 100) : null),
+    image: srv.image || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80",
+    active: srv.active !== false,
+    bookingsCount: srv.bookingsCount || 0,
+    salonId: salon.id
+  }));
+}
+
+/**
+ * Returns ONLY enabled/active services for customer discovery and booking.
+ */
+export function getPublishedSalonServices(salonId) {
+  const services = getSalonServices(salonId);
+  return services.filter(s => s.active !== false);
+}
+
+/**
+ * Adds a new service to a salon's catalogue.
+ * Automatically synchronizes with central store and customer discovery.
+ */
+export function addSalonService(salonId, serviceData) {
+  const salons = getAllCentralSalons();
+  const index = salons.findIndex(s => String(s.id) === String(salonId) || String(s.salonId) === String(salonId));
+  if (index === -1) throw new Error("Salon not found");
+
+  const salon = salons[index];
+  const existingServices = Array.isArray(salon.services) ? salon.services : [];
+
+  const sellingPrice = Math.max(1, Number(serviceData.price) || 500);
+  const defaultPrice = Number(serviceData.defaultPrice) || sellingPrice;
+  const offerPrice = serviceData.offerPrice && Number(serviceData.offerPrice) > 0 && Number(serviceData.offerPrice) < sellingPrice
+    ? Number(serviceData.offerPrice)
+    : null;
+  const discountPercent = offerPrice ? Math.round(((sellingPrice - offerPrice) / sellingPrice) * 100) : null;
+
+  const newService = {
+    id: serviceData.id || ("svc_" + Date.now()),
+    name: serviceData.name.trim(),
+    category: serviceData.category || "Haircut",
+    description: serviceData.description?.trim() || "",
+    durationMinutes: Math.max(5, Number(serviceData.durationMinutes) || 30),
+    defaultPrice,
+    price: sellingPrice,
+    offerPrice,
+    discountPercent,
+    image: serviceData.image || "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80",
+    active: serviceData.active !== false,
+    bookingsCount: 0,
+    createdAt: new Date().toISOString()
+  };
+
+  const updatedServices = [...existingServices, newService];
+  const activeServices = updatedServices.filter(s => s.active !== false);
+  const startingPrice = activeServices.length > 0
+    ? Math.min(...activeServices.map(s => s.offerPrice || s.price))
+    : salon.startingPrice;
+
+  const updatedSalon = {
+    ...salon,
+    services: updatedServices,
+    startingPrice,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveCentralSalon(updatedSalon);
+
+  try {
+    localStorage.setItem("gg_pro_services", JSON.stringify(updatedServices));
+  } catch {}
+
+  return newService;
+}
+
+/**
+ * Updates a service for a salon.
+ * Enforces permissions: professionals can only change their selling price, offer price, and details;
+ * Super Admin can also adjust defaultPrice.
+ */
+export function updateSalonService(salonId, serviceId, updateData, isSuperAdmin = false) {
+  const salons = getAllCentralSalons();
+  const index = salons.findIndex(s => String(s.id) === String(salonId) || String(s.salonId) === String(salonId));
+  if (index === -1) throw new Error("Salon not found");
+
+  const salon = salons[index];
+  const existingServices = Array.isArray(salon.services) ? salon.services : [];
+  const srvIndex = existingServices.findIndex(s => String(s.id) === String(serviceId));
+  if (srvIndex === -1) throw new Error("Service not found");
+
+  const oldSrv = existingServices[srvIndex];
+
+  // Validate selling price
+  let sellingPrice = oldSrv.price;
+  if (updateData.price !== undefined) {
+    const p = Number(updateData.price);
+    if (isNaN(p) || p <= 0) {
+      throw new Error("Selling price must be a valid positive amount");
+    }
+    sellingPrice = p;
+  }
+
+  // Offer price validation
+  let offerPrice = oldSrv.offerPrice;
+  if (updateData.offerPrice !== undefined) {
+    if (updateData.offerPrice === null || updateData.offerPrice === "" || updateData.offerPrice === 0) {
+      offerPrice = null;
+    } else {
+      const op = Number(updateData.offerPrice);
+      if (isNaN(op) || op < 0) {
+        throw new Error("Offer price cannot be negative");
+      }
+      if (op >= sellingPrice) {
+        throw new Error("Offer price must be less than regular selling price");
+      }
+      offerPrice = op > 0 ? op : null;
+    }
+  }
+
+  // Calculate discount percent
+  const discountPercent = offerPrice
+    ? Math.round(((sellingPrice - offerPrice) / sellingPrice) * 100)
+    : null;
+
+  // Default price: only super admin can change
+  const defaultPrice = isSuperAdmin && updateData.defaultPrice !== undefined
+    ? Number(updateData.defaultPrice)
+    : (oldSrv.defaultPrice || oldSrv.price);
+
+  const updatedService = {
+    ...oldSrv,
+    name: updateData.name !== undefined ? updateData.name.trim() : oldSrv.name,
+    category: updateData.category !== undefined ? updateData.category : oldSrv.category,
+    description: updateData.description !== undefined ? updateData.description.trim() : oldSrv.description,
+    durationMinutes: updateData.durationMinutes !== undefined ? Math.max(5, Number(updateData.durationMinutes)) : oldSrv.durationMinutes,
+    image: updateData.image !== undefined ? updateData.image : oldSrv.image,
+    defaultPrice,
+    price: sellingPrice,
+    offerPrice,
+    discountPercent,
+    active: updateData.active !== undefined ? Boolean(updateData.active) : oldSrv.active,
+    updatedAt: new Date().toISOString()
+  };
+
+  const updatedServices = [...existingServices];
+  updatedServices[srvIndex] = updatedService;
+
+  const activeServices = updatedServices.filter(s => s.active !== false);
+  const startingPrice = activeServices.length > 0
+    ? Math.min(...activeServices.map(s => s.offerPrice || s.price))
+    : salon.startingPrice;
+
+  const updatedSalon = {
+    ...salon,
+    services: updatedServices,
+    startingPrice,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveCentralSalon(updatedSalon);
+
+  try {
+    localStorage.setItem("gg_pro_services", JSON.stringify(updatedServices));
+  } catch {}
+
+  return updatedService;
+}
+
+/**
+ * Toggles a service between active and inactive.
+ */
+export function toggleSalonServiceStatus(salonId, serviceId) {
+  const salons = getAllCentralSalons();
+  const salon = salons.find(s => String(s.id) === String(salonId) || String(s.salonId) === String(salonId));
+  if (!salon) return null;
+
+  const srv = (salon.services || []).find(s => String(s.id) === String(serviceId));
+  if (!srv) return null;
+
+  return updateSalonService(salonId, serviceId, { active: !srv.active });
+}
+
+/**
+ * Deletes a service from a salon.
+ */
+export function deleteSalonService(salonId, serviceId) {
+  const salons = getAllCentralSalons();
+  const index = salons.findIndex(s => String(s.id) === String(salonId) || String(s.salonId) === String(salonId));
+  if (index === -1) return false;
+
+  const salon = salons[index];
+  const updatedServices = (salon.services || []).filter(s => String(s.id) !== String(serviceId));
+
+  const activeServices = updatedServices.filter(s => s.active !== false);
+  const startingPrice = activeServices.length > 0
+    ? Math.min(...activeServices.map(s => s.offerPrice || s.price))
+    : 500;
+
+  const updatedSalon = {
+    ...salon,
+    services: updatedServices,
+    startingPrice,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveCentralSalon(updatedSalon);
+
+  try {
+    localStorage.setItem("gg_pro_services", JSON.stringify(updatedServices));
+  } catch {}
+
+  return true;
 }
