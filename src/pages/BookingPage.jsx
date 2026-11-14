@@ -467,12 +467,14 @@ export default function BookingPage() {
       ===================================================== */}
 
       <div className="booking-main">
-        <Link
-          className="back-link"
-          to={`/salon/${id}`}
-        >
-          ← Back to salon
-        </Link>
+        <div className="booking-back-nav">
+          <Link
+            className="back-link"
+            to={`/salon/${id}`}
+          >
+            ← Back to salon
+          </Link>
+        </div>
 
         <span className="eyebrow">
           YOUR APPOINTMENT
